@@ -923,6 +923,9 @@
     /* =============================================
        RESPONSIVE
        ============================================= */
+    /* ---- Global credit badge (fixed, all screens) ---- */
+    #credit-badge { display: none; } /* removed — now in scorebar */
+
     @media (max-height: 640px) {
       .exercise-zone { padding: 6px 12px 4px; gap: 7px; }
       .exercise-card { padding: 10px 14px 12px; gap: 8px; }
@@ -947,10 +950,12 @@
      =================================================== -->
 <canvas id="confetti"></canvas>
 
+
 <!-- ===================================================
      WELCOME SCREEN
      =================================================== -->
 <section id="welcome" class="screen" role="main">
+  <p style="font-size:clamp(0.6rem,1.6vw,0.72rem);font-weight:800;color:rgba(255,255,255,0.5);letter-spacing:0.4px;margin-bottom:-8px">✏️ Inventé par Etienne Leborgne</p>
   <div class="mascot" aria-hidden="true">🦉</div>
   <h1 class="welcome-title">Calculette<br>Magique ✨</h1>
   <p class="welcome-sub">Quel niveau es-tu ?</p>
@@ -968,7 +973,6 @@
       <span class="lc-desc">Chiffres et fruits<br>pour t'aider</span>
     </button>
   </div>
-  <p style="color:rgba(255,255,255,0.55);font-size:clamp(0.65rem,1.8vw,0.82rem);font-weight:700;letter-spacing:0.3px;margin-top:4px">Inventé par Etienne LEBORGNE ✏️</p>
 </section>
 
 <!-- ===================================================
@@ -980,6 +984,8 @@
   <div class="scorebar">
     <div class="score-left">
       <span class="level-pill" id="level-pill">CP</span>
+      <div class="score-sep"></div>
+      <span style="font-size:0.6rem;font-weight:800;color:var(--muted);letter-spacing:0.3px;white-space:nowrap">✏️ Etienne Leborgne</span>
       <div class="score-sep"></div>
       <div class="score-item ok">
         <span class="si-lbl">✅ Bravo</span>
