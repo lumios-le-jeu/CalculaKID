@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
+  <meta name="description" content="Calculette Magique — Application de calcul mental ludique pour enfants CP et CE1" />
+  <meta name="theme-color" content="#6C5CE7" />
+  <title>🎓 Calculette Magique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* =============================================
+       DESIGN TOKENS
+       ============================================= */
+    :root {
+      --bg:        #FFF8F0;
+      --card:      #FFFFFF;
+      --purple:    #6C5CE7;
+      --orange:    #FF6B35;
+      --teal:      #00CEC9;
+      --yellow:    #FDCB6E;
+      --green:     #00B894;
+      --red:       #E17055;
+      --pink:      #FD79A8;
+      --blue:      #0984E3;
+      --text:      #2D3436;
+      --muted:     #636E72;
+      --border:    #EEE;
+      --shadow-sm: 0 4px 16px rgba(0,0,0,0.10);
+      --shadow-md: 0 8px 32px rgba(0,0,0,0.14);
+      --shadow-lg: 0 16px 48px rgba(0,0,0,0.18);
+      --radius-sm: 14px;
+      --radius-md: 22px;
+      --radius-lg: 32px;
+      --font:      'Nunito', system-ui, sans-serif;
+      --transition: 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* =============================================
+       RESET & BASE
+       ============================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      touch-action: manipulation;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* =============================================
+       SCREENS
+       ============================================= */
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96);
+    }
+
+    /* =============================================
+       WELCOME SCREEN
+       ============================================= */
+    #welcome {
+      background: linear-gradient(145deg, #a29bfe 0%, #6C5CE7 40%, #4834d4 100%);
+      gap: 28px;
+      padding: 32px 24px;
+    }
+
+    .mascot {
+      font-size: clamp(4.5rem, 14vw, 7rem);
+      animation: float 3s ease-in-out infinite;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.25));
+    }
+
+    .welcome-title {
+      font-size: clamp(2.2rem, 8vw, 4rem);
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      line-height: 1.15;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .welcome-sub {
+      font-size: clamp(0.95rem, 3vw, 1.25rem);
+      color: rgba(255,255,255,0.85);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .level-row {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .level-card {
+      background: #fff;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 26px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-family: var(--font);
+      box-shadow: var(--shadow-lg);
+      transition: transform var(--transition), box-shadow var(--transition);
+      min-width: 150px;
+    }
+
+    .level-card:hover { transform: translateY(-6px) scale(1.04); box-shadow: 0 24px 60px rgba(0,0,0,0.25); }
+    .level-card:active { transform: scale(0.97); }
+
+    .level-card .lc-emoji  { font-size: clamp(2.5rem, 8vw, 3.5rem); }
+    .level-card .lc-name   { font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 900; color: var(--purple); }
+    .level-card .lc-ops    { font-size: clamp(0.8rem, 2.5vw, 1rem); font-weight: 700; color: var(--muted); }
+    .level-card .lc-desc   { font-size: clamp(0.7rem, 2vw, 0.85rem); font-weight: 600; color: var(--muted); text-align: center; }
+
+    /* =============================================
+       GAME SCREEN
+       ============================================= */
+    #game {
+      background: linear-gradient(180deg, #FFF8F0 0%, #FFE9D5 100%);
+      justify-content: flex-start;
+      padding: 0;
+      gap: 0;
+    }
+
+    /* ---- Score Bar ---- */
+    .scorebar {
+      width: 100%;
+      background: #fff;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .score-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .level-pill {
+      background: var(--purple);
+      color: #fff;
+      border-radius: 100px;
+      padding: 5px 15px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .score-sep { width: 1px; height: 32px; background: var(--border); flex-shrink: 0; }
+
+    .score-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .score-item .si-lbl {
+      font-size: 0.6rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+    .score-item .si-val {
+      font-size: 1.35rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .score-item.ok  .si-val { color: var(--green); }
+    .score-item.nok .si-val { color: var(--red);   }
+    .score-item.pct .si-val { color: var(--purple); }
+
+    .score-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 44px; height: 44px;
+      background: #f4f4f4;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .icon-btn:active { background: #e0e0e0; transform: scale(0.9); }
+
+    /* ---- Lock button ---- */
+    .icon-btn.lock-btn {
+      background: linear-gradient(135deg, #636E72, #2D3436);
+      color: #fff;
+      box-shadow: 0 3px 0 #1a1f21, 0 2px 10px rgba(0,0,0,0.2);
+      font-size: 1.1rem;
+    }
+    .icon-btn.lock-btn:active { transform: scale(0.9) translateY(2px); box-shadow: 0 1px 0 #1a1f21; }
+
+    /* ---- Locked mode overlay (hold-to-unlock) ---- */
+    #unlock-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      flex-direction: column;
+      gap: 18px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #unlock-overlay.show { display: flex; }
+    #unlock-overlay.visible { opacity: 1; }
+
+    .unlock-hint {
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.9);
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    /* Circular hold button */
+    .hold-btn-wrap {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+
+    .hold-btn-wrap svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .hold-ring-bg {
+      fill: none;
+      stroke: rgba(255,255,255,0.2);
+      stroke-width: 6;
+    }
+
+    .hold-ring-progress {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 283; /* 2*PI*45 */
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.05s linear;
+    }
+
+    .hold-btn-inner {
+      position: absolute;
+      inset: 10px;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      transition: background 0.2s;
+    }
+    .hold-btn-wrap:active .hold-btn-inner,
+    .hold-btn-wrap.holding .hold-btn-inner {
+      background: rgba(255,255,255,0.3);
+    }
+    .hold-btn-icon { font-size: 2rem; }
+    .hold-btn-label {
+      font-size: 0.6rem;
+      font-weight: 900;
+      color: rgba(255,255,255,0.85);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Locked-screen indicator in corner when app is locked */
+    #lock-indicator {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 900;
+      display: none;
+      background: rgba(0,0,0,0.55);
+      border-radius: 100px;
+      padding: 8px 14px;
+      gap: 6px;
+      align-items: center;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      animation: float-mini 2.5s ease-in-out infinite;
+    }
+    #lock-indicator.show { display: flex; }
+
+    /* ---- Progress bar ---- */
+    .pbar-wrap {
+      width: 100%;
+      height: 5px;
+      background: #f0ebe5;
+      flex-shrink: 0;
+    }
+    .pbar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--teal));
+      transition: width 0.6s ease;
+      border-radius: 0 3px 3px 0;
+    }
+
+    /* ---- Exercise Area ---- */
+    .exercise-zone {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px 6px;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .exercise-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 540px;
+      padding: 16px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ex-question-number {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .ex-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .operand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .num-label {
+      font-size: clamp(1.6rem, 5.5vw, 2.5rem);
+      font-weight: 900;
+      color: var(--purple);
+      line-height: 1;
+    }
+
+    .fruit-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3px;
+      max-width: 180px;
+    }
+
+    /* ---- CLICKABLE FRUITS (feature #4) ---- */
+    .fruit-item {
+      font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+      display: inline-block;
+      animation: pop-in 0.3s cubic-bezier(0.34,1.56,0.64,1) backwards;
+      line-height: 1.1;
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 1px 2px;
+      transition: transform 0.15s, background 0.15s;
+      position: relative;
+    }
+    .fruit-item:active { transform: scale(0.85); }
+    .fruit-item.counted {
+      background: rgba(108,92,231,0.18);
+      outline: 2px solid var(--purple);
+      border-radius: 6px;
+      transform: scale(1.15);
+    }
+
+    /* ---- Fruit click counter badge ---- */
+    .fruit-count-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(108,92,231,0.1);
+      border: 2px solid var(--purple);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      font-weight: 800;
+      color: var(--purple);
+      transition: all 0.2s;
+      min-height: 32px;
+    }
+    .fruit-count-badge.hidden-badge { opacity: 0; pointer-events: none; }
+    .fruit-count-badge .fcount-num {
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-weight: 900;
+    }
+    .fcount-reset {
+      background: none;
+      border: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: var(--font);
+      font-weight: 700;
+      padding: 0 2px;
+    }
+    .fcount-reset:active { color: var(--red); transform: scale(0.9); }
+
+    /* ---- Operator block (feature #3) ---- */
+    .op-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .op-sym {
+      font-size: clamp(2rem, 6.5vw, 3rem);
+      font-weight: 900;
+      color: var(--orange);
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .op-emoji-hint {
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+      text-align: center;
+      line-height: 1;
+      animation: float-mini 2s ease-in-out infinite;
+    }
+
+    .op-label-hint {
+      font-size: clamp(0.55rem, 1.5vw, 0.7rem);
+      font-weight: 800;
+      color: var(--orange);
+      text-align: center;
+      max-width: 70px;
+      line-height: 1.1;
+    }
+
+    .eq-sym {
+      font-size: clamp(2rem, 6.5vw, 3rem);
+      font-weight: 900;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .answer-box {
+      min-width: 80px;
+      min-height: 1.2em;
+      font-size: clamp(2rem, 7vw, 3.2rem);
+      font-weight: 900;
+      color: var(--purple);
+      text-align: center;
+      border-bottom: 4px solid var(--purple);
+      padding: 0 10px;
+      transition: border-color 0.2s;
+    }
+    .answer-box.has-val { color: var(--orange); border-color: var(--orange); }
+    .answer-box.placeholder { color: #ccc; border-color: #ddd; }
+
+    /* ---- Number Pad ---- */
+    .numpad {
+      width: 100%;
+      max-width: 360px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      padding: 0 8px 6px;
+    }
+
+    .np-btn {
+      height: clamp(54px, 10.5vw, 74px);
+      background: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font);
+      font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+      font-weight: 900;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 4px 0 #d5d5d5, 0 2px 10px rgba(0,0,0,0.08);
+      transition: transform 0.1s, box-shadow 0.1s;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .np-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #d5d5d5, 0 1px 6px rgba(0,0,0,0.08);
+    }
+    .np-btn.del {
+      background: #FFF0ED;
+      color: var(--red);
+      font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    }
+    .np-btn.ok {
+      background: linear-gradient(135deg, #00B894, #00CEC9);
+      color: #fff;
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      box-shadow: 0 4px 0 #009474, 0 2px 16px rgba(0,184,148,0.3);
+    }
+    .np-btn.ok:active {
+      box-shadow: 0 1px 0 #009474, 0 1px 8px rgba(0,184,148,0.2);
+    }
+
+    /* =============================================
+       FEEDBACK OVERLAY
+       ============================================= */
+    #feedback {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 24px 22px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #feedback.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    #feedback.correct-bg {
+      background: linear-gradient(145deg, #00d2a0 0%, #00B894 50%, #00868A 100%);
+    }
+    #feedback.wrong-bg {
+      background: linear-gradient(145deg, #ff9a7a 0%, #E17055 50%, #d35400 100%);
+    }
+
+    .fb-icon {
+      font-size: clamp(4rem, 13vw, 6.5rem);
+      animation: bounce-in 0.5s cubic-bezier(0.34,1.56,0.64,1);
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,0.2));
+    }
+
+    .fb-title {
+      font-size: clamp(1.8rem, 6.5vw, 3.2rem);
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.2);
+      animation: bounce-in 0.5s 0.08s cubic-bezier(0.34,1.56,0.64,1) backwards;
+    }
+
+    .fb-expbox {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-md);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      padding: 12px 18px;
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: fade-up 0.4s 0.15s ease backwards;
+    }
+
+    .fb-exp-lbl {
+      font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.95);
+      text-align: center;
+    }
+
+    .fb-fruits {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3px;
+      min-height: 40px;
+    }
+
+    /* ---- Feedback fruit with cross overlay (feature #1) ---- */
+    .fb-fruit {
+      font-size: clamp(1.3rem, 3.8vw, 1.8rem);
+      display: inline-block;
+      position: relative;
+      line-height: 1;
+    }
+    .fb-fruit.vanish {
+      animation: fruit-cross-out 0.45s ease forwards;
+    }
+    .fb-fruit.appear {
+      animation: pop-in 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    /* Red X overlay that appears when fruit is being removed */
+    .fb-fruit.vanish::after {
+      content: '❌';
+      position: absolute;
+      inset: -2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9em;
+      animation: cross-pop 0.25s ease;
+    }
+
+    @keyframes fruit-cross-out {
+      0%   { opacity: 1; transform: scale(1); }
+      30%  { opacity: 0.6; transform: scale(0.9); }
+      100% { opacity: 0; transform: scale(0.2) rotate(20deg); }
+    }
+
+    @keyframes cross-pop {
+      0%   { transform: scale(0); }
+      60%  { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .fb-group-sep {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      font-weight: 900;
+      align-self: center;
+    }
+
+    /* ---- Grouped pedagogical layout ---- */
+    .fb-groups {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 8px;
+      min-height: 48px;
+    }
+
+    .fb-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.18);
+      border: 2px solid rgba(255,255,255,0.45);
+      border-radius: 14px;
+      padding: 8px 8px 5px;
+      min-width: 44px;
+      animation: pop-in 0.35s cubic-bezier(0.34,1.56,0.64,1) backwards;
+    }
+
+    .fb-group-fruits {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2px;
+      max-width: 100px;
+    }
+
+    .fb-group-label {
+      font-size: 0.65rem;
+      font-weight: 900;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 0.3px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .fb-op-lbl {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 900;
+      color: rgba(255,255,255,0.85);
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    .fb-formula {
+      font-size: clamp(1.3rem, 4.5vw, 2rem);
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      animation: fade-up 0.4s 0.25s ease backwards;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .fb-next {
+      background: #fff;
+      border: none;
+      border-radius: 100px;
+      padding: 15px 44px;
+      font-family: var(--font);
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-weight: 800;
+      cursor: pointer;
+      animation: fade-up 0.4s 0.45s ease backwards;
+      transition: transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    }
+    .fb-next:hover  { transform: translateY(-3px) scale(1.04); box-shadow: 0 12px 32px rgba(0,0,0,0.22); }
+    .fb-next:active { transform: scale(0.97); }
+    .correct-bg .fb-next { color: var(--green); }
+    .wrong-bg   .fb-next { color: var(--red);   }
+
+    /* ---- Replay button (inside feedback) ---- */
+    .fb-replay {
+      background: rgba(255,255,255,0.22);
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 100px;
+      padding: 9px 24px;
+      font-family: var(--font);
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      letter-spacing: 0.3px;
+    }
+    .fb-replay:hover  { background: rgba(255,255,255,0.35); }
+    .fb-replay:active { transform: scale(0.95); }
+
+    /* ---- Settings panel ---- */
+    #settings-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #fff;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      padding: 16px 18px;
+      z-index: 30;
+      min-width: 200px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      animation: fade-up 0.25s ease;
+    }
+    #settings-panel.open { display: flex; }
+
+    .settings-title {
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .settings-ops {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .op-toggle {
+      flex: 1;
+      min-width: 44px;
+      height: 52px;
+      background: #f4f4f4;
+      border: 2.5px solid #ddd;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.18s;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2px;
+      line-height: 1;
+    }
+    .op-toggle .op-tog-emoji { font-size: 0.7rem; }
+    .op-toggle.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(108,92,231,0.35);
+    }
+    .op-toggle:active { transform: scale(0.92); }
+    .op-toggle:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .settings-note {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    /* Keep score-right position:relative for panel anchor */
+    .score-right { position: relative; }
+
+    /* =============================================
+       CONFETTI CANVAS
+       ============================================= */
+    #confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    /* =============================================
+       ANIMATIONS
+       ============================================= */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(-2deg); }
+      50%       { transform: translateY(-18px) rotate(2deg); }
+    }
+
+    @keyframes float-mini {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-4px); }
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    @keyframes bounce-in {
+      from { transform: scale(0.3) rotate(-8deg); opacity: 0; }
+      60%  { transform: scale(1.1) rotate(3deg);  opacity: 1; }
+      to   { transform: scale(1)   rotate(0deg);  opacity: 1; }
+    }
+
+    @keyframes fade-up {
+      from { transform: translateY(22px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      15%     { transform: translateX(-14px); }
+      35%     { transform: translateX(14px); }
+      55%     { transform: translateX(-9px); }
+      75%     { transform: translateX(9px); }
+    }
+
+    @keyframes card-enter {
+      from { transform: translateY(30px) scale(0.94); opacity: 0; }
+      to   { transform: translateY(0)    scale(1);    opacity: 1; }
+    }
+
+    .card-enter { animation: card-enter 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+    .do-shake   { animation: shake 0.5s ease !important; }
+
+    /* Stars */
+    .star-pop {
+      position: fixed;
+      pointer-events: none;
+      z-index: 180;
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      animation: star-fly 0.9s ease-out forwards;
+    }
+    @keyframes star-fly {
+      0%   { opacity: 1; transform: scale(0) translateY(0); }
+      50%  { opacity: 1; transform: scale(1.6) translateY(-40px); }
+      100% { opacity: 0; transform: scale(0.8) translateY(-90px); }
+    }
+
+    /* =============================================
+       RESPONSIVE
+       ============================================= */
+    @media (max-height: 640px) {
+      .exercise-zone { padding: 6px 12px 4px; gap: 7px; }
+      .exercise-card { padding: 10px 14px 12px; gap: 8px; }
+      .fruit-item    { font-size: 1.2rem; }
+      .np-btn        { height: 50px; }
+      .numpad        { gap: 6px; }
+      .welcome-title { font-size: 2.1rem; }
+      .mascot        { font-size: 4rem; }
+      .fb-icon       { font-size: 3.5rem; }
+    }
+
+    @media (min-width: 768px) {
+      .fruit-item { font-size: 1.9rem; }
+      .fruit-grid { max-width: 250px; gap: 5px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================================================
+     CONFETTI CANVAS
+     =================================================== -->
+<canvas id="confetti"></canvas>
+
+<!-- ===================================================
+     WELCOME SCREEN
+     =================================================== -->
+<section id="welcome" class="screen" role="main">
+  <div class="mascot" aria-hidden="true">🦉</div>
+  <h1 class="welcome-title">Calculette<br>Magique ✨</h1>
+  <p class="welcome-sub">Quel niveau es-tu ?</p>
+  <div class="level-row">
+    <button class="level-card" id="btn-cp" onclick="startLevel('CP')" aria-label="Niveau CP">
+      <span class="lc-emoji">🍎</span>
+      <span class="lc-name">CP</span>
+      <span class="lc-ops">+ et −</span>
+      <span class="lc-desc">Avec des fruits !<br>Sans chiffres</span>
+    </button>
+    <button class="level-card" id="btn-ce1" onclick="startLevel('CE1')" aria-label="Niveau CE1">
+      <span class="lc-emoji">🔢</span>
+      <span class="lc-name">CE1</span>
+      <span class="lc-ops">+ − × ÷</span>
+      <span class="lc-desc">Chiffres et fruits<br>pour t'aider</span>
+    </button>
+  </div>
+  <p style="color:rgba(255,255,255,0.55);font-size:clamp(0.65rem,1.8vw,0.82rem);font-weight:700;letter-spacing:0.3px;margin-top:4px">Inventé par Etienne LEBORGNE ✏️</p>
+</section>
+
+<!-- ===================================================
+     GAME SCREEN
+     =================================================== -->
+<section id="game" class="screen hidden" aria-label="Exercice en cours">
+
+  <!-- Score Bar -->
+  <div class="scorebar">
+    <div class="score-left">
+      <span class="level-pill" id="level-pill">CP</span>
+      <div class="score-sep"></div>
+      <div class="score-item ok">
+        <span class="si-lbl">✅ Bravo</span>
+        <span class="si-val" id="sc-ok">0</span>
+      </div>
+      <div class="score-sep"></div>
+      <div class="score-item nok">
+        <span class="si-lbl">❌ Raté</span>
+        <span class="si-val" id="sc-nok">0</span>
+      </div>
+      <div class="score-sep"></div>
+      <div class="score-item pct">
+        <span class="si-lbl">🏆 Score</span>
+        <span class="si-val" id="sc-pct">—</span>
+      </div>
+    </div>
+    <div class="score-right">
+      <button class="icon-btn" id="sound-toggle" title="Activer/couper le son" onclick="toggleSound()" aria-label="Son">🔊</button>
+      <button class="icon-btn" title="Réglages opérations" onclick="toggleSettings()" aria-label="Réglages" id="settings-btn">⚙️</button>
+      <button class="icon-btn" title="Recommencer" onclick="goHome()" aria-label="Recommencer">🔄</button>
+      <button class="icon-btn lock-btn" id="lock-btn" title="Verrouiller" onclick="lockScreen()" aria-label="Verrouiller">🔒</button>
+      <!-- Settings panel (anchored to score-right) -->
+      <div id="settings-panel" role="menu" aria-label="Sélection des opérations">
+        <div class="settings-title">⚙️ Opérations actives</div>
+        <div class="settings-ops" id="settings-ops">
+          <button class="op-toggle active" id="tog-plus"  onclick="toggleOp('+')"  title="Addition">+<span class="op-tog-emoji">🌱</span></button>
+          <button class="op-toggle active" id="tog-minus" onclick="toggleOp('-')"  title="Soustraction">−<span class="op-tog-emoji">😋</span></button>
+          <button class="op-toggle active" id="tog-mul"   onclick="toggleOp('×')"  title="Multiplication">×<span class="op-tog-emoji">✨</span></button>
+          <button class="op-toggle active" id="tog-div"   onclick="toggleOp('÷')"  title="Division">÷<span class="op-tog-emoji">🍕</span></button>
+        </div>
+        <div class="settings-note" id="settings-note">Coche au moins une opération</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="pbar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+    <div class="pbar-fill" id="pbar" style="width:0%"></div>
+  </div>
+
+  <!-- Exercise Area -->
+  <div class="exercise-zone">
+    <div class="exercise-card" id="ex-card" role="region" aria-label="Exercice">
+      <!-- Rendered by JS -->
+    </div>
+
+    <!-- Number Pad -->
+    <div class="numpad" id="numpad" role="group" aria-label="Clavier numérique">
+      <button class="np-btn" onclick="pad('1')" id="k1">1</button>
+      <button class="np-btn" onclick="pad('2')" id="k2">2</button>
+      <button class="np-btn" onclick="pad('3')" id="k3">3</button>
+      <button class="np-btn" onclick="pad('4')" id="k4">4</button>
+      <button class="np-btn" onclick="pad('5')" id="k5">5</button>
+      <button class="np-btn" onclick="pad('6')" id="k6">6</button>
+      <button class="np-btn" onclick="pad('7')" id="k7">7</button>
+      <button class="np-btn" onclick="pad('8')" id="k8">8</button>
+      <button class="np-btn" onclick="pad('9')" id="k9">9</button>
+      <button class="np-btn del" onclick="padDel()" id="k-del" aria-label="Effacer">⌫</button>
+      <button class="np-btn" onclick="pad('0')" id="k0">0</button>
+      <button class="np-btn ok" onclick="validate()" id="k-ok" aria-label="Valider">✓</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================
+     LOCK INDICATOR (corner badge when locked)
+     =================================================== -->
+<button id="lock-indicator" onclick="showUnlockOverlay()" aria-label="Déverrouiller">🔒 Maintenir pour déverrouiller</button>
+
+<!-- ===================================================
+     UNLOCK OVERLAY (hold 3s to exit fullscreen)
+     =================================================== -->
+<div id="unlock-overlay" role="dialog" aria-label="Déverrouillage">
+  <div class="unlock-hint">🔒 Application verrouillée<br><small style="font-weight:600;opacity:0.8">Maintiens le bouton 3 secondes pour sortir</small></div>
+  <div class="hold-btn-wrap" id="hold-btn"
+       onpointerdown="holdStart(event)"
+       onpointerup="holdEnd(event)"
+       onpointercancel="holdEnd(event)"
+       onpointerleave="holdEnd(event)">
+    <svg viewBox="0 0 100 100">
+      <circle class="hold-ring-bg" cx="50" cy="50" r="45"/>
+      <circle class="hold-ring-progress" id="hold-ring" cx="50" cy="50" r="45"/>
+    </svg>
+    <div class="hold-btn-inner">
+      <span class="hold-btn-icon">🔓</span>
+      <span class="hold-btn-label">Maintenir<br>3 sec</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================================================
+     FEEDBACK OVERLAY
+     =================================================== -->
+<div id="feedback" role="dialog" aria-live="assertive">
+  <div class="fb-icon" id="fb-icon"></div>
+  <div class="fb-title" id="fb-title"></div>
+
+  <div class="fb-expbox">
+    <div class="fb-exp-lbl" id="fb-exp-lbl"></div>
+    <div class="fb-fruits" id="fb-fruits"></div>
+    <button class="fb-replay" id="fb-replay" onclick="replayExplanation()">🔁 Revoir l'explication</button>
+  </div>
+
+  <div class="fb-formula" id="fb-formula"></div>
+  <button class="fb-next" id="fb-next" onclick="nextEx()">Suivant ➡️</button>
+</div>
+
+<!-- ===================================================
+     JAVASCRIPT
+     =================================================== -->
+<script>
+  /* ================================================
+     CONSTANTS & DATA
+     ================================================ */
+  const FRUITS_POOL = ['🍎','🍊','🍋','🍇','🍓','🫐','🍑','🍒','🍉','🥭','🍍','🥝','🍌','🍈'];
+
+  const BRAVO_MSGS = [
+    ['🎉','Bravo !'],['⭐','Super !'],['🏆','Parfait !'],['🌟','Excellent !'],
+    ['💯','Génial !'],['🦸','Tu es fort(e) !'],['🎊','Fantastique !'],['🌈','Magnifique !'],
+  ];
+
+  // [3] Operator emoji hints: [symbol, emoji, short label]
+  const OP_META = {
+    '+': { sym:'+', emoji:'🌱', label:'On ajoute !' },
+    '-': { sym:'−', emoji:'😋', label:'On mange !' },
+    '×': { sym:'×', emoji:'✨', label:'On multiplie !' },
+    '÷': { sym:'÷', emoji:'🍕', label:'On partage !' },
+  };
+
+  /* ================================================
+     STATE
+     ================================================ */
+  const S = {
+    level:      null,     // 'CP' | 'CE1'
+    ok:         0,
+    nok:        0,
+    total:      0,
+    ex:         null,     // current exercise object
+    input:      '',       // user typed digits
+    sound:      true,
+    phase:      'welcome',// 'welcome' | 'game' | 'feedback'
+    qNum:       0,
+    clickCount: 0,        // fruit click counter
+    lastIsRight: false,   // for replay
+    ops: { '+':true, '-':true, '×':true, '÷':true }, // active operations
+  };
+
+  /* ================================================
+     AUDIO (Web Audio API — no external files)
+     ================================================ */
+  let _ac = null;
+  function ac() { return _ac || (_ac = new (window.AudioContext || window.webkitAudioContext)()); }
+
+  function beep(freq, type='sine', dur=0.15, vol=0.25, startDelay=0) {
+    if (!S.sound) return;
+    try {
+      const ctx = ac();
+      const osc = ctx.createOscillator();
+      const g   = ctx.createGain();
+      osc.connect(g); g.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + startDelay);
+      g.gain.setValueAtTime(vol, ctx.currentTime + startDelay);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startDelay + dur);
+      osc.start(ctx.currentTime + startDelay);
+      osc.stop(ctx.currentTime + startDelay + dur);
+    } catch(_) {}
+  }
+
+  function sndClick()    { beep(380, 'sine', 0.07, 0.12); }
+  function sndFruitTap() { beep(520 + S.clickCount*20, 'sine', 0.1, 0.18); }
+  function sndCorrect()  { [523,659,784,1047].forEach((f,i)=>beep(f,'sine',0.22,0.25,i*0.09)); }
+  function sndWrong()    { beep(180,'sawtooth',0.35,0.22); setTimeout(()=>beep(140,'sawtooth',0.35,0.22),200); }
+  function sndFanfare()  { [523,659,784,659,784,1047].forEach((f,i)=>beep(f,'sine',0.18,0.28,i*0.07)); }
+
+  /* ================================================
+     EXERCISE GENERATION
+     ================================================ */
+  function rnd(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
+  function pick()        { return FRUITS_POOL[Math.floor(Math.random()*FRUITS_POOL.length)]; }
+  function pickDiff(exclude) {
+    let f; do { f=pick(); } while(f===exclude);
+    return f;
+  }
+
+  // [2] CP max total = 10
+  function genCP() {
+    // Respect active ops (CP only has + and -)
+    const cpOps = ['+','-'].filter(o=>S.ops[o]);
+    if(!cpOps.length) cpOps.push('+');
+    const op = cpOps[Math.floor(Math.random()*cpOps.length)];
+    let a, b, result, fA, fB;
+    if (op==='+') {
+      a = rnd(1, 7);
+      b = rnd(1, Math.min(7, 10 - a));
+      result = a + b;
+      fA = pick(); fB = pickDiff(fA);
+    } else {
+      a = rnd(3, 10);
+      b = rnd(1, Math.min(a-1, 5));
+      result = a - b;
+      fA = pick(); fB = fA;
+    }
+    return { a, b, op, result, fA, fB };
+  }
+
+  function genCE1() {
+    // Respect active ops
+    const available = ['+','-','×','÷'].filter(o=>S.ops[o]);
+    if(!available.length) available.push('+');
+    const op = available[Math.floor(Math.random()*available.length)];
+    let a, b, result, fA, fB;
+    switch(op) {
+      case '+':
+        a=rnd(5,15); b=rnd(2,Math.min(10,20-a)); result=a+b;
+        fA=pick(); fB=pickDiff(fA); break;
+      case '-':
+        a=rnd(6,18); b=rnd(2,Math.min(a-1,8)); result=a-b;
+        fA=pick(); fB=fA; break;
+      case '×':
+        a=rnd(2,5); b=rnd(2,5); result=a*b;
+        fA=pick(); fB=fA; break;
+      case '÷':
+        result=rnd(2,5); b=rnd(2,5); a=result*b;
+        fA=pick(); fB=fA; break;
+    }
+    return { a, b, op, result, fA, fB };
+  }
+
+  function genEx() { return S.level==='CP' ? genCP() : genCE1(); }
+
+  /* ================================================
+     FRUIT CLICK COUNTER (feature #4)
+     ================================================ */
+  function onFruitClick(el) {
+    if (S.phase !== 'game') return;
+    sndFruitTap();
+    el.classList.toggle('counted');
+    // Recount all currently .counted fruits
+    const card = document.getElementById('ex-card');
+    const counted = card.querySelectorAll('.fruit-item.counted').length;
+    S.clickCount = counted;
+    updateClickBadge(counted);
+    // Also fill the answer box with count if > 0
+    if (counted > 0) {
+      S.input = String(counted);
+      updateAns();
+    }
+  }
+
+  function updateClickBadge(n) {
+    const badge = document.getElementById('fruit-badge');
+    if (!badge) return;
+    if (n === 0) {
+      badge.classList.add('hidden-badge');
+    } else {
+      badge.classList.remove('hidden-badge');
+      document.getElementById('fcount-num').textContent = n;
+    }
+  }
+
+  function resetClickCount() {
+    sndClick();
+    S.clickCount = 0;
+    S.input = '';
+    updateAns();
+    // Unmark all counted fruits
+    const card = document.getElementById('ex-card');
+    card.querySelectorAll('.fruit-item.counted').forEach(el => el.classList.remove('counted'));
+    updateClickBadge(0);
+  }
+
+  /* ================================================
+     RENDER
+     ================================================ */
+  function fruitHTML(emoji, count, animated, maxShow=10, groupId='') {
+    const show = Math.min(count, maxShow);
+    let h = '<div class="fruit-grid">';
+    for(let i=0;i<show;i++) {
+      const delay = animated ? `animation-delay:${i*45}ms` : '';
+      // [4] Each fruit is clickable — onclick calls onFruitClick(this)
+      h += `<span class="fruit-item" style="${delay}" onclick="onFruitClick(this)" title="Clique pour compter !">${emoji}</span>`;
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function renderEx() {
+    const ex   = S.ex;
+    const card = document.getElementById('ex-card');
+    const isCP = S.level==='CP';
+    const MAX  = isCP ? 10 : 10; // [2] CP max = 10
+
+    const showFA = ex.a <= MAX;
+    const showFB = ex.b <= MAX;
+
+    // [3] Operator meta
+    const opKey  = ex.op === '−' ? '-' : ex.op;
+    const opMeta = OP_META[ex.op] || OP_META['+'];
+
+    S.clickCount = 0;
+
+    let h = `<div class="ex-question-number">Question ${S.qNum}</div>`;
+    h += '<div class="ex-row">';
+
+    // Operand A
+    h += '<div class="operand">';
+    if (!isCP) h += `<div class="num-label">${ex.a}</div>`;
+    if (showFA) h += fruitHTML(ex.fA, ex.a, true, MAX, 'A');
+    h += '</div>';
+
+    // [3] Operator block with emoji hint
+    h += `<div class="op-block">
+      <div class="op-sym">${ex.op}</div>
+      <div class="op-emoji-hint">${opMeta.emoji}</div>
+      <div class="op-label-hint">${opMeta.label}</div>
+    </div>`;
+
+    // Operand B
+    h += '<div class="operand">';
+    if (!isCP) h += `<div class="num-label">${ex.b}</div>`;
+    if (showFB) h += fruitHTML(ex.fB, ex.b, true, MAX, 'B');
+    h += '</div>';
+
+    // Equals
+    h += '<div class="eq-sym">=</div>';
+
+    // Answer box
+    const hasVal   = S.input.length > 0;
+    const boxClass = hasVal ? 'answer-box has-val' : 'answer-box placeholder';
+    const boxText  = hasVal ? S.input : '?';
+    h += `<div class="${boxClass}" id="ans-box">${boxText}</div>`;
+
+    h += '</div>';
+
+    // [4] Fruit click counter badge
+    h += `<div class="fruit-count-badge hidden-badge" id="fruit-badge">
+      👆 Tu as compté : <span class="fcount-num" id="fcount-num">0</span> fruits
+      <button class="fcount-reset" onclick="resetClickCount()" title="Réinitialiser le comptage">✕</button>
+    </div>`;
+
+    card.innerHTML = h;
+    card.classList.remove('do-shake');
+    void card.offsetWidth; // reflow for animation replay
+    card.classList.add('card-enter');
+  }
+
+  function updateAns() {
+    const box = document.getElementById('ans-box');
+    if (!box) return;
+    const hasVal = S.input.length > 0;
+    box.textContent = hasVal ? S.input : '?';
+    box.className   = hasVal ? 'answer-box has-val' : 'answer-box placeholder';
+  }
+
+  function updateScore() {
+    document.getElementById('sc-ok').textContent  = S.ok;
+    document.getElementById('sc-nok').textContent = S.nok;
+    const pct = S.total>0 ? Math.round(S.ok/S.total*100) : null;
+    document.getElementById('sc-pct').textContent = pct!==null ? pct+'%' : '—';
+    document.getElementById('pbar').style.width   = (pct||0)+'%';
+    const pbarWrap = document.querySelector('.pbar-wrap');
+    if(pbarWrap) pbarWrap.setAttribute('aria-valuenow', pct||0);
+  }
+
+  /* ================================================
+     NUMPAD LOGIC
+     ================================================ */
+  function pad(d) {
+    if (S.phase!=='game') return;
+    if (S.input.length>=2) return;
+    sndClick();
+    // If user types on numpad, reset fruit click selection
+    if (S.clickCount > 0) {
+      S.clickCount = 0;
+      const card = document.getElementById('ex-card');
+      if (card) card.querySelectorAll('.fruit-item.counted').forEach(el=>el.classList.remove('counted'));
+      updateClickBadge(0);
+    }
+    S.input += d;
+    updateAns();
+  }
+
+  function padDel() {
+    if (S.phase!=='game') return;
+    sndClick();
+    S.input = S.input.slice(0,-1);
+    S.clickCount = 0;
+    const card = document.getElementById('ex-card');
+    if (card) card.querySelectorAll('.fruit-item.counted').forEach(el=>el.classList.remove('counted'));
+    updateClickBadge(0);
+    updateAns();
+  }
+
+  function validate() {
+    if (S.phase!=='game' || !S.input) return;
+    const ans    = parseInt(S.input, 10);
+    const right  = ans === S.ex.result;
+    S.total++;
+    right ? S.ok++ : S.nok++;
+    updateScore();
+    S.phase = 'feedback';
+    showFeedback(right, ans);
+  }
+
+  /* ================================================
+     FEEDBACK
+     ================================================ */
+  function showFeedback(isRight) {
+    const overlay  = document.getElementById('feedback');
+    const fbIcon   = document.getElementById('fb-icon');
+    const fbTitle  = document.getElementById('fb-title');
+    const fbExpLbl = document.getElementById('fb-exp-lbl');
+    const fbFruits = document.getElementById('fb-fruits');
+    const fbForm   = document.getElementById('fb-formula');
+
+    overlay.className = isRight ? 'show correct-bg' : 'show wrong-bg';
+    fbForm.textContent = `${S.ex.a} ${S.ex.op} ${S.ex.b} = ${S.ex.result}`;
+    S.lastIsRight = isRight;
+
+    if (isRight) {
+      const [em, msg] = BRAVO_MSGS[Math.floor(Math.random()*BRAVO_MSGS.length)];
+      fbIcon.textContent  = em;
+      fbTitle.textContent = msg;
+      sndCorrect();
+      launchConfetti();
+      spawnStars();
+    } else {
+      fbIcon.textContent  = '🤔';
+      fbTitle.textContent = `C'était ${S.ex.result} !`;
+      sndWrong();
+      document.getElementById('ex-card').classList.add('do-shake');
+    }
+    // Always show pedagogical explanation (correct OR wrong)
+    buildExplanation(fbExpLbl, fbFruits, isRight);
+  }
+
+  /* ================================================
+     PEDAGOGICAL EXPLANATION — grouped visual for all ops
+     ================================================ */
+
+  // Helper: create a fruit group box
+  function makeGroupBox(emoji, count, labelText, delayMs) {
+    const box = document.createElement('div');
+    box.className = 'fb-group';
+    box.style.animationDelay = delayMs + 'ms';
+
+    const grid = document.createElement('div');
+    grid.className = 'fb-group-fruits';
+    for(let i=0;i<count;i++) {
+      const sp = document.createElement('span');
+      sp.className = 'fb-fruit';
+      sp.textContent = emoji;
+      grid.appendChild(sp);
+    }
+    box.appendChild(grid);
+
+    if (labelText) {
+      const lbl = document.createElement('div');
+      lbl.className = 'fb-group-label';
+      lbl.textContent = labelText;
+      box.appendChild(lbl);
+    }
+    return box;
+  }
+
+  // Helper: result group box for ADDITION — shows fA fruits then fB fruits mixed
+  function makeAddResultBox(fA, countA, fB, countB, labelText, delayMs) {
+    const box = document.createElement('div');
+    box.className = 'fb-group';
+    box.style.animationDelay = delayMs + 'ms';
+
+    const grid = document.createElement('div');
+    grid.className = 'fb-group-fruits';
+    for(let i=0;i<countA;i++) {
+      const sp = document.createElement('span');
+      sp.className = 'fb-fruit';
+      sp.textContent = fA;
+      grid.appendChild(sp);
+    }
+    for(let i=0;i<countB;i++) {
+      const sp = document.createElement('span');
+      sp.className = 'fb-fruit';
+      sp.textContent = fB;
+      grid.appendChild(sp);
+    }
+    box.appendChild(grid);
+
+    if (labelText) {
+      const lbl = document.createElement('div');
+      lbl.className = 'fb-group-label';
+      lbl.textContent = labelText;
+      box.appendChild(lbl);
+    }
+    return box;
+  }
+
+  // Helper: operator separator label
+  function makeOpLabel(text) {
+    const sp = document.createElement('span');
+    sp.className = 'fb-op-lbl';
+    sp.textContent = text;
+    return sp;
+  }
+
+  function buildExplanation(lblEl, fruitsEl, isRight) {
+    const ex = S.ex;
+    fruitsEl.innerHTML = '';
+    fruitsEl.className = 'fb-fruits fb-groups'; // switch to grouped layout
+
+    if (ex.op === '+') {
+      /* -------- ADDITION --------
+         Show: [GroupA] + [GroupB] = [GroupResult]
+         Animate: GroupB and result appear with delay if wrong */
+      lblEl.textContent = `${ex.a} ${ex.fA} + ${ex.b} ${ex.fB} = ${ex.result} au total`;
+
+      fruitsEl.appendChild(makeGroupBox(ex.fA, ex.a, `${ex.a} ${ex.fA}`, 0));
+      fruitsEl.appendChild(makeOpLabel('+'));
+
+      const grpB = makeGroupBox(ex.fB, ex.b, `${ex.b} ${ex.fB}`, isRight ? 80 : 500);
+      fruitsEl.appendChild(grpB);
+      fruitsEl.appendChild(makeOpLabel('='));
+
+      // Result box: mix fA fruits + fB fruits (pedagogically correct)
+      const grpR = makeAddResultBox(ex.fA, ex.a, ex.fB, ex.b, `= ${ex.result}`, isRight ? 160 : 900);
+      fruitsEl.appendChild(grpR);
+
+      if(!isRight && S.sound) {
+        setTimeout(()=>beep(440,'sine',0.12,0.18), 500);
+        setTimeout(()=>beep(520,'sine',0.12,0.18), 900);
+      }
+
+    } else if (ex.op === '-') {
+      /* -------- SUBTRACTION --------
+         Show A fruits flat, then cross out last B with ❌ one by one */
+      lblEl.textContent = `${ex.a} ${ex.fA} − ${ex.b} enlevés = ${ex.result} qui restent`;
+      fruitsEl.className = 'fb-fruits'; // flat layout for subtraction (clearer X removal)
+
+      for(let i=0;i<Math.min(ex.a,10);i++) {
+        const sp = document.createElement('span');
+        sp.className = 'fb-fruit';
+        sp.textContent = ex.fA;
+        fruitsEl.appendChild(sp);
+      }
+      const allActive = () => fruitsEl.querySelectorAll('.fb-fruit:not(.vanish)');
+      for(let i=0;i<Math.min(ex.b,8);i++) {
+        setTimeout(()=>{
+          const items = allActive();
+          if(items.length) {
+            items[items.length-1].classList.add('vanish');
+            if(S.sound) beep(300-i*18,'sine',0.12,0.18);
+          }
+        }, (isRight ? 200 : 500) + i*280);
+      }
+
+    } else if (ex.op === '×') {
+      /* -------- MULTIPLICATION --------
+         Show a group boxes of b fruits each
+         e.g. 4×5 → 4 boxes each with 5 🍎 */
+      lblEl.textContent = `${ex.a} fois ${ex.b} ${ex.fA} → ${ex.result} au total`;
+
+      for(let g=0;g<ex.a;g++) {
+        const delayMs = (isRight ? 0 : 400) + g * 280;
+        fruitsEl.appendChild(makeGroupBox(ex.fA, ex.b, `× ${g+1}`, delayMs));
+        if(S.sound) setTimeout(()=>beep(440+g*50,'sine',0.1,0.16), delayMs + 80);
+      }
+
+    } else { // ÷
+      /* -------- DIVISION --------
+         Show b group boxes of result fruits each
+         e.g. 20÷5=4 → 5 boxes each with 4 🍍
+         Label: "5 groupes de 4 = 20" */
+      lblEl.textContent = `${ex.a} ${ex.fA} partagés en ${ex.b} groupes → ${ex.result} dans chaque groupe`;
+
+      for(let g=0;g<ex.b;g++) {
+        const delayMs = (isRight ? 0 : 400) + g * 300;
+        fruitsEl.appendChild(makeGroupBox(ex.fA, ex.result, `Groupe ${g+1}`, delayMs));
+        if(S.sound) setTimeout(()=>beep(420+g*45,'sine',0.1,0.16), delayMs + 80);
+      }
+    }
+  }
+
+  function nextEx() {
+    S.phase = 'game';
+    S.input = '';
+    S.clickCount = 0;
+    document.getElementById('feedback').className = '';
+    stopConfetti();
+    S.qNum++;
+    S.ex = genEx();
+    renderEx();
+  }
+
+  /* ================================================
+     NAVIGATION
+     ================================================ */
+  function startLevel(lvl) {
+    S.level = lvl; S.ok=0; S.nok=0; S.total=0; S.input=''; S.qNum=1; S.clickCount=0;
+    S.ex = genEx();
+    S.phase = 'game';
+
+    document.getElementById('level-pill').textContent = lvl;
+    document.getElementById('welcome').classList.add('hidden');
+    document.getElementById('game').classList.remove('hidden');
+    document.getElementById('feedback').className = '';
+    updateScore();
+    renderEx();
+    sndClick();
+  }
+
+  function goHome() {
+    S.phase = 'welcome';
+    document.getElementById('feedback').className = '';
+    document.getElementById('game').classList.add('hidden');
+    document.getElementById('welcome').classList.remove('hidden');
+    stopConfetti();
+  }
+
+  function toggleSound() {
+    S.sound = !S.sound;
+    document.getElementById('sound-toggle').textContent = S.sound ? '🔊' : '🔇';
+    if(S.sound) sndClick();
+  }
+
+  /* ================================================
+     REPLAY EXPLANATION
+     ================================================ */
+  function replayExplanation() {
+    sndClick();
+    const fbFruits = document.getElementById('fb-fruits');
+    const fbExpLbl = document.getElementById('fb-exp-lbl');
+    buildExplanation(fbExpLbl, fbFruits, S.lastIsRight);
+  }
+
+  /* ================================================
+     SETTINGS PANEL (operation toggles)
+     ================================================ */
+  let settingsOpen = false;
+
+  function toggleSettings() {
+    settingsOpen = !settingsOpen;
+    const panel = document.getElementById('settings-panel');
+    const btn   = document.getElementById('settings-btn');
+    panel.classList.toggle('open', settingsOpen);
+    btn.style.background = settingsOpen ? '#e8e4ff' : '';
+    // Show/hide × and ÷ depending on level
+    const isCE1 = S.level === 'CE1';
+    document.getElementById('tog-mul').style.display = isCE1 ? '' : 'none';
+    document.getElementById('tog-div').style.display = isCE1 ? '' : 'none';
+    if (settingsOpen) sndClick();
+  }
+
+  // Close settings if click outside
+  document.addEventListener('pointerdown', e => {
+    if (!settingsOpen) return;
+    const panel = document.getElementById('settings-panel');
+    const btn   = document.getElementById('settings-btn');
+    if (!panel.contains(e.target) && e.target !== btn) {
+      settingsOpen = false;
+      panel.classList.remove('open');
+      btn.style.background = '';
+    }
+  });
+
+  function toggleOp(op) {
+    // Count currently active ops
+    const activeOps = Object.values(S.ops).filter(Boolean).length;
+    // Prevent unchecking the last active op
+    if (S.ops[op] && activeOps <= 1) {
+      // Shake the button to indicate can't uncheck
+      const id = { '+':'tog-plus', '-':'tog-minus', '×':'tog-mul', '÷':'tog-div' }[op];
+      const el = document.getElementById(id);
+      el.style.animation = 'shake 0.4s ease';
+      setTimeout(()=>el.style.animation='', 400);
+      return;
+    }
+    S.ops[op] = !S.ops[op];
+    const id = { '+':'tog-plus', '-':'tog-minus', '×':'tog-mul', '÷':'tog-div' }[op];
+    document.getElementById(id).classList.toggle('active', S.ops[op]);
+    // Update note
+    const count = Object.values(S.ops).filter(Boolean).length;
+    document.getElementById('settings-note').textContent =
+      count === 1 ? 'Une seule opération active' : `${count} opérations actives`;
+    sndClick();
+  }
+
+  /* ================================================
+     LOCK / FULLSCREEN (hold 3s to unlock)
+     ================================================ */
+  const HOLD_DURATION = 3000; // ms
+  let holdTimer    = null;
+  let holdStart_t  = null;
+  let holdRafId    = null;
+  let isLocked     = false;
+
+  const RING_CIRC  = 283; // 2*PI*45
+
+  function lockScreen() {
+    // Enter fullscreen
+    const el = document.documentElement;
+    if (el.requestFullscreen)          el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    isLocked = true;
+    document.getElementById('lock-indicator').classList.add('show');
+    if(S.sound) beep(300,'sine',0.15,0.2);
+  }
+
+  function showUnlockOverlay() {
+    const ov = document.getElementById('unlock-overlay');
+    ov.classList.add('show');
+    requestAnimationFrame(()=>ov.classList.add('visible'));
+    // Reset ring
+    document.getElementById('hold-ring').style.strokeDashoffset = RING_CIRC;
+  }
+
+  function holdStart(e) {
+    e.preventDefault();
+    document.getElementById('hold-btn').classList.add('holding');
+    holdStart_t = performance.now();
+    // Animate ring
+    function animRing() {
+      const elapsed = performance.now() - holdStart_t;
+      const pct     = Math.min(elapsed / HOLD_DURATION, 1);
+      const offset  = RING_CIRC * (1 - pct);
+      document.getElementById('hold-ring').style.strokeDashoffset = offset;
+      if (pct < 1) {
+        holdRafId = requestAnimationFrame(animRing);
+      } else {
+        // 3 seconds reached → unlock!
+        unlockScreen();
+      }
+    }
+    holdRafId = requestAnimationFrame(animRing);
+  }
+
+  function holdEnd(e) {
+    // Released too soon — reset
+    document.getElementById('hold-btn').classList.remove('holding');
+    if (holdRafId) { cancelAnimationFrame(holdRafId); holdRafId=null; }
+    holdStart_t = null;
+    // Reset ring back
+    document.getElementById('hold-ring').style.strokeDashoffset = RING_CIRC;
+    if(S.sound) beep(250,'sine',0.08,0.1);
+  }
+
+  function unlockScreen() {
+    isLocked = false;
+    if (holdRafId) { cancelAnimationFrame(holdRafId); holdRafId=null; }
+    // Hide overlay
+    const ov = document.getElementById('unlock-overlay');
+    ov.classList.remove('visible');
+    setTimeout(()=>ov.classList.remove('show'), 300);
+    document.getElementById('lock-indicator').classList.remove('show');
+    // Exit fullscreen
+    if (document.exitFullscreen)            document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    if(S.sound) { beep(523,'sine',0.15,0.2); setTimeout(()=>beep(784,'sine',0.15,0.2),150); }
+  }
+
+  // If user exits fullscreen via browser (e.g. Escape key), sync lock state
+  document.addEventListener('fullscreenchange', ()=>{
+    if (!document.fullscreenElement && isLocked) {
+      // Browser forced exit — just unlock cleanly
+      isLocked = false;
+      document.getElementById('lock-indicator').classList.remove('show');
+      const ov = document.getElementById('unlock-overlay');
+      ov.classList.remove('visible');
+      setTimeout(()=>ov.classList.remove('show'), 300);
+    }
+  });
+
+  /* ================================================
+     KEYBOARD SUPPORT (desktop / external keyboard)
+     ================================================ */
+  document.addEventListener('keydown', e => {
+    if (S.phase==='welcome') return;
+    if (S.phase==='feedback') { if(e.key==='Enter'||e.key===' ') nextEx(); return; }
+    if (e.key>='0'&&e.key<='9') pad(e.key);
+    else if (e.key==='Backspace') padDel();
+    else if (e.key==='Enter') validate();
+  });
+
+  // Prevent pull-to-refresh & scroll on iOS/Android
+  document.addEventListener('touchmove', e=>e.preventDefault(), {passive:false});
+
+  /* ================================================
+     CONFETTI ENGINE
+     ================================================ */
+  const cnv = document.getElementById('confetti');
+  const c   = cnv.getContext('2d');
+  let particles = [];
+  let rafId     = null;
+
+  function resize() { cnv.width=innerWidth; cnv.height=innerHeight; }
+  resize(); addEventListener('resize', resize);
+
+  const COLORS = ['#FF6B35','#4ECDC4','#FDCB6E','#6C5CE7','#00B894','#FD79A8','#0984E3','#e17055','#a29bfe'];
+
+  function launchConfetti() {
+    particles = [];
+    for(let i=0;i<150;i++) {
+      particles.push({
+        x:  Math.random()*cnv.width,
+        y: -10 - Math.random()*180,
+        vx: (Math.random()-.5)*5,
+        vy:  3 + Math.random()*5,
+        col: COLORS[Math.floor(Math.random()*COLORS.length)],
+        w:   5 + Math.random()*11,
+        h:   5 + Math.random()*6,
+        rot: Math.random()*Math.PI*2,
+        rv:  (Math.random()-.5)*.18,
+        shape: Math.random()>.55?'rect':'circle',
+        alpha: 1,
+      });
+    }
+    if(!rafId) rafId = requestAnimationFrame(tickConfetti);
+    sndFanfare();
+  }
+
+  function stopConfetti() {
+    particles = [];
+    c.clearRect(0,0,cnv.width,cnv.height);
+    if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+  }
+
+  function tickConfetti() {
+    c.clearRect(0,0,cnv.width,cnv.height);
+    particles = particles.filter(p=>p.y < cnv.height+40 && p.alpha>0.02);
+    particles.forEach(p=>{
+      p.x += p.vx; p.y += p.vy; p.rot += p.rv; p.vy*=1.012;
+      if(p.y > cnv.height*0.7) p.alpha -= 0.025;
+      c.save();
+      c.globalAlpha = Math.max(0,p.alpha);
+      c.translate(p.x,p.y); c.rotate(p.rot);
+      c.fillStyle = p.col;
+      if(p.shape==='rect') c.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      else { c.beginPath(); c.arc(0,0,p.w/2,0,Math.PI*2); c.fill(); }
+      c.restore();
+    });
+    if(particles.length>0) rafId=requestAnimationFrame(tickConfetti);
+    else { c.clearRect(0,0,cnv.width,cnv.height); rafId=null; }
+  }
+
+  function spawnStars() {
+    const slots  = [{x:'18%',y:'25%'},{x:'82%',y:'18%'},{x:'50%',y:'10%'},{x:'12%',y:'72%'},{x:'88%',y:'68%'},{x:'35%',y:'20%'},{x:'70%',y:'30%'}];
+    const emojis = ['⭐','🌟','✨','💫','🎉','🎊','🏆'];
+    slots.forEach((pos,i)=>{
+      setTimeout(()=>{
+        const el = document.createElement('div');
+        el.className = 'star-pop';
+        el.style.left = pos.x; el.style.top = pos.y;
+        el.textContent = emojis[i%emojis.length];
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(), 950);
+      }, i*80);
+    });
+  }
+</script>
+</body>
+</html>
