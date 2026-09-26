@@ -1280,6 +1280,26 @@
     .subject-h::after { content:''; flex:1; height:2px; background:rgba(255,255,255,.35); border-radius:2px; }
     .lc-tag { white-space:nowrap; background:#EEF0FF; color:#6C5CE7; border-radius:100px; padding:2px 10px; font-size:.72rem; font-weight:900; letter-spacing:.3px; }
     .pirate-card .lc-tag { background:#7B3F12; color:#FFF6DC; }
+
+    /* Mes tables */
+    #mini[data-game="apprendre"] { background:linear-gradient(180deg,#FDF0FF,#EED6F7); }
+    .at-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; width:100%; }
+    .at-pick { display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 4px; background:#fff; border:3px solid #E3E6EA; border-radius:16px; font-family:var(--font); cursor:pointer; box-shadow:0 4px 0 #d5d5d5; }
+    .at-pick:active { transform:translateY(3px); box-shadow:0 1px 0 #d5d5d5; }
+    .at-pick.done { border-color:#F1C40F; background:#FFFBEA; }
+    .at-n { font-size:clamp(1.2rem,4.5vw,1.6rem); font-weight:900; color:var(--purple); white-space:nowrap; }
+    .at-stars { color:#F1C40F; font-size:clamp(.8rem,2.6vw,1rem); letter-spacing:1px; }
+    .at-tip { background:#FFF6D6; border-radius:12px; padding:8px 12px; font-weight:800; font-size:.9rem; color:#6E4B00; text-align:center; }
+    .at-lines { display:grid; grid-template-columns:1fr 1fr; gap:6px; width:100%; }
+    .at-line { padding:8px; border-radius:10px; border:2px solid #E3E6EA; background:#fff; font-family:var(--font); font-weight:900; font-size:clamp(1rem,3.4vw,1.2rem); cursor:pointer; color:var(--text); }
+    .at-line.sel { background:#6C5CE7; color:#fff; border-color:#6C5CE7; }
+    .at-view { display:flex; flex-direction:column; align-items:center; gap:8px; min-height:10px; }
+    .at-say { font-weight:900; color:var(--purple); font-size:1.15rem; }
+    .at-dots { display:flex; flex-direction:column; gap:4px; align-items:center; }
+    .at-row { display:flex; gap:4px; }
+    .at-row span { width:var(--ds,12px); height:var(--ds,12px); border-radius:50%; background:#6C5CE7; }
+    .at-row:nth-child(even) span { background:#FD79A8; }
+    .at-prog { color:var(--muted); }
   </style>
 </head>
 <body>
@@ -1317,6 +1337,11 @@
         <span class="lc-emoji">⚡</span>
         <span class="lc-name">Tables</span>
         <span class="lc-desc">60 secondes<br>chrono !</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('apprendre')" aria-label="Mes tables">
+        <span class="lc-emoji">✖️</span>
+        <span class="lc-name long">Mes tables</span>
+        <span class="lc-desc">Apprends table<br>par table</span>
       </button>
       <button class="level-card game-card" onclick="openMini('nombres')" aria-label="Nombres">
         <span class="lc-emoji">🔢</span>
@@ -3789,6 +3814,160 @@
     miniResult(ok, `C'était « ${st.item[0]} » !`,
       `<div class="en-vis">${enVis(st.cat, st.item[2])}</div><div class="fb-exp-lbl" style="font-size:1.3rem">🇬🇧 ${st.item[0]} = 🇫🇷 ${st.item[1]}</div>`);
     sayEn(st.item[0]);
+  }
+
+
+  /* =========================================================
+     JEU 15 — MES TABLES (apprendre table par table)
+     ========================================================= */
+  const AT = { st:null };
+  const AT_KEY = 'calc-mes-tables';
+  function atStars() { try { return JSON.parse(localStorage.getItem(AT_KEY) || '{}') || {}; } catch(_) { return {}; } }
+  function atSave(t, n) {
+    const s = atStars();
+    if (!(s[t] >= n)) { s[t] = n; try { localStorage.setItem(AT_KEY, JSON.stringify(s)); } catch(_) {} }
+  }
+  const AT_TIPS = {
+    1:  "Multiplier par 1 ne change rien : 1 × 7 = 7.",
+    2:  "× 2, c'est le double : 2 × 6 = 6 + 6 = 12.",
+    3:  "Dans la table de 3, on ajoute 3 à chaque fois : 3, 6, 9, 12…",
+    4:  "× 4, c'est le double du double : 4 × 6 → 12 → 24.",
+    5:  "Les résultats de la table de 5 finissent toujours par 0 ou par 5.",
+    6:  "6 × un nombre pair finit par ce nombre : 6 × 4 = 24, 6 × 8 = 48.",
+    7:  "La plus coquine ! Retiens 7 × 8 = 56 : 5, 6, 7, 8 !",
+    8:  "× 8, c'est le double du double du double !",
+    9:  "Astuce des doigts : pour 9 × 3, baisse ton 3ᵉ doigt : 2 doigts à gauche, 7 à droite → 27.",
+    10: "× 10 : on ajoute un 0 à la fin : 10 × 7 = 70.",
+  };
+  function atDots(rows, cols) {
+    const ds = Math.max(8, Math.min(16, Math.floor(200 / Math.max(rows, cols))));
+    let h = `<div class="at-dots" style="--ds:${ds}px">`;
+    for (let r = 0; r < rows; r++) h += '<div class="at-row">' + '<span></span>'.repeat(cols) + '</div>';
+    return h + '</div>';
+  }
+  const atPhrase = (t, k) => `${t} × ${k} = ${t * k}`;
+  const atSpeak  = (t, k) => `${frNum(t)} fois ${frNum(k)}, ${frNum(t * k)}`;
+
+  GAMES.apprendre = {
+    title: 'Mes tables', emoji: '✖️',
+    newQ(body) { atChooser(body); },
+  };
+  function atChooser(body) {
+    body = body || document.getElementById('mini-body');
+    if (MINI.cleanup) { try { MINI.cleanup(); } catch(_) {} MINI.cleanup = null; }
+    MINI.pad = null; AT.st = null;
+    const stars = atStars();
+    body.innerHTML = `<div class="m-card">
+      <div class="m-prompt">Quelle table veux-tu apprendre ?</div>
+      <div class="at-grid">${[1,2,3,4,5,6,7,8,9,10].map(t => {
+        const s = stars[t] || 0;
+        return `<button class="at-pick${s === 3 ? ' done' : ''}" onclick="atLearn(${t})"><span class="at-n">× ${t}</span><span class="at-stars">${'★'.repeat(s)}${'☆'.repeat(3 - s)}</span></button>`;
+      }).join('')}</div>
+      <div class="m-hint">Gagne 3 étoiles ★★★ en réussissant les 10 calculs du premier coup !</div>
+    </div>`;
+  }
+  function atLearn(t, k = 1) {
+    if (MINI.answered) return;
+    MINI.pad = null;
+    AT.st = { t, k, mode:'learn' };
+    const body = document.getElementById('mini-body');
+    body.innerHTML = `<div class="m-card">
+      <div class="m-prompt">La table de ${t}</div>
+      <div class="at-tip">💡 ${AT_TIPS[t]}</div>
+      <div class="at-lines">${[1,2,3,4,5,6,7,8,9,10].map(i =>
+        `<button class="at-line${i === k ? ' sel' : ''}" onclick="atLearnLine(${i})">${atPhrase(t, i)}</button>`).join('')}</div>
+      <div class="at-view" id="at-view"></div>
+      <div class="w-actions">
+        <button class="m-btn" onclick="atChooser()">← Les tables</button>
+        <button class="m-btn go" onclick="atPractice(${t})">🎯 Je m'entraîne</button>
+      </div>
+    </div>`;
+    atLearnLine(k, true);
+  }
+  function atLearnLine(k, silent) {
+    const st = AT.st; if (!st || st.mode !== 'learn') return;
+    st.k = k;
+    document.querySelectorAll('.at-line').forEach((b, i) => b.classList.toggle('sel', i + 1 === k));
+    document.getElementById('at-view').innerHTML =
+      `<div class="at-say">${k} ${k > 1 ? 'rangées' : 'rangée'} de ${st.t} = ${st.t * k}</div>${atDots(k, st.t)}`;
+    if (!silent) say(atSpeak(st.t, k));
+  }
+  function atPractice(t) {
+    const lv = MINI.level;
+    const queue = shuffle([1,2,3,4,5,6,7,8,9,10]).map(k => ({ k, miss: lv === 'CE2' && Math.random() < 0.35, swap: Math.random() < 0.5, wrong:false, help:false, retry:false }));
+    AT.st = { t, mode:'practice', queue, idx:0, first:0, lock:false };
+    const body = document.getElementById('mini-body');
+    body.innerHTML = `<div class="m-card">
+      <div class="tb-top"><div>✖️ Table de ${t}</div><div class="at-prog" id="at-prog"></div></div>
+      <div class="tb-q" id="at-q"></div>
+      <div class="m-answer placeholder" id="at-ans">?</div>
+      <button class="m-btn" onclick="atHelp()">💡 Aide</button>
+      <div class="at-view" id="at-help"></div>
+    </div>`;
+    const ans = body.querySelector('#at-ans');
+    body.querySelector('.m-card').appendChild(miniPad(ans, 3, v => atAnswer(v), v => {
+      const q = atCur(); if (q && v.length >= String(atExpected(q)).length) atAnswer(parseInt(v, 10));
+    }));
+    MINI.cleanup = () => { AT.st && (AT.st.lock = true); };
+    atShow();
+    sndClick();
+  }
+  const atCur = () => AT.st && AT.st.mode === 'practice' ? AT.st.queue[AT.st.idx] : null;
+  const atExpected = q => q.miss ? q.k : AT.st.t * q.k;
+  function atQText(q) {
+    const t = AT.st.t;
+    if (q.miss) return q.swap ? `? × ${t} = ${t * q.k}` : `${t} × ? = ${t * q.k}`;
+    return q.swap ? `${q.k} × ${t} = ?` : `${t} × ${q.k} = ?`;
+  }
+  function atShow() {
+    const st = AT.st, q = atCur();
+    const done = st.queue.filter((x, i) => i < st.idx && !x.retry).length;
+    document.getElementById('at-prog').textContent = `${Math.min(done + 1, 10)} / 10`;
+    const qe = document.getElementById('at-q');
+    qe.textContent = atQText(q); qe.className = 'tb-q';
+    document.getElementById('at-help').innerHTML = '';
+    const ans = document.getElementById('at-ans');
+    ans.dataset.v = ''; ans.textContent = '?'; ans.classList.add('placeholder');
+    st.lock = false;
+  }
+  function atHelp() {
+    const q = atCur(); if (!q || AT.st.lock) return;
+    q.help = true; sndClick();
+    document.getElementById('at-help').innerHTML =
+      `<div class="m-hint">${q.k} rangée${q.k > 1 ? 's' : ''} de ${AT.st.t} points :</div>${atDots(q.k, AT.st.t)}`;
+  }
+  function atAnswer(v) {
+    const st = AT.st, q = atCur(); if (!q || st.lock) return;
+    st.lock = true;
+    const qe = document.getElementById('at-q');
+    if (v === atExpected(q)) {
+      if (!q.wrong && !q.help && !q.retry) st.first++;
+      MINI.ok++; qe.classList.add('good');
+      qe.textContent = atQText(q).replace('?', atExpected(q));
+      if (S.sound) beep(660 + st.idx * 20, 'sine', 0.12, 0.2);
+      setTimeout(atNext, 600);
+    } else {
+      MINI.nok++; q.wrong = true; qe.classList.add('bad');
+      qe.textContent = atQText(q).replace('?', atExpected(q));
+      document.getElementById('at-help').innerHTML = `<div class="at-say">${atPhrase(st.t, q.k)}</div>${atDots(q.k, st.t)}`;
+      say(atSpeak(st.t, q.k));
+      if (S.sound) beep(180, 'sawtooth', 0.2, 0.15);
+      st.queue.push({ ...q, wrong:false, help:false, retry:true });  // on la reverra à la fin
+      setTimeout(atNext, 2200);
+    }
+    miniScore();
+  }
+  function atNext() {
+    const st = AT.st; if (!st || st.mode !== 'practice') return;
+    st.idx++;
+    if (st.idx < st.queue.length) { atShow(); return; }
+    const stars = st.first >= 10 ? 3 : st.first >= 8 ? 2 : st.first >= 5 ? 1 : 0;
+    atSave(st.t, stars);
+    miniEnd(stars === 3 ? '🏆' : stars ? '⭐' : '💪',
+      stars === 3 ? `Table de ${st.t} maîtrisée !` : stars ? 'Bien joué !' : 'Continue, tu progresses !',
+      `<div class="nb-big" style="color:#FFEAA7">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</div>
+       <div class="fb-exp-lbl">${st.first} / 10 réussis du premier coup</div>
+       <div class="fb-exp-lbl">💡 ${AT_TIPS[st.t]}</div>`, stars >= 2);
   }
 
   function spawnStars() {
