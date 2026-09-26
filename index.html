@@ -1041,6 +1041,20 @@
       flex-basis:100%; text-align:center; font-size:0.8rem; font-weight:800; color:rgba(255,255,255,0.9);
       margin-top:2px;
     }
+
+    /* ---- Feedback compact (tout doit tenir à l'écran) ---- */
+    #feedback { overflow-y:auto; justify-content:safe center; gap:10px; padding:14px 16px; }
+    .fb-icon { font-size:clamp(2.4rem,7vw,3.6rem); cursor:pointer; flex-shrink:0; }
+    .fb-crew svg { height:clamp(3.2rem,10vw,4.8rem); }
+    .fb-crew .fb-crew-em { font-size:clamp(1.6rem,5vw,2.4rem); }
+    body.theme-pirate .fb-title { font-size:clamp(1.8rem,6vw,2.8rem); }
+    body.theme-pirate .fb-fruit { font-size:clamp(0.95rem,2.6vw,1.25rem); }
+    body.theme-pirate .fb-group { padding:5px 6px 3px; }
+    body.theme-pirate .fb-groups { gap:6px; }
+    .fb-expbox { padding:10px 14px; gap:6px; }
+    .fb-next { flex-shrink:0; }
+    #range-btn { display:none; }
+    body.theme-pirate #range-btn { display:flex; }
   </style>
 </head>
 <body>
@@ -1058,17 +1072,17 @@
   <p style="font-size:clamp(0.6rem,1.6vw,0.72rem);font-weight:800;color:rgba(255,255,255,0.5);letter-spacing:0.4px;margin-bottom:-8px">✏️ Inventé par Etienne Leborgne</p>
   <div class="mascot" aria-hidden="true">🦉</div>
   <h1 class="welcome-title">Calculette<br>Magique ✨</h1>
-  <p class="welcome-sub">Quel niveau es-tu ?</p>
+  <p class="welcome-sub">Choisis ton aventure !</p>
   <div class="level-row">
-    <button class="level-card" id="btn-cp" onclick="startLevel('CP')" aria-label="Niveau CP">
+    <button class="level-card" id="btn-cp" onclick="startLevel('CP')" aria-label="Fruits">
       <span class="lc-emoji">🍎</span>
-      <span class="lc-name">CP</span>
+      <span class="lc-name">Fruits</span>
       <span class="lc-ops">+ et −</span>
       <span class="lc-desc">Avec des fruits !<br>Sans chiffres</span>
     </button>
-    <button class="level-card pirate-card" id="btn-ce1" onclick="openRange('welcome')" aria-label="Niveau CE1">
+    <button class="level-card pirate-card" id="btn-ce1" onclick="startLevel('CE1')" aria-label="Pirates">
       <span class="lc-crew" id="lc-crew"></span>
-      <span class="lc-name">CE1</span>
+      <span class="lc-name">Pirates</span>
       <span class="lc-ops">+ − × ÷</span>
       <span class="lc-desc">🏴‍☠️ Chiffres et trésors<br>de pirates !</span>
     </button>
@@ -1110,7 +1124,7 @@
     <div class="rg-hint">👆 Reste appuyé sur − ou + pour aller plus vite</div>
   </div>
   <button class="rg-go" onclick="confirmRange()">🏴‍☠️ À l'abordage !</button>
-  <button class="rg-back" onclick="goHome()">← Retour</button>
+  <button class="rg-back" onclick="cancelRange()">← Retour</button>
 </section>
 
 <!-- ===================================================
@@ -1141,6 +1155,7 @@
       </div>
     </div>
     <div class="score-right">
+      <button class="icon-btn" id="range-btn" title="Choisir les nombres" onclick="openRange('game')" aria-label="Choisir les nombres">🗺️</button>
       <button class="icon-btn" id="sound-toggle" title="Activer/couper le son" onclick="toggleSound()" aria-label="Son">🔊</button>
       <button class="icon-btn" title="Réglages opérations" onclick="toggleSettings()" aria-label="Réglages" id="settings-btn">⚙️</button>
       <button class="icon-btn" title="Recommencer" onclick="goHome()" aria-label="Recommencer">🔄</button>
@@ -1155,7 +1170,6 @@
           <button class="op-toggle active" id="tog-div"   onclick="toggleOp('÷')"  title="Division">÷<span class="op-tog-emoji">🍕</span></button>
         </div>
         <div class="settings-note" id="settings-note">Coche au moins une opération</div>
-        <button class="settings-range-btn" id="settings-range-btn" onclick="openRange('game')">🗺️ Nombres : 1 → 200</button>
       </div>
     </div>
   </div>
@@ -1219,7 +1233,7 @@
      FEEDBACK OVERLAY
      =================================================== -->
 <div id="feedback" role="dialog" aria-live="assertive">
-  <div class="fb-icon" id="fb-icon"></div>
+  <div class="fb-icon" id="fb-icon" onclick="nextEx()" title="Suivant"></div>
   <div class="fb-title" id="fb-title"></div>
 
   <div class="fb-expbox">
@@ -1838,7 +1852,7 @@
     S.ex = genEx();
     S.phase = 'game';
 
-    document.getElementById('level-pill').textContent = lvl;
+    document.getElementById('level-pill').textContent = lvl === 'CE1' ? 'Pirates' : '🍎 Fruits';
     document.body.classList.toggle('theme-pirate', lvl === 'CE1');
     [['tog-plus','+'],['tog-minus','-'],['tog-mul','×'],['tog-div','÷']].forEach(([id,op])=>{
       const em = document.querySelector('#'+id+' .op-tog-emoji');
@@ -1893,9 +1907,6 @@
     const isCE1 = S.level === 'CE1';
     document.getElementById('tog-mul').style.display = isCE1 ? '' : 'none';
     document.getElementById('tog-div').style.display = isCE1 ? '' : 'none';
-    const rb = document.getElementById('settings-range-btn');
-    rb.style.display = isCE1 ? '' : 'none';
-    rb.textContent = `🗺️ Nombres : ${S.range.lo} → ${S.range.hi}`;
     if (settingsOpen) sndClick();
   }
 
@@ -2127,6 +2138,14 @@
     document.getElementById('range').classList.remove('hidden');
     S.phase = 'range';
     sndClick();
+  }
+
+  function cancelRange() {
+    if (S.rangeFrom === 'game' && S.level === 'CE1') {
+      document.getElementById('range').classList.add('hidden');
+      document.getElementById('game').classList.remove('hidden');
+      S.phase = 'game'; sndClick();
+    } else goHome();
   }
 
   function confirmRange() {
