@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
-  <meta name="description" content="Calculette Magique — Application de calcul mental ludique pour enfants CP et CE1" />
+  <meta name="description" content="Le Cartable Magique — jeux éducatifs en maths, français et découverte du monde pour le CP, CE1 et CE2" />
   <meta name="theme-color" content="#6C5CE7" />
-  <title>🎓 Calculette Magique</title>
+  <title>🎒 Le Cartable Magique</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pirata+One&display=swap" rel="stylesheet" />
   <style>
@@ -937,6 +937,10 @@
       .fb-icon       { font-size: 3.5rem; }
     }
 
+    #welcome .mascot { font-size:clamp(3rem,9vw,4.5rem); }
+    #welcome .welcome-title { font-size:clamp(2rem,6.5vw,3.2rem); }
+    #welcome { gap:14px; padding-top:20px; }
+
     @media (min-width: 768px) {
       .fruit-item { font-size: 1.9rem; }
       .fruit-grid { max-width: 250px; gap: 5px; }
@@ -1062,7 +1066,8 @@
     #welcome { overflow-y:auto; justify-content:safe center; gap:18px; }
     .level-row.games { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; width:100%; max-width:820px; }
     .level-row.games .level-card { min-width:0; padding:18px 12px; }
-    .level-row.games .lc-name { font-size:clamp(1.05rem,3.4vw,1.45rem); overflow-wrap:anywhere; }
+    .level-row.games .lc-name { font-size:clamp(1.05rem,3.4vw,1.45rem); white-space:nowrap; }
+    .level-row.games .lc-name.long { font-size:clamp(0.95rem,2.9vw,1.15rem); }
     @media (max-width:560px) {
       #mini .score-item .si-lbl, #mini .score-sep { display:none; }
       #mini .mini-title { font-size:.75rem; padding:5px 10px; }
@@ -1166,6 +1171,115 @@
     #mfb.wrong-bg   { background:linear-gradient(145deg,#ff9a7a 0%,#E17055 50%,#d35400 100%); }
     #mfb.correct-bg .fb-next { color:var(--green); }
     #mfb.wrong-bg .fb-next { color:var(--red); }
+
+    /* =============================================
+       MINI-JEUX — lot 2
+       ============================================= */
+    #mini[data-game="tables"]     { background:linear-gradient(180deg,#FFF1E6,#FFD9BF); }
+    #mini[data-game="mesures"]    { background:linear-gradient(180deg,#EEF7E8,#D5EBC6); }
+    #mini[data-game="symetrie"]   { background:linear-gradient(180deg,#EDF1FF,#D5DCFA); }
+    #mini[data-game="syllabes"]   { background:linear-gradient(180deg,#FFF0F6,#FAD3E4); }
+    #mini[data-game="alpha"]      { background:linear-gradient(180deg,#F0FBF7,#CFEFE3); }
+    #mini[data-game="nature"]     { background:linear-gradient(180deg,#FFF9E6,#F8E7B0); }
+    #mini[data-game="accords"]    { background:linear-gradient(180deg,#F3F0FF,#DCD5FA); }
+    #mini[data-game="calendrier"] { background:linear-gradient(180deg,#EAF6FF,#CBE6F8); }
+    #mini[data-game="english"]    { background:linear-gradient(180deg,#EEF3FF,#D2DEFA); }
+
+    /* Tables */
+    .tb-big { font-size:clamp(3rem,12vw,4.5rem); line-height:1; }
+    .tb-record { background:#FFEAA7; color:#6E4B00; border-radius:100px; padding:5px 16px; font-weight:900; }
+    .tb-go { font-size:clamp(1.2rem,4vw,1.5rem); padding:14px 34px; }
+    .tb-top { display:flex; justify-content:space-between; width:100%; font-size:clamp(1.2rem,4vw,1.6rem); font-weight:900; }
+    .tb-time { color:var(--orange); }
+    .tb-bar { width:100%; height:12px; background:#EEE; border-radius:100px; overflow:hidden; }
+    #tb-fill { height:100%; width:100%; background:linear-gradient(90deg,#FF6B35,#FDCB6E); transition:width .1s linear; }
+    .tb-q { font-size:clamp(2.2rem,8vw,3.2rem); font-weight:900; color:var(--purple); transition:color .15s; }
+    .tb-q.good { color:var(--green); }
+    .tb-q.bad  { color:var(--red); }
+
+    /* Mesures */
+    .ruler-svg { width:100%; max-width:640px; height:auto; }
+    .balance-svg { width:100%; max-width:420px; height:auto; }
+    .fb-expbox .ruler-svg { background:#fff; border-radius:10px; }
+    .fb-expbox .balance-svg { background:#fff; border-radius:10px; max-width:300px; }
+
+    /* Symétrie */
+    .sym-grid { display:grid; gap:2px; background:#C9D2DC; padding:2px; border-radius:8px; }
+    .sym-cell { width:var(--cs,36px); height:var(--cs,36px); background:#fff; border:none; padding:0; cursor:pointer; border-radius:3px; }
+    .sym-cell.lock { background:#F1F3F6; cursor:default; }
+    .sym-cell.m { background:#6C5CE7; }
+    .sym-cell.u { background:#00B894; }
+    .sym-cell.ok { background:#00B894; }
+    .sym-cell.miss { background:repeating-linear-gradient(45deg,#FDCB6E 0 5px,#fff 5px 10px); }
+    .sym-cell.extra { background:#E17055; }
+    .sym-cell.ax-r { box-shadow:inset -4px 0 0 #E74C3C; }
+    .sym-cell.ax-l { box-shadow:inset 4px 0 0 #E74C3C; }
+    .sym-cell.ax-b { box-shadow:inset 0 -4px 0 #E74C3C; }
+    .sym-cell.ax-t { box-shadow:inset 0 4px 0 #E74C3C; }
+    .sym-legend { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; font-size:.8rem; font-weight:800; color:#fff; }
+    .sym-legend i { display:inline-block; width:14px; height:14px; border-radius:3px; vertical-align:-2px; margin-right:4px; }
+
+    /* Syllabes */
+    .tile.syl { width:auto; min-width:var(--ts,52px); padding:0 12px; }
+    .tile.syl .t-l { font-size:calc(var(--ts,52px) * .42); }
+    .tile.syl .t-v { display:none; }
+    .slot.syl { width:calc(var(--ts,52px) * 1.7); }
+    .syl-sep { color:rgba(255,255,255,.7); font-weight:900; font-size:1.3rem; align-self:center; }
+
+    /* Ordre alphabétique */
+    .alpha-strip { display:flex; flex-wrap:wrap; gap:1px; justify-content:center; font-weight:900; font-size:.8rem; color:var(--muted); }
+    .alpha-strip span { width:18px; text-align:center; }
+    .al-slots { display:flex; flex-direction:column; gap:8px; width:100%; max-width:380px; }
+    .al-slot { display:flex; align-items:center; gap:10px; min-height:50px; border:3px dashed #B2BEC3; border-radius:12px; padding:4px 12px; background:#F7F9FA; font-weight:900; font-size:clamp(1.1rem,3.6vw,1.35rem); cursor:pointer; font-family:var(--font); color:var(--text); text-align:left; }
+    .al-slot .al-n { color:var(--muted); width:24px; }
+    .al-slot.filled { border-style:solid; border-color:var(--purple); background:#F1EEFF; }
+    .al-pool, .nat-sentence { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+    .chip-w { border:3px solid #E3E6EA; background:#fff; border-radius:12px; padding:8px 14px; font-family:var(--font); font-weight:900; font-size:clamp(1.05rem,3.6vw,1.3rem); cursor:pointer; box-shadow:0 3px 0 #d5d5d5; color:var(--text); }
+    .chip-w:active { transform:translateY(2px); box-shadow:0 1px 0 #d5d5d5; }
+    .chip-w.used { visibility:hidden; }
+    .chip-w.sel { background:#FFEAA7; border-color:#E1B12C; }
+    .al-hl { color:#E17055; text-decoration:underline; }
+    .al-fb { display:flex; flex-direction:column; gap:4px; color:#fff; font-weight:900; font-size:1.2rem; }
+
+    /* Nature des mots */
+    .nat-cat { padding:2px 12px; border-radius:100px; color:#fff; }
+    .cat-N { background:#0984E3; } .cat-V { background:#E74C3C; } .cat-A { background:#00A67E; } .cat-D { background:#8E44AD; }
+    .nat-fb { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
+    .nat-fbw { display:flex; flex-direction:column; align-items:center; background:rgba(0,0,0,.18); border-radius:8px; padding:3px 8px; color:#fff; font-weight:900; font-size:1.05rem; }
+    .nat-fbw small { font-size:.62rem; font-weight:800; opacity:.95; }
+    .nat-fbw.t { background:#fff; color:#2D3436; }
+
+    /* Accords */
+    .acc-src { font-size:clamp(1.5rem,5.5vw,2.2rem); font-weight:900; color:var(--purple); text-align:center; }
+    .acc-fb b, #mfb .al-hl { background:#FFEAA7; color:#2D3436; border-radius:4px; padding:0 3px; text-decoration:none; }
+
+    /* Calendrier */
+    .cal-week { display:flex; gap:4px; flex-wrap:wrap; justify-content:center; }
+    .cal-day { padding:4px 8px; border-radius:8px; background:rgba(255,255,255,.2); color:#fff; font-weight:800; font-size:.85rem; }
+    .cal-day.today { background:#fff; color:#2D3436; }
+    .cal-day.ans { background:#FFEAA7; color:#2D3436; }
+    .cal-title { font-weight:900; font-size:1.2rem; color:var(--purple); }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; width:100%; max-width:340px; }
+    .cal-grid div { text-align:center; padding:5px 0; border-radius:6px; background:#F4F6F8; font-weight:800; font-size:.95rem; color:#2D3436; }
+    .cal-grid .h { background:none; color:var(--muted); font-size:.72rem; }
+    .cal-grid .e { background:none; }
+    .cal-grid .hl { background:#FDCB6E; }
+    .fb-expbox .cal-grid .h { color:#fff; }
+
+    /* English */
+    .en-vis { font-size:clamp(3.2rem,11vw,4.5rem); line-height:1; }
+    .en-color { display:inline-block; width:1em; height:1em; border-radius:50%; border:3px solid rgba(0,0,0,.15); vertical-align:middle; }
+    .en-num { font-weight:900; color:var(--purple); }
+    .m-choice.img { min-height:92px; font-size:clamp(2.3rem,8vw,3.1rem); line-height:1; }
+    .en-word { font-size:clamp(1.6rem,6vw,2.4rem); font-weight:900; color:var(--purple); }
+    #mfb .en-num { color:#fff; }
+
+    /* Accueil par matière */
+    .subject { width:100%; max-width:880px; display:flex; flex-direction:column; gap:10px; }
+    .subject-h { color:#fff; font-weight:900; font-size:clamp(1.1rem,3.6vw,1.4rem); display:flex; align-items:center; gap:10px; text-shadow:0 2px 8px rgba(0,0,0,.2); }
+    .subject-h::after { content:''; flex:1; height:2px; background:rgba(255,255,255,.35); border-radius:2px; }
+    .lc-tag { white-space:nowrap; background:#EEF0FF; color:#6C5CE7; border-radius:100px; padding:2px 10px; font-size:.72rem; font-weight:900; letter-spacing:.3px; }
+    .pirate-card .lc-tag { background:#7B3F12; color:#FFF6DC; }
   </style>
 </head>
 <body>
@@ -1182,46 +1296,104 @@
 <section id="welcome" class="screen" role="main">
   <p style="font-size:clamp(0.6rem,1.6vw,0.72rem);font-weight:800;color:rgba(255,255,255,0.5);letter-spacing:0.4px;margin-bottom:-8px">✏️ Inventé par Etienne Leborgne</p>
   <div class="mascot" aria-hidden="true">🦉</div>
-  <h1 class="welcome-title">Calculette<br>Magique ✨</h1>
-  <p class="welcome-sub">Choisis ton aventure !</p>
-  <div class="level-row games">
-    <button class="level-card" id="btn-cp" onclick="startLevel('CP')" aria-label="Fruits">
-      <span class="lc-emoji">🍎</span>
-      <span class="lc-name">Fruits</span>
-      <span class="lc-ops">+ et −</span>
-      <span class="lc-desc">Avec des fruits !<br>Sans chiffres</span>
-    </button>
-    <button class="level-card pirate-card" id="btn-ce1" onclick="startLevel('CE1')" aria-label="Pirates">
-      <span class="lc-crew" id="lc-crew"></span>
-      <span class="lc-name">Pirates</span>
-      <span class="lc-ops">+ − × ÷</span>
-      <span class="lc-desc">🏴‍☠️ Chiffres et trésors<br>de pirates !</span>
-    </button>
-    <button class="level-card game-card" onclick="openMini('mots')" aria-label="Mots">
-      <span class="lc-emoji">🔤</span>
-      <span class="lc-name">Mots</span>
-      <span class="lc-desc">Écoute et écris le mot<br>avec les lettres</span>
-    </button>
-    <button class="level-card game-card" onclick="openMini('heure')" aria-label="L'heure">
-      <span class="lc-emoji">🕐</span>
-      <span class="lc-name">L'heure</span>
-      <span class="lc-desc">Lis l'heure<br>sur l'horloge</span>
-    </button>
-    <button class="level-card game-card" onclick="openMini('monnaie')" aria-label="Monnaie">
-      <span class="lc-emoji">💶</span>
-      <span class="lc-name">Monnaie</span>
-      <span class="lc-desc">Paie juste et<br>rends la monnaie</span>
-    </button>
-    <button class="level-card game-card" onclick="openMini('conj')" aria-label="Conjugaison">
-      <span class="lc-emoji">✍️</span>
-      <span class="lc-name">Conjugaison</span>
-      <span class="lc-desc">Trouve la bonne<br>forme du verbe</span>
-    </button>
-    <button class="level-card game-card" onclick="openMini('nombres')" aria-label="Nombres">
-      <span class="lc-emoji">🔢</span>
-      <span class="lc-name">Nombres</span>
-      <span class="lc-desc">En chiffres<br>et en lettres</span>
-    </button>
+  <h1 class="welcome-title">Le Cartable<br>Magique 🎒</h1>
+  <p class="welcome-sub">Choisis ton jeu !</p>
+  <div class="subject">
+    <div class="subject-h">🔢 Maths</div>
+    <div class="level-row games">
+      <button class="level-card" id="btn-cp" onclick="startLevel('CP')" aria-label="Calculette Fruits">
+        <span class="lc-emoji">🍎</span>
+        <span class="lc-tag">🧮 CALCULETTE</span>
+        <span class="lc-name">Fruits</span>
+        <span class="lc-desc">+ et − en comptant<br>des fruits</span>
+      </button>
+      <button class="level-card pirate-card" id="btn-ce1" onclick="startLevel('CE1')" aria-label="Calculette Pirates">
+        <span class="lc-crew" id="lc-crew"></span>
+        <span class="lc-tag">🧮 CALCULETTE</span>
+        <span class="lc-name">Pirates</span>
+        <span class="lc-desc">+ − × ÷ avec<br>les trésors</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('tables')" aria-label="Tables">
+        <span class="lc-emoji">⚡</span>
+        <span class="lc-name">Tables</span>
+        <span class="lc-desc">60 secondes<br>chrono !</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('nombres')" aria-label="Nombres">
+        <span class="lc-emoji">🔢</span>
+        <span class="lc-name">Nombres</span>
+        <span class="lc-desc">En chiffres<br>et en lettres</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('monnaie')" aria-label="Monnaie">
+        <span class="lc-emoji">💶</span>
+        <span class="lc-name">Monnaie</span>
+        <span class="lc-desc">Paie juste et<br>rends la monnaie</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('heure')" aria-label="L'heure">
+        <span class="lc-emoji">🕐</span>
+        <span class="lc-name">L'heure</span>
+        <span class="lc-desc">Lis l'heure<br>sur l'horloge</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('mesures')" aria-label="Mesures">
+        <span class="lc-emoji">📏</span>
+        <span class="lc-name">Mesures</span>
+        <span class="lc-desc">Règle et<br>balance</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('symetrie')" aria-label="Symétrie">
+        <span class="lc-emoji">🔷</span>
+        <span class="lc-name">Symétrie</span>
+        <span class="lc-desc">Colorie<br>le reflet</span>
+      </button>
+    </div>
+  </div>
+  <div class="subject">
+    <div class="subject-h">📚 Français</div>
+    <div class="level-row games">
+      <button class="level-card game-card" onclick="openMini('mots')" aria-label="Mots">
+        <span class="lc-emoji">🔤</span>
+        <span class="lc-name">Mots</span>
+        <span class="lc-desc">Écoute et écris<br>le mot</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('syllabes')" aria-label="Syllabes">
+        <span class="lc-emoji">🧩</span>
+        <span class="lc-name">Syllabes</span>
+        <span class="lc-desc">Remets les syllabes<br>dans l'ordre</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('alpha')" aria-label="Alphabet">
+        <span class="lc-emoji">🔠</span>
+        <span class="lc-name">Alphabet</span>
+        <span class="lc-desc">Range les mots<br>de A à Z</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('nature')" aria-label="Grammaire">
+        <span class="lc-emoji">🏷️</span>
+        <span class="lc-name">Grammaire</span>
+        <span class="lc-desc">Nom, verbe,<br>adjectif…</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('accords')" aria-label="Accords">
+        <span class="lc-emoji">👫</span>
+        <span class="lc-name">Accords</span>
+        <span class="lc-desc">Pluriel et<br>féminin</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('conj')" aria-label="Conjugaison">
+        <span class="lc-emoji">✍️</span>
+        <span class="lc-name long">Conjugaison</span>
+        <span class="lc-desc">Trouve la bonne<br>forme du verbe</span>
+      </button>
+    </div>
+  </div>
+  <div class="subject">
+    <div class="subject-h">🌍 Découverte du monde</div>
+    <div class="level-row games">
+      <button class="level-card game-card" onclick="openMini('calendrier')" aria-label="Calendrier">
+        <span class="lc-emoji">📅</span>
+        <span class="lc-name long">Calendrier</span>
+        <span class="lc-desc">Jours, mois<br>et saisons</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('english')" aria-label="English">
+        <span class="lc-emoji">🇬🇧</span>
+        <span class="lc-name">English</span>
+        <span class="lc-desc">Apprends des mots<br>en anglais</span>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -1271,6 +1443,7 @@
   <!-- Score Bar -->
   <div class="scorebar">
     <div class="score-left">
+      <button class="icon-btn" onclick="goHome()" aria-label="Accueil" title="Accueil">🏠</button>
       <span class="level-pill" id="level-pill">CP</span>
       <div class="score-sep"></div>
       <span style="font-size:0.6rem;font-weight:800;color:var(--muted);letter-spacing:0.3px;white-space:nowrap">✏️ Etienne Leborgne</span>
@@ -2362,20 +2535,22 @@
   const cap     = s => s.charAt(0).toUpperCase() + s.slice(1);
 
   /* ---- Voix (synthèse vocale du navigateur) ---- */
-  let frVoice = null;
+  let frVoice = null, enVoice = null;
   function loadVoices() {
     try {
       const vs = speechSynthesis.getVoices();
       frVoice = vs.find(v => /^fr[-_]FR/i.test(v.lang)) || vs.find(v => /^fr/i.test(v.lang)) || null;
+      enVoice = vs.find(v => /^en[-_]GB/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null;
     } catch(_) {}
   }
   if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
-  function say(text) {
+  function say(text, lang = 'fr-FR') {
     if (!('speechSynthesis' in window)) return;
     try {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'fr-FR'; if (frVoice) u.voice = frVoice; u.rate = 0.85;
+      const en = lang.startsWith('en'), v = en ? enVoice : frVoice;
+      u.lang = lang; if (v) u.voice = v; u.rate = en ? 0.8 : 0.85;
       speechSynthesis.speak(u);
     } catch(_) {}
   }
@@ -2402,6 +2577,7 @@
   }
   function miniSetLevel(lv) { MINI.level = lv; miniLvlUI(); sndClick(); miniNew(); }
   function miniNew() {
+    if (MINI.cleanup) { try { MINI.cleanup(); } catch(_) {} MINI.cleanup = null; }
     MINI.answered = false; MINI.pad = null;
     const body = document.getElementById('mini-body');
     body.innerHTML = '';
@@ -2436,6 +2612,7 @@
     stopConfetti(); miniNew();
   }
   function miniHome() {
+    if (MINI.cleanup) { try { MINI.cleanup(); } catch(_) {} MINI.cleanup = null; }
     MINI.fbOpen = false;
     document.getElementById('mfb').className = '';
     stopConfetti();
@@ -2460,7 +2637,7 @@
   });
 
   /* Pavé numérique réutilisable */
-  function miniPad(target, maxLen, onOk) {
+  function miniPad(target, maxLen, onOk, onChange) {
     const wrap = document.createElement('div');
     wrap.className = 'numpad m-numpad';
     const press = k => {
@@ -2473,6 +2650,7 @@
       target.dataset.v = v;
       target.textContent = v || '?';
       target.classList.toggle('placeholder', !v);
+      if (onChange && k !== 'del') onChange(v);
     };
     ['1','2','3','4','5','6','7','8','9','del','0','ok'].forEach(k => {
       const b = document.createElement('button');
@@ -2916,6 +3094,701 @@
     miniResult(ok, `C'était ${nbFmt(n)} !`,
       `<div class="nb-big">${nbFmt(n)}</div><div class="fb-exp-lbl">${w}</div>${n >= 10 ? `<div class="fb-exp-lbl">${nbDecomp(n)}</div>` : ''}`);
     say(w);
+  }
+
+
+  /* =========================================================
+     MINI-JEUX — lot 2 : Tables · Mesures · Symétrie · Syllabes ·
+     Ordre alphabétique · Nature des mots · Accords · Calendrier · English
+     ========================================================= */
+
+  /* Écran de fin (sans compter un point bravo/raté) */
+  function miniEnd(icon, title, html, celebrate) {
+    MINI.answered = true; MINI.pad = null;
+    const ov = document.getElementById('mfb');
+    ov.className = 'show ' + (celebrate ? 'correct-bg' : 'wrong-bg');
+    document.getElementById('mfb-icon').textContent  = icon;
+    document.getElementById('mfb-title').textContent = title;
+    document.getElementById('mfb-box').innerHTML = html;
+    if (celebrate) { sndCorrect(); launchConfetti(); } else sndFanfare();
+    MINI.fbOpen = true; ov.scrollTop = 0;
+  }
+  function sayEn(t) { say(t, 'en-GB'); }
+
+  /* =========================================================
+     JEU 6 — COURSE AUX TABLES (60 s)
+     ========================================================= */
+  const TB = { st:null };
+  const tbKey = lv => 'calc-tables-record-' + lv;
+  function tbGetRecord(lv) { try { return parseInt(localStorage.getItem(tbKey(lv)) || '0', 10) || 0; } catch(_) { return 0; } }
+  function tbSetRecord(lv, v) { try { localStorage.setItem(tbKey(lv), String(v)); } catch(_) {} }
+  function tbGen(lv) {
+    let a, b;
+    if (lv === 'CE1') {
+      const t = rndi(0, 2);
+      if (t === 0) { a = rndi(1, 10); b = rndi(1, 10); return { text:`${a} + ${b} = ?`, res:a + b }; }
+      if (t === 1) { a = rndi(1, 9); return { text:`${a} + ? = 10`, res:10 - a }; }
+      a = pickArr([2, 5, 10]); b = rndi(1, 10);
+      return Math.random() < 0.5 ? { text:`${a} × ${b} = ?`, res:a * b } : { text:`${b} × ${a} = ?`, res:a * b };
+    }
+    a = rndi(2, 9); b = rndi(2, 10);
+    return Math.random() < 0.5 ? { text:`${a} × ${b} = ?`, res:a * b } : { text:`${b} × ${a} = ?`, res:a * b };
+  }
+  GAMES.tables = {
+    title: 'Tables', emoji: '⚡',
+    newQ(body, lv) {
+      TB.st = { lv, running:false };
+      body.innerHTML = `<div class="m-card">
+        <div class="tb-big">⚡</div>
+        <div class="m-prompt">60 secondes pour répondre<br>au plus de calculs possible !</div>
+        <div class="m-hint">${lv === 'CE1' ? 'Additions, compléments à 10, tables de 2, 5 et 10' : 'Tables de multiplication de 2 à 9'}</div>
+        <div class="tb-record">🏆 Record : ${tbGetRecord(lv)}</div>
+        <button class="m-btn go tb-go" onclick="tbStart()">▶️ C'est parti !</button>
+      </div>`;
+    },
+    onKey(e) { if (e.key === 'Enter' && TB.st && !TB.st.running) tbStart(); },
+  };
+  function tbStart() {
+    if (TB.st && TB.st.running) return;
+    const st = TB.st = { lv:MINI.level, running:true, score:0, errors:0, end:performance.now() + 60000, q:null, lock:false };
+    const body = document.getElementById('mini-body');
+    body.innerHTML = `<div class="m-card">
+      <div class="tb-top"><div>✅ <span id="tb-score">0</span></div><div class="tb-time">⏱️ <span id="tb-sec">60</span> s</div></div>
+      <div class="tb-bar"><div id="tb-fill"></div></div>
+      <div class="tb-q" id="tb-q"></div>
+      <div class="m-answer placeholder" id="tb-ans">?</div>
+    </div>`;
+    const ans = body.querySelector('#tb-ans');
+    body.querySelector('.m-card').appendChild(miniPad(ans, 3, v => tbAnswer(v), v => {
+      if (st.q && v.length >= String(st.q.res).length) tbAnswer(parseInt(v, 10));
+    }));
+    tbNextQ();
+    const iv = setInterval(() => {
+      const left = Math.max(0, st.end - performance.now());
+      const sec = document.getElementById('tb-sec'), fill = document.getElementById('tb-fill');
+      if (sec) sec.textContent = Math.ceil(left / 1000);
+      if (fill) fill.style.width = (left / 600) + '%';
+      if (left <= 0) { clearInterval(iv); tbFinish(); }
+    }, 100);
+    MINI.cleanup = () => { clearInterval(iv); st.running = false; };
+    sndClick();
+  }
+  function tbNextQ() {
+    const st = TB.st; st.q = tbGen(st.lv); st.lock = false;
+    const q = document.getElementById('tb-q'), ans = document.getElementById('tb-ans');
+    if (!q) return;
+    q.textContent = st.q.text; q.className = 'tb-q';
+    ans.dataset.v = ''; ans.textContent = '?'; ans.classList.add('placeholder');
+  }
+  function tbAnswer(v) {
+    const st = TB.st; if (!st || !st.running || st.lock) return;
+    st.lock = true;
+    const q = document.getElementById('tb-q');
+    if (v === st.q.res) {
+      st.score++; MINI.ok++; q.classList.add('good');
+      if (S.sound) beep(660 + Math.min(st.score, 20) * 15, 'sine', 0.1, 0.2);
+      document.getElementById('tb-score').textContent = st.score;
+      setTimeout(() => st.running && tbNextQ(), 180);
+    } else {
+      st.errors++; MINI.nok++; q.classList.add('bad');
+      q.textContent = st.q.text.replace('?', st.q.res);
+      if (S.sound) beep(180, 'sawtooth', 0.2, 0.15);
+      setTimeout(() => st.running && tbNextQ(), 900);
+    }
+    miniScore();
+  }
+  function tbFinish() {
+    const st = TB.st; if (!st.running) return;
+    st.running = false;
+    const rec = tbGetRecord(st.lv), newRec = st.score > rec;
+    if (newRec) tbSetRecord(st.lv, st.score);
+    miniEnd(newRec ? '🏆' : '⏱️', newRec ? 'Nouveau record !' : 'Temps écoulé !',
+      `<div class="nb-big">${st.score}</div><div class="fb-exp-lbl">bonne${st.score > 1 ? 's' : ''} réponse${st.score > 1 ? 's' : ''}${st.errors ? ' · ' + st.errors + ' erreur' + (st.errors > 1 ? 's' : '') : ''}</div>
+       <div class="fb-exp-lbl">🏆 Record : ${Math.max(rec, st.score)}</div>`, newRec || st.score >= rec);
+  }
+
+  /* =========================================================
+     JEU 7 — MESURES (règle et balance)
+     ========================================================= */
+  function rulerSVG(startMm, lenMm, showMm) {
+    const X = mm => 20 + mm * 4, endMm = startMm + lenMm;
+    let s = '<svg class="ruler-svg" viewBox="0 0 680 130" aria-label="règle">';
+    // crayon
+    const x0 = X(startMm), x1 = X(endMm);
+    s += `<rect x="${x0}" y="18" width="12" height="26" rx="3" fill="#FF8FC7" stroke="#B0476F" stroke-width="1.5"/>`;
+    s += `<rect x="${x0 + 12}" y="18" width="${Math.max(0, x1 - x0 - 36)}" height="26" fill="#FDCB6E" stroke="#B8860B" stroke-width="1.5"/>`;
+    s += `<polygon points="${x1 - 24},18 ${x1},31 ${x1 - 24},44" fill="#F5DEB3" stroke="#B8860B" stroke-width="1.5"/>`;
+    s += `<polygon points="${x1 - 8},26.5 ${x1},31 ${x1 - 8},35.5" fill="#2D3436"/>`;
+    s += `<line x1="${x0}" y1="46" x2="${x0}" y2="64" stroke="#E17055" stroke-width="2" stroke-dasharray="3 3"/>`;
+    s += `<line x1="${x1}" y1="46" x2="${x1}" y2="64" stroke="#E17055" stroke-width="2" stroke-dasharray="3 3"/>`;
+    // règle
+    s += '<rect x="6" y="64" width="668" height="58" rx="6" fill="#FDF6E3" stroke="#C9B37E" stroke-width="2"/>';
+    for (let mm = 0; mm <= 160; mm++) {
+      const big = mm % 10 === 0, half = mm % 5 === 0;
+      if (!big && !half && !showMm) continue;
+      const len = big ? 24 : half ? 16 : 9;
+      s += `<line x1="${X(mm)}" y1="64" x2="${X(mm)}" y2="${64 + len}" stroke="#2D3436" stroke-width="${big ? 2 : 1}"/>`;
+      if (big && mm <= 150) s += `<text x="${X(mm)}" y="110" text-anchor="middle" font-size="15" font-weight="800" font-family="Nunito, sans-serif" fill="#2D3436">${mm / 10}</text>`;
+    }
+    s += '<text x="668" y="80" text-anchor="end" font-size="12" font-weight="800" font-family="Nunito, sans-serif" fill="#8a7a50">cm</text>';
+    return s + '</svg>';
+  }
+  function balanceSVG(weights) {
+    let s = '<svg class="balance-svg" viewBox="0 0 400 230" aria-label="balance">';
+    s += '<rect x="150" y="212" width="100" height="12" rx="4" fill="#636E72"/><rect x="194" y="60" width="12" height="154" fill="#95A5A6"/>';
+    s += '<rect x="40" y="54" width="320" height="10" rx="5" fill="#636E72"/><circle cx="200" cy="59" r="9" fill="#2D3436"/>';
+    s += '<line x1="80" y1="64" x2="45" y2="150" stroke="#95A5A6" stroke-width="2"/><line x1="80" y1="64" x2="115" y2="150" stroke="#95A5A6" stroke-width="2"/>';
+    s += '<line x1="320" y1="64" x2="255" y2="150" stroke="#95A5A6" stroke-width="2"/><line x1="320" y1="64" x2="385" y2="150" stroke="#95A5A6" stroke-width="2"/>';
+    s += '<path d="M10 150 H150 Q80 178 10 150 Z" fill="#B2BEC3"/><path d="M250 150 H390 Q320 178 250 150 Z" fill="#B2BEC3"/>';
+    s += '<text x="80" y="146" text-anchor="middle" font-size="54">📦</text>';
+    // masses (2 rangées de 4 max)
+    weights.forEach((w, i) => {
+      const row = Math.floor(i / 4), col = i % 4, inRow = Math.min(4, weights.length - row * 4);
+      const h = w >= 1000 ? 36 : w >= 500 ? 32 : w >= 100 ? 27 : w >= 20 ? 22 : 18;
+      const wd = 32, cx = 320 - (inRow * 34) / 2 + col * 34 + 17, base = 148 - row * 40;
+      s += `<path d="M${cx - wd/2 + 3} ${base} L${cx - wd/2 + 7} ${base - h} H${cx + wd/2 - 7} L${cx + wd/2 - 3} ${base} Z" fill="#7F8C8D" stroke="#2D3436" stroke-width="1.2"/>`;
+      s += `<rect x="${cx - 5}" y="${base - h - 6}" width="10" height="6" rx="2" fill="#7F8C8D" stroke="#2D3436" stroke-width="1"/>`;
+      s += `<text x="${cx}" y="${base - 5}" text-anchor="middle" font-size="${w >= 1000 ? 10 : 9}" font-weight="900" font-family="Nunito, sans-serif" fill="#fff">${w >= 1000 ? (w / 1000) + 'kg' : w + 'g'}</text>`;
+    });
+    return s + '</svg>';
+  }
+  const MES = { st:null };
+  GAMES.mesures = {
+    title: 'Mesures', emoji: '📏',
+    newQ(body, lv) {
+      const mode = Math.random() < 0.55 ? 'ruler' : 'balance';
+      let html, st;
+      if (mode === 'ruler') {
+        if (lv === 'CE1') {
+          const len = rndi(2, 14);
+          st = { mode, start:0, len:len * 10, unit:'cm', answer:len, showMm:false };
+        } else if (Math.random() < 0.5) {
+          const start = rndi(1, 4), len = rndi(2, 15 - start);
+          st = { mode, start:start * 10, len:len * 10, unit:'cm', answer:len, showMm:true };
+        } else {
+          const len = rndi(4, 29) * 5;
+          st = { mode, start:0, len, unit:'mm', answer:len, showMm:true };
+        }
+        html = `<div class="m-prompt">Combien mesure le crayon ?<br><small>Réponds en <b>${st.unit === 'cm' ? 'centimètres (cm)' : 'millimètres (mm)'}</b></small></div>
+                ${rulerSVG(st.start, st.len, st.showMm)}`;
+      } else {
+        const set = lv === 'CE1' ? [100, 50, 20, 10] : [1000, 500, 200, 100, 50, 20, 10, 5];
+        const n = lv === 'CE1' ? rndi(2, 4) : rndi(3, 5);
+        const ws = [];
+        for (let i = 0; i < n; i++) ws.push(pickArr(set));
+        if (lv === 'CE2' && ws.filter(w => w === 1000).length > 1) ws.splice(ws.indexOf(1000), 1);
+        ws.sort((a, b) => b - a);
+        st = { mode, ws, unit:'g', answer:ws.reduce((s, w) => s + w, 0) };
+        html = `<div class="m-prompt">La balance est en équilibre.<br>Combien pèse le paquet ? <small>(en <b>grammes</b>)</small></div>
+                ${balanceSVG(ws)}${lv === 'CE2' ? '<div class="m-hint">💡 1 kg = 1 000 g</div>' : ''}`;
+      }
+      MES.st = st;
+      body.innerHTML = `<div class="m-card">${html}<div class="m-answer placeholder" id="mes-ans">?</div></div>`;
+      const ans = body.querySelector('#mes-ans');
+      body.querySelector('.m-card').appendChild(miniPad(ans, 4, v => mesCheck(v)));
+    },
+  };
+  function mesCheck(v) {
+    const st = MES.st; const ok = v === st.answer;
+    let html;
+    if (st.mode === 'ruler') {
+      html = rulerSVG(st.start, st.len, st.showMm);
+      if (st.unit === 'mm') {
+        const cm = Math.floor(st.len / 10), mm = st.len % 10;
+        html += `<div class="fb-exp-lbl">Le crayon mesure ${st.len} mm${mm ? ` (${cm} cm et ${mm} mm)` : ` (${cm} cm)`}</div><div class="fb-exp-lbl">💡 1 cm = 10 mm</div>`;
+      } else if (st.start > 0) {
+        html += `<div class="fb-exp-lbl">Le crayon va de ${st.start / 10} à ${(st.start + st.len) / 10} cm :<br>${(st.start + st.len) / 10} − ${st.start / 10} = ${st.len / 10} cm</div>`;
+      } else {
+        html += `<div class="fb-exp-lbl">Le crayon commence à 0 et finit à ${st.len / 10} : il mesure ${st.len / 10} cm</div>`;
+      }
+    } else {
+      html = balanceSVG(st.ws) + `<div class="fb-exp-lbl">${st.ws.map(w => w + ' g').join(' + ')} = ${st.answer} g</div>`;
+    }
+    miniResult(ok, `C'était ${st.answer} ${st.unit} !`, html);
+  }
+
+  /* =========================================================
+     JEU 8 — SYMÉTRIE
+     ========================================================= */
+  const SYM = { st:null };
+  GAMES.symetrie = {
+    title: 'Symétrie', emoji: '🔷',
+    newQ(body, lv) {
+      const vertical = lv === 'CE1' || Math.random() < 0.5;
+      const half = lv === 'CE1' ? 4 : 5, other = lv === 'CE1' ? 6 : 7;
+      const rows = vertical ? other : half * 2, cols = vertical ? half * 2 : other;
+      const inModel = (r, c) => vertical ? c < half : r < half;
+      const mirror = (r, c) => vertical ? [r, 2 * half - 1 - c] : [2 * half - 1 - r, c];
+      const k = lv === 'CE1' ? rndi(4, 7) : rndi(6, 11);
+      const model = new Set();
+      let r = rndi(0, rows - 1), c = rndi(0, cols - 1);
+      if (!inModel(r, c)) [r, c] = mirror(r, c);
+      for (let it = 0; model.size < k && it < 400; it++) {
+        model.add(r + ',' + c);
+        const moves = shuffle([[1,0],[-1,0],[0,1],[0,-1]]);
+        for (const [dr, dc] of moves) {
+          const nr = r + dr, nc = c + dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && inModel(nr, nc)) { r = nr; c = nc; break; }
+        }
+      }
+      const target = new Set([...model].map(p => { const [a, b] = p.split(',').map(Number); return mirror(a, b).join(','); }));
+      SYM.st = { vertical, half, rows, cols, model, target, user:new Set(), inModel };
+      const cs = Math.max(24, Math.min(44, Math.floor((Math.min(innerWidth - 24, 640) - 40) / cols) - 2));
+      body.innerHTML = `<div class="m-card" style="--cs:${cs}px">
+        <div class="m-prompt">Colorie le symétrique de la figure<br><small>par rapport à la ligne rouge</small></div>
+        <div class="sym-grid" id="sym-grid" style="grid-template-columns:repeat(${cols}, var(--cs))"></div>
+        <div class="w-actions">
+          <button class="m-btn" onclick="symClear()">↺ Effacer</button>
+          <button class="m-btn go" onclick="symCheck()">✓ Valider</button>
+        </div>
+      </div>`;
+      symRender();
+    },
+  };
+  function symAxisCls(st, r, c) {
+    if (st.vertical) return c === st.half - 1 ? ' ax-r' : c === st.half ? ' ax-l' : '';
+    return r === st.half - 1 ? ' ax-b' : r === st.half ? ' ax-t' : '';
+  }
+  function symRender() {
+    const st = SYM.st; let h = '';
+    for (let r = 0; r < st.rows; r++) for (let c = 0; c < st.cols; c++) {
+      const key = r + ',' + c;
+      if (st.inModel(r, c)) h += `<span class="sym-cell lock${st.model.has(key) ? ' m' : ''}${symAxisCls(st, r, c)}"></span>`;
+      else h += `<button class="sym-cell${st.user.has(key) ? ' u' : ''}${symAxisCls(st, r, c)}" onclick="symToggle(${r},${c})" aria-label="case"></button>`;
+    }
+    document.getElementById('sym-grid').innerHTML = h;
+  }
+  function symToggle(r, c) {
+    const st = SYM.st; if (MINI.answered) return;
+    const key = r + ',' + c;
+    st.user.has(key) ? st.user.delete(key) : st.user.add(key);
+    if (S.sound) beep(st.user.has(key) ? 600 : 400, 'sine', 0.06, 0.12);
+    symRender();
+  }
+  function symClear() { if (MINI.answered) return; SYM.st.user.clear(); sndClick(); symRender(); }
+  function symCheck() {
+    const st = SYM.st; if (MINI.answered) return;
+    const ok = st.user.size === st.target.size && [...st.target].every(k => st.user.has(k));
+    let h = '';
+    for (let r = 0; r < st.rows; r++) for (let c = 0; c < st.cols; c++) {
+      const key = r + ',' + c;
+      let cls = '';
+      if (st.inModel(r, c)) cls = st.model.has(key) ? ' m' : ' lock';
+      else if (st.target.has(key)) cls = st.user.has(key) ? ' ok' : ' miss';
+      else if (st.user.has(key)) cls = ' extra';
+      h += `<span class="sym-cell${cls}${symAxisCls(st, r, c)}"></span>`;
+    }
+    const cs = Math.max(16, Math.min(28, Math.floor((Math.min(innerWidth, 560) - 80) / st.cols) - 2));
+    const legend = ok ? '' : `<div class="sym-legend"><span><i style="background:#00B894"></i>juste</span><span><i style="background:repeating-linear-gradient(45deg,#FDCB6E 0 4px,#fff 4px 8px)"></i>oublié</span><span><i style="background:#E17055"></i>en trop</span></div>`;
+    miniResult(ok, 'Presque !', `<div class="sym-grid" style="--cs:${cs}px;grid-template-columns:repeat(${st.cols}, var(--cs))">${h}</div>${legend}
+      <div class="fb-exp-lbl">💡 Chaque case doit être à la même distance de la ligne rouge, de l'autre côté.</div>`);
+  }
+
+  /* =========================================================
+     JEU 9 — SYLLABES
+     ========================================================= */
+  const SYL_WORDS = [
+    ['la-pin','🐰',1],['mou-ton','🐑',1],['ca-nard','🦆',1],['to-ma-te','🍅',1],['ba-na-ne','🍌',1],['ca-deau','🎁',1],
+    ['ba-teau','⛵',1],['gâ-teau','🍰',1],['ro-bot','🤖',1],['lu-ne','🌙',1],['pom-me','🍎',1],['sa-pin','🌲',1],
+    ['ci-tron','🍋',1],['a-vion','✈️',1],['vé-lo','🚲',1],['bé-bé','👶',1],['mai-son','🏠',1],['pois-son','🐟',1],
+    ['oi-seau','🐦',1],['che-val','🐴',1],['tor-tue','🐢',1],['fu-sée','🚀',1],['li-vre','📖',1],['so-leil','☀️',1],
+    ['fro-ma-ge','🧀',1],['ca-rot-te','🥕',1],['cha-peau','🎩',1],['vo-lcan','🌋',0],
+    ['pa-pil-lon','🦋',2],['cro-co-di-le','🐊',2],['é-lé-phant','🐘',2],['hé-li-cop-tè-re','🚁',2],['or-di-na-teur','💻',2],
+    ['té-lé-pho-ne','📱',2],['di-no-sau-re','🦕',2],['pa-ra-pluie','☂️',2],['kan-gou-rou','🦘',2],['tam-bour','🥁',2],
+    ['es-car-got','🐌',2],['gre-nouil-le','🐸',2],['cham-pi-gnon','🍄',2],['ci-trouil-le','🎃',2],['pin-gouin','🐧',2],
+    ['dau-phin','🐬',2],['ba-lei-ne','🐳',2],['mon-ta-gne','⛰️',2],['cho-co-lat','🍫',2],['a-na-nas','🍍',2],
+    ['gi-ra-fe','🦒',2],['trac-teur','🚜',2],['coc-ci-nel-le','🐞',2],['hip-po-po-ta-me','🦛',2],['lu-net-tes','👓',2],
+    ['bi-cy-clet-te','🚲',2],['pa-ra-chu-te','🪂',0],
+  ].filter(w => w[2] > 0);
+  const SYLG = { st:null, last:null };
+  function sylTile(s, cls, onclick) {
+    return `<button class="tile syl ${cls || ''}" ${onclick ? `onclick="${onclick}"` : 'tabindex="-1"'}><span class="t-l">${s.toUpperCase()}</span><span class="t-v"></span></button>`;
+  }
+  GAMES.syllabes = {
+    title: 'Syllabes', emoji: '🧩',
+    newQ(body, lv) {
+      const lvl = (lv === 'CE2' && Math.random() < 0.7) ? 2 : 1;
+      let w; do { w = pickArr(SYL_WORDS.filter(x => x[2] === lvl)); } while (w[0] === SYLG.last);
+      SYLG.last = w[0];
+      const syls = w[0].split('-'), word = syls.join('');
+      const others = shuffle(SYL_WORDS.filter(x => x[0] !== w[0]).flatMap(x => x[0].split('-')).filter(s => !syls.includes(s)));
+      const intr = others.slice(0, lv === 'CE1' ? 1 : 2);
+      const tiles = shuffle(syls.concat(intr)).map(s => ({ s, used:false }));
+      SYLG.st = { syls, word, emoji:w[1], tiles, slots:syls.map(() => null) };
+      const ts = Math.max(40, Math.min(58, Math.floor((Math.min(innerWidth - 24, 640) - 40) / (syls.length * 1.9))));
+      body.innerHTML = `<div class="m-card" style="--ts:${ts}px">
+        <div class="w-img" onclick="say(SYLG.st.word)" title="Écouter">${w[1]}</div>
+        <button class="m-btn listen" onclick="say(SYLG.st.word)">🔊 Écouter le mot</button>
+        <div class="w-slots" id="syl-slots"></div>
+        <div class="w-rack" id="syl-rack"></div>
+        <div class="w-actions">
+          <button class="m-btn" onclick="sylClear()">↺ Effacer</button>
+          <button class="m-btn go" id="syl-ok" onclick="sylCheck()">✓ Valider</button>
+        </div>
+        <div class="m-hint">Remets les syllabes dans l'ordre pour écrire le mot</div>
+      </div>`;
+      sylRender();
+      if (S.sound) setTimeout(() => say(word), 350);
+    },
+  };
+  function sylRender() {
+    const st = SYLG.st;
+    document.getElementById('syl-slots').innerHTML = st.slots.map((ti, k) =>
+      ti === null ? `<button class="slot syl" onclick="sylUnslot(${k})" aria-label="case vide"></button>` : sylTile(st.tiles[ti].s, '', `sylUnslot(${k})`)).join('');
+    document.getElementById('syl-rack').innerHTML = st.tiles.map((t, i) =>
+      t.used ? '' : sylTile(t.s, '', `sylPick(${i})`)).join('') || '<span class="m-hint" style="color:#fff">✓</span>';
+    document.getElementById('syl-ok').disabled = st.slots.includes(null);
+  }
+  function sylPick(i) {
+    const st = SYLG.st; if (MINI.answered || st.tiles[i].used) return;
+    const k = st.slots.indexOf(null); if (k < 0) return;
+    st.tiles[i].used = true; st.slots[k] = i;
+    if (S.sound) beep(520 + k * 40, 'sine', 0.08, 0.15);
+    sylRender();
+  }
+  function sylUnslot(k) {
+    const st = SYLG.st; if (MINI.answered || st.slots[k] === null) return;
+    st.tiles[st.slots[k]].used = false; st.slots[k] = null; sndClick(); sylRender();
+  }
+  function sylClear() { const st = SYLG.st; if (MINI.answered) return; st.tiles.forEach(t => t.used = false); st.slots = st.slots.map(() => null); sndClick(); sylRender(); }
+  function sylCheck() {
+    const st = SYLG.st; if (MINI.answered) return;
+    if (st.slots.includes(null)) { miniShake(document.getElementById('syl-slots')); return; }
+    const got = st.slots.map(i => st.tiles[i].s);
+    const ok = got.join('') === st.word;
+    const good = st.syls.map(s => sylTile(s, 'ok-t')).join('<span class="syl-sep">·</span>');
+    const html = ok
+      ? `<div class="fb-exp-lbl">${st.emoji} ${st.word}</div><div class="w-fbrow">${good}</div><div class="fb-exp-lbl">${st.syls.length} syllabes</div>`
+      : `<div class="fb-exp-lbl">Tu as écrit :</div><div class="w-fbrow">${got.map((s, i) => sylTile(s, s === st.syls[i] ? '' : 'bad-t')).join('')}</div>
+         <div class="fb-exp-lbl">Il fallait ${st.emoji} :</div><div class="w-fbrow">${good}</div>`;
+    miniResult(ok, 'Presque !', html);
+    say(st.word);
+  }
+
+  /* =========================================================
+     JEU 10 — ORDRE ALPHABÉTIQUE
+     ========================================================= */
+  const AL = { st:null };
+  const alBase = w => baseL(w).toLowerCase();
+  GAMES.alpha = {
+    title: 'Alphabet', emoji: '🔠',
+    newQ(body, lv) {
+      const pool = [...new Set(WORDS.map(w => w[0]).concat(SYL_WORDS.map(w => w[0].replace(/-/g, ''))))];
+      let words = [];
+      if (lv === 'CE1') {
+        const firsts = new Set();
+        for (const w of shuffle(pool)) { if (words.length >= 4) break; const f = alBase(w)[0]; if (!firsts.has(f)) { firsts.add(f); words.push(w); } }
+      } else {
+        const byFirst = {};
+        pool.forEach(w => (byFirst[alBase(w)[0]] = byFirst[alBase(w)[0]] || []).push(w));
+        const letters = Object.keys(byFirst).filter(l => byFirst[l].length >= 2);
+        const L = pickArr(letters);
+        words = shuffle(byFirst[L]).slice(0, 2);
+        for (const w of shuffle(pool)) { if (words.length >= 5) break; if (!words.includes(w)) words.push(w); }
+      }
+      words = shuffle(words);
+      const sorted = words.slice().sort((a, b) => a.localeCompare(b, 'fr', { sensitivity:'base' }));
+      AL.st = { words, sorted, slots:words.map(() => null) };
+      body.innerHTML = `<div class="m-card">
+        <div class="m-prompt">Range les mots dans l'ordre alphabétique</div>
+        <div class="alpha-strip">${[...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(l => `<span>${l}</span>`).join('')}</div>
+        <div class="al-slots" id="al-slots"></div>
+        <div class="al-pool" id="al-pool"></div>
+        <div class="w-actions">
+          <button class="m-btn" onclick="alClear()">↺ Effacer</button>
+          <button class="m-btn go" id="al-ok" onclick="alCheck()">✓ Valider</button>
+        </div>
+        <div class="m-hint">${lv === 'CE2' ? 'Si deux mots commencent par la même lettre, regarde la 2ᵉ lettre !' : 'Touche les mots dans l\'ordre : A, B, C…'}</div>
+      </div>`;
+      alRender();
+    },
+  };
+  function alRender() {
+    const st = AL.st;
+    document.getElementById('al-slots').innerHTML = st.slots.map((wi, k) =>
+      `<button class="al-slot${wi !== null ? ' filled' : ''}" onclick="alUnslot(${k})"><span class="al-n">${k + 1}.</span>${wi !== null ? st.words[wi] : ''}</button>`).join('');
+    document.getElementById('al-pool').innerHTML = st.words.map((w, i) =>
+      `<button class="chip-w${st.slots.includes(i) ? ' used' : ''}" onclick="alPick(${i})">${w}</button>`).join('');
+    document.getElementById('al-ok').disabled = st.slots.includes(null);
+  }
+  function alPick(i) { const st = AL.st; if (MINI.answered || st.slots.includes(i)) return; const k = st.slots.indexOf(null); if (k < 0) return; st.slots[k] = i; sndClick(); alRender(); }
+  function alUnslot(k) { const st = AL.st; if (MINI.answered || st.slots[k] === null) return; st.slots[k] = null; sndClick(); alRender(); }
+  function alClear() { if (MINI.answered) return; AL.st.slots = AL.st.slots.map(() => null); sndClick(); alRender(); }
+  function alCheck() {
+    const st = AL.st; if (MINI.answered) return;
+    if (st.slots.includes(null)) return;
+    const got = st.slots.map(i => st.words[i]);
+    const ok = got.every((w, i) => w === st.sorted[i]);
+    const firstCount = {};
+    st.sorted.forEach(w => { const f = alBase(w)[0]; firstCount[f] = (firstCount[f] || 0) + 1; });
+    const mark = w => { const n = firstCount[alBase(w)[0]] > 1 ? 2 : 1; return `<span class="al-hl">${w.slice(0, n)}</span>${w.slice(n)}`; };
+    miniResult(ok, 'Presque !', `<div class="fb-exp-lbl">Le bon ordre :</div><div class="al-fb">${st.sorted.map((w, i) => `<div>${i + 1}. ${mark(w)}</div>`).join('')}</div>`);
+  }
+
+  /* =========================================================
+     JEU 11 — NATURE DES MOTS
+     ========================================================= */
+  const NAT_SENT = [
+    'Le/D petit/A chat/N boit/V le/D lait/N frais/A', 'Ma/D sœur/N mange/V une/D pomme/N rouge/A',
+    'Le/D gros/A chien/N court/V dans/X le/D jardin/N', 'Les/D enfants/N lancent/V un/D ballon/N bleu/A',
+    'Mon/D père/N lit/V un/D long/A livre/N', 'La/D maîtresse/N écrit/V une/D phrase/N',
+    'Un/D oiseau/N chante/V sur/X la/D branche/N', 'Les/D petites/A souris/N mangent/V le/D fromage/N',
+    'Mon/D frère/N dessine/V une/D maison/N', 'La/D vieille/A dame/N arrose/V ses/D fleurs/N',
+    'Le/D boulanger/N prépare/V un/D pain/N chaud/A', 'Ce/D grand/A arbre/N perd/V ses/D feuilles/N',
+    'Les/D poissons/N nagent/V dans/X la/D rivière/N', 'Mon/D chat/N noir/A dort/V sur/X le/D canapé/N',
+    'Le/D pirate/N cherche/V un/D trésor/N caché/A', 'Cette/D fille/N porte/V une/D robe/N jaune/A',
+    'Le/D train/N rapide/A arrive/V en/X gare/N', 'Les/D élèves/N écoutent/V une/D belle/A histoire/N',
+    'Ma/D grand-mère/N tricote/V un/D pull/N chaud/A', 'Le/D soleil/N brille/V dans/X le/D ciel/N bleu/A',
+    'Des/D nuages/N gris/A cachent/V la/D lune/N', 'Paul/N mange/V une/D glace/N',
+    'Julie/N regarde/V les/D étoiles/N brillantes/A', 'Le/D petit/A lapin/N saute/V dans/X le/D pré/N',
+    'Notre/D voisin/N répare/V sa/D voiture/N rouge/A',
+  ];
+  const NAT_NAME = { N:['nom','les noms'], V:['verbe','le verbe'], A:['adjectif','les adjectifs'], D:['déterminant','les déterminants'] };
+  const NAT = { st:null };
+  GAMES.nature = {
+    title: 'Grammaire', emoji: '🏷️',
+    newQ(body, lv) {
+      const s = pickArr(NAT_SENT).split(' ').map(t => { const [w, tag] = t.split('/'); return { w, tag }; });
+      const cats = (lv === 'CE1' ? ['N', 'V'] : ['N', 'V', 'A', 'D']).filter(c => s.some(x => x.tag === c));
+      const cat = pickArr(cats);
+      const n = s.filter(x => x.tag === cat).length;
+      NAT.st = { s, cat, sel:new Set() };
+      const plural = { N:'noms', V:'verbes', A:'adjectifs', D:'déterminants' }[cat];
+      const label = n === 1 ? (cat === 'A' ? "l'" : 'le ') + `<span class="nat-cat cat-${cat}">${NAT_NAME[cat][0]}</span>` : `tous les <span class="nat-cat cat-${cat}">${plural}</span>`;
+      NAT.st.n = n; NAT.st.plural = plural;
+      body.innerHTML = `<div class="m-card">
+        <div class="m-prompt">Touche ${label}</div>
+        ${lv === 'CE1' && n > 1 ? `<div class="m-hint">Il y en a ${n}</div>` : ''}
+        <div class="nat-sentence" id="nat-s"></div>
+        <button class="m-btn go" onclick="natCheck()">✓ Valider</button>
+      </div>`;
+      natRender();
+    },
+  };
+  function natRender() {
+    const st = NAT.st;
+    document.getElementById('nat-s').innerHTML = st.s.map((x, i) =>
+      `<button class="chip-w${st.sel.has(i) ? ' sel' : ''}" onclick="natToggle(${i})">${x.w}</button>`).join('');
+  }
+  function natToggle(i) { const st = NAT.st; if (MINI.answered) return; st.sel.has(i) ? st.sel.delete(i) : st.sel.add(i); sndClick(); natRender(); }
+  function natCheck() {
+    const st = NAT.st; if (MINI.answered) return;
+    if (!st.sel.size) { miniShake(document.getElementById('nat-s')); return; }
+    const target = st.s.map((x, i) => x.tag === st.cat ? i : -1).filter(i => i >= 0);
+    const ok = target.length === st.sel.size && target.every(i => st.sel.has(i));
+    const what = target.length > 1 ? 'Les ' + st.plural + ' étaient' : (st.cat === 'A' ? "L'" : 'Le ') + NAT_NAME[st.cat][0] + ' était';
+    const html = `<div class="fb-exp-lbl">${what} :</div>
+      <div class="nat-fb">${st.s.map(x => `<span class="nat-fbw${x.tag === st.cat ? ' t' : ''}">${x.w}<small>${x.tag !== 'X' ? NAT_NAME[x.tag][0] : '&nbsp;'}</small></span>`).join('')}</div>`;
+    miniResult(ok, 'Presque !', html);
+  }
+
+  /* =========================================================
+     JEU 12 — ACCORDS (pluriel / féminin)
+     ========================================================= */
+  const ACC_PLUR = [
+    ['un petit chat','des petits chats',['des petit chats','des petits chat','des petit chat'],1],
+    ['la fleur rouge','les fleurs rouges',['les fleur rouges','les fleurs rouge','les fleures rouges'],1],
+    ['un grand arbre','des grands arbres',['des grand arbres','des grands arbre','des grandes arbres'],1],
+    ['une belle maison','des belles maisons',['des belle maisons','des belles maison','des beaux maisons'],1],
+    ['un chien noir','des chiens noirs',['des chien noirs','des chiens noir','des chiens noires'],1],
+    ['la porte ouverte','les portes ouvertes',['les porte ouvertes','les portes ouverte','les portes ouvert'],1],
+    ['un beau bateau','des beaux bateaux',['des beaus bateaus','des beaux bateaus','des beau bateaux'],1],
+    ['le petit oiseau','les petits oiseaux',['les petits oiseaus','les petit oiseaux','les petits oiseau'],1],
+    ['un gros gâteau','des gros gâteaux',['des gross gâteaux','des gros gâteaus','des gros gâteau'],1],
+    ['le cheval blanc','les chevaux blancs',['les chevals blancs','les chevaux blanc','les chevaus blancs'],2],
+    ['le journal','les journaux',['les journals','les journaus','les journeaux'],2],
+    ['un bijou','des bijoux',['des bijous','des bijou','des bijoues'],2],
+    ['le vieux château','les vieux châteaux',['les vieuxs châteaux','les vieux châteaus','les vieus châteaux'],2],
+    ['un nez rouge','des nez rouges',['des nezs rouges','des nez rouge','des nes rouges'],2],
+    ['une souris grise','des souris grises',['des souriss grises','des souris grise','des sourises grises'],2],
+    ['un animal sauvage','des animaux sauvages',['des animals sauvages','des animaux sauvage','des animaus sauvages'],2],
+    ['un joli caillou','des jolis cailloux',['des jolis caillous','des joli cailloux','des jolis caillou'],2],
+  ];
+  const ACC_FEM = [
+    ['un voisin gentil','une voisine gentille',['une voisine gentil','une voisin gentille','une voisine gentile'],1],
+    ['un ami heureux','une amie heureuse',['une ami heureuse','une amie heureux','une amie heureuze'],1],
+    ['un petit lion','une petite lionne',['une petite lione','une petit lionne','une petite lion'],1],
+    ['un marchand content','une marchande contente',['une marchande content','une marchand contente','une marchende contente'],1],
+    ['un chien noir','une chienne noire',['une chiene noire','une chienne noir','une chien noire'],1],
+    ['un boulanger souriant','une boulangère souriante',['une boulangère souriant','une boulangerre souriante','une boulangeure souriante'],2],
+    ['un chanteur célèbre','une chanteuse célèbre',['une chanteure célèbre','une chanteuze célèbre','une chantrice célèbre'],2],
+    ['un grand acteur','une grande actrice',['une grande acteure','une grand actrice','une grande acteuse'],2],
+    ['un élève sérieux','une élève sérieuse',['une élève sérieux','une élèvesse sérieuse','une élève sérieuze'],2],
+    ['un cousin sportif','une cousine sportive',['une cousine sportif','une cousine sportife','une cousin sportive'],2],
+    ['le roi puissant','la reine puissante',['la roine puissante','la reine puissant','la rei puissante'],2],
+    ['un loup blanc','une louve blanche',['une loupe blanche','une louve blanc','une louve blanque'],2],
+  ];
+  const ACC = { st:null };
+  GAMES.accords = {
+    title: 'Accords', emoji: '👫',
+    newQ(body, lv) {
+      const fem = Math.random() < (lv === 'CE1' ? 0.3 : 0.45);
+      const list = (fem ? ACC_FEM : ACC_PLUR).filter(x => lv === 'CE2' || x[3] === 1);
+      const [src, dst, traps] = pickArr(list);
+      const opts = shuffle([dst, ...traps]);
+      ACC.st = { src, dst, opts, fem };
+      body.innerHTML = `<div class="m-card">
+        <div class="m-prompt">${fem ? 'Mets au <b>féminin</b> :' : 'Mets au <b>pluriel</b> :'}</div>
+        <div class="acc-src">${src}</div>
+        <div class="m-hint">Choisis la bonne écriture</div>
+        ${choicesHTML(opts, 'accCheck', 'one words')}
+      </div>`;
+    },
+  };
+  function accHighlight(src, dst) {
+    const a = src.split(' '), b = dst.split(' ');
+    return b.map((w, i) => {
+      const o = a[i] || ''; let p = 0;
+      while (p < w.length && p < o.length && w[p] === o[p]) p++;
+      return p >= w.length ? w : w.slice(0, p) + '<b>' + w.slice(p) + '</b>';
+    }).join(' ');
+  }
+  function accCheck(i) {
+    const st = ACC.st; if (MINI.answered) return;
+    const ok = st.opts[i] === st.dst;
+    miniResult(ok, `C'était « ${st.dst} » !`,
+      `<div class="fb-exp-lbl acc-fb">${st.src} → ${accHighlight(st.src, st.dst)}</div>
+       <div class="fb-exp-lbl">💡 ${st.fem ? 'Au féminin, on ajoute souvent un -e (et parfois la fin du mot change).' : 'Au pluriel, on ajoute souvent un -s… mais -eau, -al, -ou font souvent -x !'}</div>`);
+    say(st.dst);
+  }
+
+  /* =========================================================
+     JEU 13 — CALENDRIER
+     ========================================================= */
+  const DAYS = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
+  const MONTHS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  const MDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const SEASON = { 0:'hiver', 1:'hiver', 3:'printemps', 4:'printemps', 6:'été', 7:'été', 9:'automne', 10:'automne' };
+  const ORD = n => n === 1 ? '1ᵉʳ' : n + 'ᵉ';
+  const CAL = { st:null };
+  function calWeek(today, ans) {
+    return `<div class="cal-week">${DAYS.map((d, i) => `<span class="cal-day${i === today ? ' today' : ''}${i === ans ? ' ans' : ''}">${d}</span>`).join('')}</div>`;
+  }
+  function calMonthGrid(y, m, hl) {
+    const first = (new Date(y, m, 1).getDay() + 6) % 7;
+    const nd = new Date(y, m + 1, 0).getDate();
+    let h = `<div class="cal-grid">${['lun','mar','mer','jeu','ven','sam','dim'].map(d => `<div class="h">${d}</div>`).join('')}`;
+    for (let i = 0; i < first; i++) h += '<div class="e"></div>';
+    for (let d = 1; d <= nd; d++) h += `<div class="${d === hl ? 'hl' : ''}">${d}</div>`;
+    return h + '</div>';
+  }
+  function calQuestion(lv) {
+    const types = lv === 'CE1' ? ['days','days','months','season','grid'] : ['days','months','ndays','season','grid','grid'];
+    const t = pickArr(types);
+    if (t === 'days') {
+      const today = rndi(0, 6);
+      let off, phrase;
+      if (lv === 'CE1') [off, phrase] = pickArr([[1, 'Demain'], [2, 'Après-demain'], [-1, 'Hier'], [-2, 'Avant-hier']]);
+      else { off = pickArr([rndi(2, 10), -rndi(2, 6)]); phrase = off > 0 ? `Dans ${off} jours` : `Il y a ${-off} jours`; }
+      const ans = ((today + off) % 7 + 7) % 7;
+      const opts = [DAYS[ans]];
+      for (const d of shuffle([ans + 1, ans - 1, ans + 2, ans - 2, today].map(x => DAYS[((x % 7) + 7) % 7]))) { if (opts.length >= 4) break; if (!opts.includes(d)) opts.push(d); }
+      return { prompt:`Aujourd'hui, nous sommes <b>${DAYS[today]}</b>.<br>${phrase}, quel jour ${off > 0 ? 'serons-nous' : 'étions-nous'} ?`,
+               opts, correct:DAYS[ans], explain:calWeek(today, ans) + `<div class="fb-exp-lbl">${cap(DAYS[today])} ${off > 0 ? '+' : '−'} ${Math.abs(off)} jour${Math.abs(off) > 1 ? 's' : ''} → ${DAYS[ans]}</div>` };
+    }
+    if (t === 'months') {
+      const m = rndi(0, 11);
+      let prompt, ans;
+      const k = lv === 'CE1' ? rndi(0, 1) : rndi(0, 2);
+      if (k === 0) { ans = (m + 1) % 12; prompt = `Quel mois vient <b>après</b> ${MONTHS[m]} ?`; }
+      else if (k === 1) { ans = (m + 11) % 12; prompt = `Quel mois vient <b>avant</b> ${MONTHS[m]} ?`; }
+      else { ans = m; prompt = `Quel est le <b>${ORD(m + 1)} mois</b> de l'année ?`; }
+      const opts = [MONTHS[ans]];
+      for (const x of shuffle([ans + 1, ans - 1, ans + 2, m, ans + 11, ans + 6])) { const mm = MONTHS[((x % 12) + 12) % 12]; if (opts.length >= 4) break; if (!opts.includes(mm)) opts.push(mm); }
+      return { prompt, opts, correct:MONTHS[ans], explain:`<div class="cal-week">${MONTHS.map((mo, i) => `<span class="cal-day${i === ans ? ' ans' : ''}">${i + 1}. ${mo}</span>`).join('')}</div>` };
+    }
+    if (t === 'ndays') {
+      const m = rndi(0, 11), ans = m === 1 ? '28 ou 29' : String(MDAYS[m]);
+      return { prompt:`Combien de jours y a-t-il en <b>${MONTHS[m]}</b> ?`, opts:['28 ou 29', '30', '31'], correct:ans,
+               explain:`<div class="fb-exp-lbl">${cap(MONTHS[m])} a ${ans} jours.</div><div class="fb-exp-lbl">💡 Astuce : compte sur les bosses de tes poings ! Bosse = 31 jours, creux = 30 (sauf février).</div>` };
+    }
+    if (t === 'season') {
+      const m = pickArr(Object.keys(SEASON).map(Number));
+      return { prompt:`En quelle saison est le mois de <b>${MONTHS[m]}</b> ?`, opts:['hiver', 'printemps', 'été', 'automne'], correct:SEASON[m],
+               explain:`<div class="fb-exp-lbl">❄️ hiver : janvier, février · 🌸 printemps : avril, mai<br>☀️ été : juillet, août · 🍂 automne : octobre, novembre</div>` };
+    }
+    // lecture d'un calendrier
+    const y = new Date().getFullYear(), m = rndi(0, 11), nd = new Date(y, m + 1, 0).getDate(), d = rndi(1, nd);
+    const wd = (new Date(y, m, d).getDay() + 6) % 7;
+    const opts = [DAYS[wd]];
+    for (const x of shuffle([wd + 1, wd - 1, wd + 2, wd + 3])) { const dd = DAYS[((x % 7) + 7) % 7]; if (opts.length >= 4) break; if (!opts.includes(dd)) opts.push(dd); }
+    return { prompt:`Regarde le calendrier.<br>Quel jour de la semaine est le <b>${d} ${MONTHS[m]}</b> ?`,
+             extra:`<div class="cal-title">${cap(MONTHS[m])} ${y}</div>${calMonthGrid(y, m, 0)}`,
+             opts, correct:DAYS[wd], explain:`${calMonthGrid(y, m, d)}<div class="fb-exp-lbl">Le ${d} ${MONTHS[m]} ${y} est un ${DAYS[wd]}.</div>` };
+  }
+  GAMES.calendrier = {
+    title: 'Calendrier', emoji: '📅',
+    newQ(body, lv) {
+      const q = calQuestion(lv);
+      q.opts = q.opts.length === 3 ? q.opts : shuffle(q.opts);
+      CAL.st = q;
+      body.innerHTML = `<div class="m-card">
+        <div class="m-prompt">${q.prompt}</div>${q.extra || ''}
+        ${choicesHTML(q.opts, 'calCheck', q.opts.length === 3 ? 'one' : '')}
+      </div>`;
+    },
+  };
+  function calCheck(i) {
+    const st = CAL.st; if (MINI.answered) return;
+    miniResult(st.opts[i] === st.correct, `C'était « ${st.correct} » !`, st.explain);
+  }
+
+  /* =========================================================
+     JEU 14 — ENGLISH
+     ========================================================= */
+  const EN_VOC = {
+    animals: [['cat','chat','🐱',1],['dog','chien','🐶',1],['bird','oiseau','🐦',1],['fish','poisson','🐟',1],['horse','cheval','🐴',1],
+              ['cow','vache','🐮',1],['pig','cochon','🐷',1],['rabbit','lapin','🐰',1],['mouse','souris','🐭',1],['lion','lion','🦁',1],
+              ['elephant','éléphant','🐘',2],['monkey','singe','🐒',2],['frog','grenouille','🐸',2],['duck','canard','🦆',2],['sheep','mouton','🐑',2],['bear','ours','🐻',2]],
+    food:    [['apple','pomme','🍎',1],['banana','banane','🍌',1],['strawberry','fraise','🍓',1],['cake','gâteau','🍰',1],['bread','pain','🍞',1],
+              ['milk','lait','🥛',1],['cheese','fromage','🧀',2],['grapes','raisin','🍇',2],['pear','poire','🍐',2],['lemon','citron','🍋',2],['egg','œuf','🥚',2],['carrot','carotte','🥕',2]],
+    colors:  [['red','rouge','#E74C3C',1],['blue','bleu','#3498DB',1],['green','vert','#27AE60',1],['yellow','jaune','#F1C40F',1],['orange','orange','#E67E22',1],
+              ['pink','rose','#FF8FC7',1],['black','noir','#222222',1],['white','blanc','#FFFFFF',1],['purple','violet','#8E44AD',2],['brown','marron','#8B5A2B',2],['grey','gris','#95A5A6',2]],
+    numbers: ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty']
+               .map((w, i) => [w, frNum(i + 1), String(i + 1), i < 10 ? 1 : 2]),
+    objects: [['house','maison','🏠',1],['car','voiture','🚗',1],['ball','ballon','⚽',1],['book','livre','📖',1],['sun','soleil','☀️',1],['tree','arbre','🌳',1],
+              ['pencil','crayon','✏️',2],['bike','vélo','🚲',2],['boat','bateau','⛵',2],['plane','avion','✈️',2],['moon','lune','🌙',2],['star','étoile','⭐',2],['flower','fleur','🌸',2],['hat','chapeau','🎩',2]],
+  };
+  function enVis(cat, v) {
+    if (cat === 'colors')  return `<span class="en-color" style="background:${v}"></span>`;
+    if (cat === 'numbers') return `<span class="en-num">${v}</span>`;
+    return v;
+  }
+  const EN = { st:null, last:null };
+  GAMES.english = {
+    title: 'English', emoji: '🇬🇧',
+    newQ(body, lv) {
+      const cat = pickArr(Object.keys(EN_VOC));
+      const list = EN_VOC[cat].filter(x => lv === 'CE2' || x[3] === 1);
+      let item; do { item = pickArr(list); } while (item[0] === EN.last);
+      EN.last = item[0];
+      const others = shuffle(list.filter(x => x !== item)).slice(0, 3);
+      const opts = shuffle([item, ...others]);
+      const mode = lv === 'CE1' ? 'listen' : pickArr(['listen', 'word']);
+      EN.st = { cat, item, opts, mode };
+      if (mode === 'listen') {
+        body.innerHTML = `<div class="m-card">
+          <div class="m-prompt">Écoute et touche la bonne image</div>
+          <button class="m-btn listen" onclick="sayEn(EN.st.item[0])">🔊 Listen !</button>
+          ${lv === 'CE2' ? `<div class="en-word">${item[0]}</div>` : ''}
+          <div class="m-choices">${opts.map((o, i) => `<button class="m-choice img" onclick="enCheck(${i})">${enVis(cat, o[2])}</button>`).join('')}</div>
+        </div>`;
+        setTimeout(() => sayEn(item[0]), 350);
+      } else {
+        body.innerHTML = `<div class="m-card">
+          <div class="m-prompt">Comment dit-on en anglais ?</div>
+          <div class="en-vis">${enVis(cat, item[2])}</div>
+          ${choicesHTML(opts.map(o => o[0]), 'enCheck')}
+        </div>`;
+      }
+    },
+  };
+  function enCheck(i) {
+    const st = EN.st; if (MINI.answered) return;
+    const ok = st.opts[i] === st.item;
+    miniResult(ok, `C'était « ${st.item[0]} » !`,
+      `<div class="en-vis">${enVis(st.cat, st.item[2])}</div><div class="fb-exp-lbl" style="font-size:1.3rem">🇬🇧 ${st.item[0]} = 🇫🇷 ${st.item[1]}</div>`);
+    sayEn(st.item[0]);
   }
 
   function spawnStars() {
