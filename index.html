@@ -1055,6 +1055,117 @@
     .fb-next { flex-shrink:0; }
     #range-btn { display:none; }
     body.theme-pirate #range-btn { display:flex; }
+
+    /* =============================================
+       MINI-JEUX (Mots, Heure, Monnaie, Conjugaison, Nombres)
+       ============================================= */
+    #welcome { overflow-y:auto; justify-content:safe center; gap:18px; }
+    .level-row.games { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; width:100%; max-width:820px; }
+    .level-row.games .level-card { min-width:0; padding:18px 12px; }
+    .level-row.games .lc-name { font-size:clamp(1.05rem,3.4vw,1.45rem); overflow-wrap:anywhere; }
+    @media (max-width:560px) {
+      #mini .score-item .si-lbl, #mini .score-sep { display:none; }
+      #mini .mini-title { font-size:.75rem; padding:5px 10px; }
+      #mini .scorebar { padding:8px 10px; }
+      #mini .score-left { gap:8px; }
+      #mini .icon-btn { width:38px; height:38px; font-size:1.05rem; }
+      #mini .score-right { gap:5px; }
+    }
+    .level-row.games .lc-emoji { font-size:clamp(2.2rem,7vw,3rem); }
+
+    #mini { justify-content:flex-start; background:#F4F7FB; }
+    #mini[data-game="mots"]    { background:linear-gradient(180deg,#E8F6EF,#CDEBDC); }
+    #mini[data-game="heure"]   { background:linear-gradient(180deg,#EAF2FF,#D3E4FB); }
+    #mini[data-game="monnaie"] { background:linear-gradient(180deg,#FFF6E5,#FBE3B9); }
+    #mini[data-game="conj"]    { background:linear-gradient(180deg,#F5EDFF,#E3D3FA); }
+    #mini[data-game="nombres"] { background:linear-gradient(180deg,#E6F7FB,#C9ECF4); }
+    .mini-title { white-space:nowrap; }
+    .mini-body { flex:1; width:100%; overflow-y:auto; display:flex; flex-direction:column; align-items:center; justify-content:safe center; padding:14px 12px 18px; gap:12px; }
+    .m-card { background:#fff; border-radius:var(--radius-lg); box-shadow:var(--shadow-md); width:100%; max-width:640px; padding:18px 14px; display:flex; flex-direction:column; align-items:center; gap:14px; animation:card-enter .4s cubic-bezier(.34,1.56,.64,1); }
+    .m-prompt { font-size:clamp(1.1rem,3.6vw,1.5rem); font-weight:900; text-align:center; color:var(--text); line-height:1.35; }
+    .m-prompt b { color:var(--purple); }
+    .m-hint { font-size:.8rem; font-weight:700; color:var(--muted); text-align:center; }
+    .m-choices { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
+    .m-choices.one { grid-template-columns:1fr; }
+    .m-choice { min-height:58px; background:#fff; border:3px solid #E3E6EA; border-radius:var(--radius-md); font-family:var(--font); font-size:clamp(1.05rem,3.6vw,1.45rem); font-weight:900; color:var(--text); cursor:pointer; box-shadow:0 4px 0 #d5d5d5; padding:8px; }
+    .m-choice.words { font-size:clamp(.95rem,3vw,1.2rem); }
+    .m-choice:active { transform:translateY(3px); box-shadow:0 1px 0 #d5d5d5; }
+    .m-btn { border:none; border-radius:100px; padding:12px 22px; font-family:var(--font); font-weight:900; font-size:clamp(1rem,3vw,1.2rem); cursor:pointer; background:#EEF2F7; color:var(--text); box-shadow:0 3px 0 #cfd6de; }
+    .m-btn:active { transform:translateY(2px); box-shadow:0 1px 0 #cfd6de; }
+    .m-btn.go { background:linear-gradient(135deg,#00B894,#00CEC9); color:#fff; box-shadow:0 3px 0 #009474; }
+    .m-btn.go:disabled { opacity:.45; }
+    .m-btn.listen { background:#0984E3; color:#fff; box-shadow:0 3px 0 #06609f; }
+    .w-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .lvl-toggle { display:flex; background:#EEF2F7; border-radius:100px; padding:3px; flex-shrink:0; }
+    .lvl-toggle button { border:none; background:none; font-family:var(--font); font-weight:900; font-size:.8rem; padding:5px 10px; border-radius:100px; color:var(--muted); cursor:pointer; }
+    .lvl-toggle button.active { background:var(--purple); color:#fff; }
+    .m-answer { min-width:120px; font-size:clamp(2rem,7vw,3rem); font-weight:900; color:var(--orange); text-align:center; border-bottom:4px solid var(--orange); padding:0 10px; }
+    .m-answer.placeholder { color:#ccc; border-color:#ddd; }
+    .m-numpad { max-width:320px; }
+    .do-shake2 { animation: shake .45s ease; }
+
+    /* ---- Mots (Scrabble) ---- */
+    .w-img { font-size:clamp(4rem,16vw,6.5rem); line-height:1; cursor:pointer; animation:float 3s ease-in-out infinite; }
+    .w-slots, .w-rack, .w-fbrow { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; }
+    .w-slots { flex-wrap:nowrap; }
+    .w-rack { background:linear-gradient(180deg,#A0693A,#7A4A22); padding:10px; border-radius:14px; box-shadow:inset 0 -5px 0 rgba(0,0,0,.25); max-width:100%; }
+    .tile { width:var(--ts,52px); height:var(--ts,52px); background:linear-gradient(160deg,#FBEBC6,#EFD49A); border:none; border-radius:7px; box-shadow:0 3px 0 #BF9A5A, 0 3px 8px rgba(0,0,0,.2); position:relative; font-family:var(--font); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; flex-shrink:0; }
+    .tile .t-l { font-size:calc(var(--ts,52px) * .55); font-weight:900; color:#2D3436; line-height:1; }
+    .tile .t-v { position:absolute; right:4px; bottom:2px; font-size:calc(var(--ts,52px) * .2); font-weight:800; color:#2D3436; }
+    .tile:active { transform:translateY(2px); }
+    .tile.ghost { background:rgba(0,0,0,.18); box-shadow:none; cursor:default; }
+    .slot { width:var(--ts,52px); height:var(--ts,52px); border:3px dashed #B2BEC3; border-radius:7px; background:#F7F9FA; flex-shrink:0; cursor:pointer; padding:0; }
+    .tile.ok-t  { background:linear-gradient(160deg,#C8F7DC,#8EE4B5); }
+    .tile.bad-t { background:linear-gradient(160deg,#FFD6CC,#F5A594); }
+    .w-fbrow .tile { --ts:40px; cursor:default; }
+
+    /* ---- Heure ---- */
+    .clock { width:clamp(180px,48vw,250px); height:auto; }
+    .fb-expbox .clock { width:130px; }
+
+    /* ---- Monnaie ---- */
+    .mon-item { font-size:clamp(3.2rem,12vw,4.6rem); display:flex; align-items:center; gap:12px; line-height:1; }
+    .mon-price { font-size:clamp(1.4rem,5vw,2rem); font-weight:900; background:#FFEAA7; color:#6E4B00; border-radius:10px; padding:4px 12px; border:2px dashed #E1B12C; }
+    .mon-tray { min-height:72px; width:100%; background:#F7F1E3; border:3px dashed #D1C4A5; border-radius:var(--radius-md); display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center; padding:8px; }
+    .mon-tray .empty { font-size:.85rem; font-weight:700; color:var(--muted); text-align:center; }
+    .mon-wallet, .mon-fbrow { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; }
+    .mon-pick, .mon-given { background:none; border:none; padding:2px; cursor:pointer; }
+    .mon-pick:active, .mon-given:active { transform:scale(.9); }
+    .coin { display:inline-flex; align-items:center; justify-content:center; border-radius:50%; font-weight:900; color:#3b2b00; box-shadow:inset 0 0 0 2px rgba(0,0,0,.15), 0 2px 4px rgba(0,0,0,.3); font-family:var(--font); }
+    .coin b { font-size:.72rem; background:rgba(255,255,255,.55); border-radius:6px; padding:0 3px; }
+    .c10  { width:38px; height:38px; background:radial-gradient(circle at 35% 35%,#FBE78B,#D4AC0D); }
+    .c20  { width:42px; height:42px; background:radial-gradient(circle at 35% 35%,#FBE78B,#D4AC0D); }
+    .c50  { width:46px; height:46px; background:radial-gradient(circle at 35% 35%,#FBE78B,#D4AC0D); }
+    .c100 { width:48px; height:48px; background:radial-gradient(circle,#E5E8EB 0 54%,#D4AC0D 57% 100%); }
+    .c200 { width:54px; height:54px; background:radial-gradient(circle,#F4D03F 0 54%,#C3C8CC 57% 100%); }
+    .note { display:inline-flex; align-items:center; justify-content:center; width:76px; height:42px; border-radius:6px; font-weight:900; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.45); box-shadow:0 2px 4px rgba(0,0,0,.3); border:3px solid rgba(255,255,255,.55); font-family:var(--font); font-size:1rem; }
+    .n500 { background:linear-gradient(135deg,#9AA9A2,#6F7F78); }
+    .n1000 { background:linear-gradient(135deg,#D9776C,#B04A40); }
+    .n2000 { background:linear-gradient(135deg,#5E8FD0,#2F5E9E); }
+    .n5000 { background:linear-gradient(135deg,#F2A65A,#D07A22); }
+
+    /* ---- Conjugaison ---- */
+    .cj-tense { background:#6C5CE7; color:#fff; border-radius:100px; padding:4px 14px; font-weight:900; font-size:.9rem; }
+    .cj-sentence { font-size:clamp(1.3rem,4.5vw,1.9rem); font-weight:900; text-align:center; line-height:1.5; }
+    .cj-blank { display:inline-block; min-width:110px; border-bottom:4px solid var(--purple); }
+    .cj-inf { color:var(--muted); font-size:.75em; white-space:nowrap; }
+    .cj-table { border-collapse:collapse; color:#fff; font-weight:800; font-size:clamp(.95rem,3vw,1.15rem); }
+    .cj-table td { padding:3px 10px; }
+    .cj-table td:first-child { text-align:right; opacity:.85; }
+    .cj-table tr.hl { background:rgba(255,255,255,.28); }
+
+    /* ---- Nombres ---- */
+    .nb-words { font-size:clamp(1.4rem,5vw,2.1rem); font-weight:900; color:#0984E3; text-align:center; word-break:break-word; }
+    .nb-big { font-size:clamp(2.6rem,10vw,4rem); font-weight:900; color:var(--purple); line-height:1.1; }
+    #mfb .nb-big { color:#fff; }
+
+    /* ---- Feedback mini-jeux ---- */
+    #mfb { position:fixed; inset:0; z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:safe center; gap:10px; padding:14px 16px; overflow-y:auto; pointer-events:none; opacity:0; transition:opacity .3s ease; }
+    #mfb.show { opacity:1; pointer-events:all; }
+    #mfb.correct-bg { background:linear-gradient(145deg,#00d2a0 0%,#00B894 50%,#00868A 100%); }
+    #mfb.wrong-bg   { background:linear-gradient(145deg,#ff9a7a 0%,#E17055 50%,#d35400 100%); }
+    #mfb.correct-bg .fb-next { color:var(--green); }
+    #mfb.wrong-bg .fb-next { color:var(--red); }
   </style>
 </head>
 <body>
@@ -1073,7 +1184,7 @@
   <div class="mascot" aria-hidden="true">🦉</div>
   <h1 class="welcome-title">Calculette<br>Magique ✨</h1>
   <p class="welcome-sub">Choisis ton aventure !</p>
-  <div class="level-row">
+  <div class="level-row games">
     <button class="level-card" id="btn-cp" onclick="startLevel('CP')" aria-label="Fruits">
       <span class="lc-emoji">🍎</span>
       <span class="lc-name">Fruits</span>
@@ -1085,6 +1196,31 @@
       <span class="lc-name">Pirates</span>
       <span class="lc-ops">+ − × ÷</span>
       <span class="lc-desc">🏴‍☠️ Chiffres et trésors<br>de pirates !</span>
+    </button>
+    <button class="level-card game-card" onclick="openMini('mots')" aria-label="Mots">
+      <span class="lc-emoji">🔤</span>
+      <span class="lc-name">Mots</span>
+      <span class="lc-desc">Écoute et écris le mot<br>avec les lettres</span>
+    </button>
+    <button class="level-card game-card" onclick="openMini('heure')" aria-label="L'heure">
+      <span class="lc-emoji">🕐</span>
+      <span class="lc-name">L'heure</span>
+      <span class="lc-desc">Lis l'heure<br>sur l'horloge</span>
+    </button>
+    <button class="level-card game-card" onclick="openMini('monnaie')" aria-label="Monnaie">
+      <span class="lc-emoji">💶</span>
+      <span class="lc-name">Monnaie</span>
+      <span class="lc-desc">Paie juste et<br>rends la monnaie</span>
+    </button>
+    <button class="level-card game-card" onclick="openMini('conj')" aria-label="Conjugaison">
+      <span class="lc-emoji">✍️</span>
+      <span class="lc-name">Conjugaison</span>
+      <span class="lc-desc">Trouve la bonne<br>forme du verbe</span>
+    </button>
+    <button class="level-card game-card" onclick="openMini('nombres')" aria-label="Nombres">
+      <span class="lc-emoji">🔢</span>
+      <span class="lc-name">Nombres</span>
+      <span class="lc-desc">En chiffres<br>et en lettres</span>
     </button>
   </div>
 </section>
@@ -1202,6 +1338,38 @@
     </div>
   </div>
 </section>
+
+<!-- ===================================================
+     MINI-JEUX (écran commun)
+     =================================================== -->
+<section id="mini" class="screen hidden" aria-label="Jeu">
+  <div class="scorebar">
+    <div class="score-left">
+      <button class="icon-btn" onclick="miniHome()" aria-label="Accueil" title="Accueil">🏠</button>
+      <span class="level-pill mini-title" id="mini-title">🔤 Mots</span>
+      <div class="lvl-toggle" id="lvl-toggle">
+        <button data-lv="CE1" onclick="miniSetLevel('CE1')">CE1</button>
+        <button data-lv="CE2" onclick="miniSetLevel('CE2')">CE2</button>
+      </div>
+      <div class="score-sep"></div>
+      <div class="score-item ok"><span class="si-lbl">✅ Bravo</span><span class="si-val" id="m-ok">0</span></div>
+      <div class="score-sep"></div>
+      <div class="score-item nok"><span class="si-lbl">❌ Raté</span><span class="si-val" id="m-nok">0</span></div>
+    </div>
+    <div class="score-right">
+      <button class="icon-btn" id="m-sound" title="Activer/couper le son" onclick="toggleSound()" aria-label="Son">🔊</button>
+      <button class="icon-btn lock-btn" title="Verrouiller" onclick="lockScreen()" aria-label="Verrouiller">🔒</button>
+    </div>
+  </div>
+  <div class="mini-body" id="mini-body"></div>
+</section>
+
+<div id="mfb" role="dialog" aria-live="assertive">
+  <div class="fb-icon" id="mfb-icon" onclick="miniNext()" title="Suivant"></div>
+  <div class="fb-title" id="mfb-title"></div>
+  <div class="fb-expbox" id="mfb-box"></div>
+  <button class="fb-next" onclick="miniNext()">Suivant ➡️</button>
+</div>
 
 <!-- ===================================================
      LOCK INDICATOR (corner badge when locked)
@@ -1878,7 +2046,7 @@
 
   function toggleSound() {
     S.sound = !S.sound;
-    document.getElementById('sound-toggle').textContent = S.sound ? '🔊' : '🔇';
+    document.querySelectorAll('#sound-toggle, #m-sound').forEach(b => b.textContent = S.sound ? '🔊' : '🔇');
     if(S.sound) sndClick();
   }
 
@@ -2181,6 +2349,574 @@
     });
     ['pointerup','pointerleave','pointercancel'].forEach(ev => btn.addEventListener(ev, stop));
   });
+
+
+  /* =========================================================
+     MINI-JEUX : Mots · L'heure · Monnaie · Conjugaison · Nombres
+     ========================================================= */
+  const MINI = { id:null, level:'CE1', ok:0, nok:0, answered:false, fbOpen:false, pad:null };
+  const GAMES = {};
+  const rndi    = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+  const pickArr = a => a[Math.floor(Math.random()*a.length)];
+  const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+  const cap     = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+  /* ---- Voix (synthèse vocale du navigateur) ---- */
+  let frVoice = null;
+  function loadVoices() {
+    try {
+      const vs = speechSynthesis.getVoices();
+      frVoice = vs.find(v => /^fr[-_]FR/i.test(v.lang)) || vs.find(v => /^fr/i.test(v.lang)) || null;
+    } catch(_) {}
+  }
+  if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+  function say(text) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'fr-FR'; if (frVoice) u.voice = frVoice; u.rate = 0.85;
+      speechSynthesis.speak(u);
+    } catch(_) {}
+  }
+
+  /* ---- Coquille commune ---- */
+  function openMini(id) {
+    MINI.id = id; MINI.ok = 0; MINI.nok = 0;
+    const g = GAMES[id];
+    S.phase = 'mini'; S.level = null;
+    document.body.classList.remove('theme-pirate');
+    const scr = document.getElementById('mini');
+    scr.dataset.game = id;
+    document.getElementById('mini-title').textContent = g.emoji + ' ' + g.title;
+    document.getElementById('welcome').classList.add('hidden');
+    scr.classList.remove('hidden');
+    miniScore(); miniLvlUI(); miniNew(); sndClick();
+  }
+  function miniScore() {
+    document.getElementById('m-ok').textContent  = MINI.ok;
+    document.getElementById('m-nok').textContent = MINI.nok;
+  }
+  function miniLvlUI() {
+    document.querySelectorAll('#lvl-toggle button').forEach(b => b.classList.toggle('active', b.dataset.lv === MINI.level));
+  }
+  function miniSetLevel(lv) { MINI.level = lv; miniLvlUI(); sndClick(); miniNew(); }
+  function miniNew() {
+    MINI.answered = false; MINI.pad = null;
+    const body = document.getElementById('mini-body');
+    body.innerHTML = '';
+    GAMES[MINI.id].newQ(body, MINI.level);
+    body.scrollTop = 0;
+  }
+  const MINI_BRAVO = [['🎉','Bravo !'],['⭐','Super !'],['🏆','Parfait !'],['🌟','Excellent !'],['💯','Génial !'],['🦸','Tu es fort(e) !'],['🎊','Fantastique !'],['🌈','Magnifique !']];
+  function miniResult(ok, wrongTitle, html) {
+    if (MINI.answered) return;
+    MINI.answered = true;
+    ok ? MINI.ok++ : MINI.nok++;
+    miniScore();
+    const ov = document.getElementById('mfb');
+    ov.className = 'show ' + (ok ? 'correct-bg' : 'wrong-bg');
+    if (ok) {
+      const [em, msg] = pickArr(MINI_BRAVO);
+      document.getElementById('mfb-icon').textContent  = em;
+      document.getElementById('mfb-title').textContent = msg;
+      sndCorrect(); launchConfetti();
+    } else {
+      document.getElementById('mfb-icon').textContent  = '🤔';
+      document.getElementById('mfb-title').textContent = wrongTitle;
+      sndWrong();
+    }
+    document.getElementById('mfb-box').innerHTML = html;
+    MINI.fbOpen = true; ov.scrollTop = 0;
+  }
+  function miniNext() {
+    if (!MINI.fbOpen) return;
+    MINI.fbOpen = false;
+    document.getElementById('mfb').className = '';
+    stopConfetti(); miniNew();
+  }
+  function miniHome() {
+    MINI.fbOpen = false;
+    document.getElementById('mfb').className = '';
+    stopConfetti();
+    try { speechSynthesis.cancel(); } catch(_) {}
+    document.getElementById('mini').classList.add('hidden');
+    document.getElementById('welcome').classList.remove('hidden');
+    S.phase = 'welcome';
+  }
+  function miniShake(el) { if (!el) return; el.classList.remove('do-shake2'); void el.offsetWidth; el.classList.add('do-shake2'); }
+
+  document.addEventListener('keydown', e => {
+    if (S.phase !== 'mini') return;
+    if (MINI.fbOpen) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); miniNext(); } return; }
+    if (MINI.pad) {
+      if (e.key >= '0' && e.key <= '9') MINI.pad(e.key);
+      else if (e.key === 'Backspace') MINI.pad('del');
+      else if (e.key === 'Enter') MINI.pad('ok');
+      return;
+    }
+    const g = GAMES[MINI.id];
+    if (g && g.onKey) g.onKey(e);
+  });
+
+  /* Pavé numérique réutilisable */
+  function miniPad(target, maxLen, onOk) {
+    const wrap = document.createElement('div');
+    wrap.className = 'numpad m-numpad';
+    const press = k => {
+      if (MINI.answered) return;
+      let v = target.dataset.v || '';
+      if (k === 'ok') { if (v) onOk(parseInt(v, 10)); else miniShake(target); return; }
+      if (k === 'del') v = v.slice(0, -1);
+      else if (v.length < maxLen) v += k;
+      sndClick();
+      target.dataset.v = v;
+      target.textContent = v || '?';
+      target.classList.toggle('placeholder', !v);
+    };
+    ['1','2','3','4','5','6','7','8','9','del','0','ok'].forEach(k => {
+      const b = document.createElement('button');
+      b.className = 'np-btn' + (k === 'del' ? ' del' : k === 'ok' ? ' ok' : '');
+      b.textContent = k === 'del' ? '⌫' : k === 'ok' ? '✓' : k;
+      b.onclick = () => press(k);
+      wrap.appendChild(b);
+    });
+    MINI.pad = press;
+    return wrap;
+  }
+
+  /* Choix multiples réutilisables */
+  function choicesHTML(list, handler, cls='') {
+    return `<div class="m-choices ${cls}">` + list.map((c, i) =>
+      `<button class="m-choice ${cls.includes('words') ? 'words' : ''}" onclick="${handler}(${i})">${c}</button>`).join('') + '</div>';
+  }
+
+  /* ---- Nombres en lettres (orthographe rectifiée 1990 : traits d'union partout) ---- */
+  const NU = ['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'];
+  const NT = {2:'vingt',3:'trente',4:'quarante',5:'cinquante',6:'soixante'};
+  function nUnder100(n) {
+    if (n < 20) return NU[n];
+    const t = Math.floor(n/10), u = n%10;
+    if (t <= 6) return NT[t] + (u === 0 ? '' : u === 1 ? '-et-un' : '-' + NU[u]);
+    if (t === 7) return 'soixante' + (u === 1 ? '-et-onze' : '-' + NU[10+u]);
+    if (t === 8) return u === 0 ? 'quatre-vingts' : 'quatre-vingt-' + NU[u];
+    return 'quatre-vingt-' + NU[10+u];
+  }
+  function nUnder1000(n) {
+    if (n < 100) return nUnder100(n);
+    const h = Math.floor(n/100), r = n%100;
+    const s = h === 1 ? 'cent' : NU[h] + '-cent' + (r === 0 ? 's' : '');
+    return r ? s + '-' + nUnder100(r) : s;
+  }
+  function frNum(n) {
+    if (n < 1000) return nUnder1000(n);
+    const k = Math.floor(n/1000), r = n%1000;
+    const s = k === 1 ? 'mille' : nUnder1000(k) + '-mille';
+    return r ? s + '-' + nUnder1000(r) : s;
+  }
+
+  /* =========================================================
+     JEU 1 — MOTS (lettres Scrabble)
+     ========================================================= */
+  const WORDS = [
+    // niveau 1 (CE1)
+    ['chat','🐱',1],['chien','🐶',1],['lapin','🐰',1],['vache','🐮',1],['cochon','🐷',1],['mouton','🐑',1],['poule','🐔',1],
+    ['canard','🦆',1],['lion','🦁',1],['singe','🐒',1],['souris','🐭',1],['tortue','🐢',1],['poisson','🐟',1],['oiseau','🐦',1],
+    ['cheval','🐴',1],['loup','🐺',1],['ours','🐻',1],['zèbre','🦓',1],['maison','🏠',1],['soleil','☀️',1],['lune','🌙',1],
+    ['arbre','🌳',1],['fleur','🌸',1],['rose','🌹',1],['sapin','🌲',1],['pomme','🍎',1],['poire','🍐',1],['fraise','🍓',1],
+    ['banane','🍌',1],['orange','🍊',1],['citron','🍋',1],['tomate','🍅',1],['gâteau','🍰',1],['pain','🍞',1],['lait','🥛',1],
+    ['bateau','⛵',1],['avion','✈️',1],['vélo','🚲',1],['train','🚂',1],['livre','📖',1],['robe','👗',1],['clé','🔑',1],
+    ['cadeau','🎁',1],['ballon','🎈',1],['étoile','⭐',1],['nuage','☁️',1],['neige','❄️',1],['main','✋',1],['pied','🦶',1],
+    ['dent','🦷',1],['lit','🛏️',1],['porte','🚪',1],['bébé','👶',1],['roi','🤴',1],['fée','🧚',1],
+    // niveau 2 (CE2)
+    ['voiture','🚗',2],['chapeau','🎩',2],['chaussure','👟',2],['pantalon','👖',2],['parapluie','☂️',2],['lunettes','👓',2],
+    ['téléphone','📱',2],['ordinateur','💻',2],['guitare','🎸',2],['tambour','🥁',2],['cerise','🍒',2],['raisin','🍇',2],
+    ['ananas','🍍',2],['champignon','🍄',2],['carotte','🥕',2],['fromage','🧀',2],['château','🏰',2],['montagne','⛰️',2],
+    ['fusée','🚀',2],['horloge','🕰️',2],['éléphant','🐘',2],['girafe','🦒',2],['grenouille','🐸',2],['papillon','🦋',2],
+    ['abeille','🐝',2],['escargot','🐌',2],['serpent','🐍',2],['crocodile','🐊',2],['dauphin','🐬',2],['baleine','🐳',2],
+    ['requin','🦈',2],['pingouin','🐧',2],['hibou','🦉',2],['écureuil','🐿️',2],['hérisson','🦔',2],['kangourou','🦘',2],
+    ['citrouille','🎃',2],['bougie','🕯️',2],['crayon','✏️',2],['ciseaux','✂️',2],['cartable','🎒',2],['garçon','👦',2],
+    ['fantôme','👻',2],['dinosaure','🦕',2],['tracteur','🚜',2],['hélicoptère','🚁',2],['camion','🚚',2],['pirate','🏴‍☠️',2],
+  ];
+  const SCRABBLE = {a:1,b:3,c:3,d:2,e:1,f:4,g:2,h:4,i:1,j:8,k:10,l:1,m:2,n:1,o:1,p:3,q:8,r:1,s:1,t:1,u:1,v:4,w:10,x:10,y:10,z:10};
+  const baseL = ch => ch.normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const lval  = ch => SCRABBLE[baseL(ch)] || 1;
+  const CONFUS = {
+    a:['à','â','e'], e:['é','è','ê','a'], 'é':['e','è','ê'], 'è':['é','e','ê'], 'ê':['è','é','e'], i:['y','î'], o:['ô','u'], u:['o','ù'],
+    s:['z','c'], c:['s','k','ç'], 'ç':['c','s'], g:['j'], j:['g'], m:['n'], n:['m'], t:['d'], d:['t'], p:['b'], b:['p','d'],
+    f:['v'], v:['f'], l:['r'], r:['l'], 'â':['a'], 'î':['i'], 'ô':['o','a'], x:['s'], z:['s'], y:['i'], k:['c'], q:['k'], h:['e'],
+  };
+  const MOTS = { st:null, last:null };
+
+  function motsIntruders(word, n) {
+    const pool = [];
+    for (const ch of word) {
+      (CONFUS[ch] || []).forEach(c => pool.push(c));
+      if (!'aeiouyéèêàâîôù'.includes(ch)) pool.push(ch); // consonne doublée (piège classique)
+    }
+    const out = [];
+    for (const c of shuffle(pool)) { if (out.length >= n) break; if (!out.includes(c)) out.push(c); }
+    while (out.length < n) out.push(pickArr([...'aeilnorstu']));
+    return out;
+  }
+  function tileHTML(ch, cls, onclick) {
+    return `<button class="tile ${cls||''}" ${onclick ? `onclick="${onclick}"` : 'tabindex="-1"'}><span class="t-l">${ch.toUpperCase()}</span><span class="t-v">${lval(ch)}</span></button>`;
+  }
+  function motsRender() {
+    const st = MOTS.st;
+    document.getElementById('w-slots').innerHTML = st.slots.map((ti, k) =>
+      ti === null ? `<button class="slot" onclick="motsUnslot(${k})" aria-label="case vide"></button>` : tileHTML(st.tiles[ti].ch, '', `motsUnslot(${k})`)
+    ).join('');
+    document.getElementById('w-rack').innerHTML = st.tiles.map((t, i) =>
+      t.used ? `<span class="tile ghost"></span>` : tileHTML(t.ch, '', `motsPick(${i})`)
+    ).join('');
+    document.getElementById('w-ok').disabled = st.slots.includes(null);
+  }
+  function motsPick(i) {
+    const st = MOTS.st; if (MINI.answered || st.tiles[i].used) return;
+    const k = st.slots.indexOf(null); if (k < 0) return;
+    st.tiles[i].used = true; st.slots[k] = i;
+    if (S.sound) beep(520 + k*30, 'sine', 0.08, 0.15);
+    motsRender();
+  }
+  function motsUnslot(k) {
+    const st = MOTS.st; if (MINI.answered || st.slots[k] === null) return;
+    st.tiles[st.slots[k]].used = false; st.slots[k] = null;
+    sndClick(); motsRender();
+  }
+  function motsClear() {
+    const st = MOTS.st; if (MINI.answered) return;
+    st.tiles.forEach(t => t.used = false); st.slots = st.slots.map(() => null);
+    sndClick(); motsRender();
+  }
+  function motsCheck() {
+    const st = MOTS.st; if (MINI.answered) return;
+    if (st.slots.includes(null)) { miniShake(document.getElementById('w-slots')); return; }
+    const letters = [...st.word];
+    const got = st.slots.map(i => st.tiles[i].ch);
+    const ok = got.join('') === st.word;
+    const pts = letters.reduce((s, c) => s + lval(c), 0);
+    const good = letters.map(c => tileHTML(c, 'ok-t')).join('');
+    let html;
+    if (ok) {
+      html = `<div class="fb-exp-lbl">${st.emoji} ${st.word.toUpperCase()}</div><div class="w-fbrow">${good}</div>
+              <div class="fb-exp-lbl">🏅 Ce mot vaut ${pts} points au Scrabble !</div>`;
+    } else {
+      html = `<div class="fb-exp-lbl">Tu as écrit :</div><div class="w-fbrow">${got.map((c, i) => tileHTML(c, c === letters[i] ? '' : 'bad-t')).join('')}</div>
+              <div class="fb-exp-lbl">Il fallait écrire ${st.emoji} :</div><div class="w-fbrow">${good}</div>`;
+    }
+    miniResult(ok, 'Presque !', html);
+    say(st.word);
+  }
+  GAMES.mots = {
+    title: 'Mots', emoji: '🔤',
+    newQ(body, lv) {
+      const lvl = (lv === 'CE2' && Math.random() < 0.7) ? 2 : 1;
+      let w; do { w = pickArr(WORDS.filter(x => x[2] === lvl)); } while (w[0] === MOTS.last);
+      MOTS.last = w[0];
+      const word = w[0], letters = [...word];
+      const tiles = shuffle(letters.concat(motsIntruders(word, lv === 'CE1' ? 2 : 3))).map(ch => ({ ch, used:false }));
+      MOTS.st = { word, emoji:w[1], tiles, slots: letters.map(() => null) };
+      const avail = Math.min(innerWidth - 24, 640) - 30;
+      const ts = Math.max(22, Math.min(58, Math.floor((avail - (letters.length - 1) * 6) / letters.length)));
+      body.innerHTML = `<div class="m-card" style="--ts:${ts}px">
+        <div class="w-img" onclick="say(MOTS.st.word)" title="Écouter">${w[1]}</div>
+        <button class="m-btn listen" onclick="say(MOTS.st.word)">🔊 Écouter le mot</button>
+        <div class="w-slots" id="w-slots"></div>
+        <div class="w-rack" id="w-rack" style="--ts:${Math.max(ts, 42)}px"></div>
+        <div class="w-actions">
+          <button class="m-btn" onclick="motsClear()">↺ Effacer</button>
+          <button class="m-btn go" id="w-ok" onclick="motsCheck()">✓ Valider</button>
+        </div>
+        <div class="m-hint">Touche les lettres dans le bon ordre. Attention, il y a des lettres pièges !</div>
+      </div>`;
+      motsRender();
+      if (S.sound) setTimeout(() => say(word), 350);
+    },
+    onKey(e) {
+      const st = MOTS.st; if (!st) return;
+      if (e.key === 'Enter') { motsCheck(); return; }
+      if (e.key === 'Backspace') {
+        for (let k = st.slots.length - 1; k >= 0; k--) if (st.slots[k] !== null) { motsUnslot(k); break; }
+        return;
+      }
+      if (e.key.length === 1) {
+        const i = st.tiles.findIndex(t => !t.used && t.ch === e.key.toLowerCase());
+        if (i >= 0) motsPick(i);
+      }
+    },
+  };
+
+  /* =========================================================
+     JEU 2 — L'HEURE
+     ========================================================= */
+  function clockSVG(h, m) {
+    const P = (r, deg) => { const a = deg*Math.PI/180; return [100 + r*Math.sin(a), 100 - r*Math.cos(a)]; };
+    let s = '<svg class="clock" viewBox="0 0 200 200" aria-label="horloge"><circle cx="100" cy="100" r="94" fill="#fff" stroke="#2D3436" stroke-width="6"/>';
+    for (let i = 0; i < 60; i++) {
+      const big = i % 5 === 0;
+      const [x1, y1] = P(big ? 76 : 82, i*6), [x2, y2] = P(88, i*6);
+      s += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#2D3436" stroke-width="${big ? 3.5 : 1.5}"/>`;
+    }
+    for (let n = 1; n <= 12; n++) {
+      const [x, y] = P(63, n*30);
+      s += `<text x="${x.toFixed(1)}" y="${(y + 6.5).toFixed(1)}" text-anchor="middle" font-size="19" font-weight="900" font-family="Nunito, sans-serif" fill="#2D3436">${n}</text>`;
+    }
+    const [hx, hy] = P(44, ((h % 12) + m/60) * 30), [mx, my] = P(74, m*6);
+    s += `<line x1="100" y1="100" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}" stroke="#E17055" stroke-width="9" stroke-linecap="round"/>`;
+    s += `<line x1="100" y1="100" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}" stroke="#0984E3" stroke-width="5.5" stroke-linecap="round"/>`;
+    s += '<circle cx="100" cy="100" r="7" fill="#2D3436"/></svg>';
+    return s;
+  }
+  const hFmt = (h, m) => `${h} h ${String(m).padStart(2, '0')}`;
+  function hName(h) { return h === 1 ? 'une heure' : frNum(h) + ' heures'; }
+  function heureWords(h, m) {
+    const next = h % 12 + 1;
+    if (m === 0)  return hName(h) + ' pile';
+    if (m === 15) return hName(h) + ' et quart';
+    if (m === 30) return hName(h) + ' et demie';
+    if (m === 45) return hName(next) + ' moins le quart';
+    if (m < 30)   return hName(h) + ' ' + frNum(m);
+    return hName(next) + ' moins ' + frNum(60 - m);
+  }
+  const HEURE = { st:null };
+  GAMES.heure = {
+    title: "L'heure", emoji: '🕐',
+    newQ(body, lv) {
+      const h = rndi(1, 12);
+      const m = lv === 'CE1' ? pickArr([0, 15, 30, 45]) : rndi(0, 11) * 5;
+      const okM = x => lv === 'CE1' ? x % 15 === 0 : x % 5 === 0;
+      const key = (a, b) => a + ':' + b;
+      const opts = [[h, m]], seen = new Set([key(h, m)]);
+      const cands = shuffle([
+        [m === 0 ? 12 : m/5, (h % 12) * 5],          // aiguilles inversées
+        [h % 12 + 1, m], [h === 1 ? 12 : h - 1, m],
+        [h, (m + 30) % 60], [h, (60 - m) % 60], [h, (m + 15) % 60], [h % 12 + 1, (m + 30) % 60],
+      ]);
+      for (const [a, b] of cands) {
+        if (opts.length >= 4) break;
+        if (!Number.isInteger(a) || a < 1 || a > 12 || !okM(b) || seen.has(key(a, b))) continue;
+        seen.add(key(a, b)); opts.push([a, b]);
+      }
+      HEURE.st = { h, m, opts: shuffle(opts) };
+      body.innerHTML = `<div class="m-card">
+        <div class="m-prompt">Quelle heure est-il ?</div>
+        ${clockSVG(h, m)}
+        <div class="m-hint">🔴 petite aiguille = les heures · 🔵 grande aiguille = les minutes</div>
+        ${choicesHTML(HEURE.st.opts.map(([a, b]) => hFmt(a, b)), 'heureCheck')}
+      </div>`;
+    },
+  };
+  function heureCheck(i) {
+    const st = HEURE.st; if (MINI.answered) return;
+    const [a, b] = st.opts[i];
+    const ok = a === st.h && b === st.m;
+    const words = heureWords(st.h, st.m);
+    miniResult(ok, `C'était ${hFmt(st.h, st.m)} !`,
+      `${clockSVG(st.h, st.m)}<div class="fb-exp-lbl">Il est ${hFmt(st.h, st.m)} :<br>${words}</div>`);
+    say('Il est ' + words);
+  }
+
+  /* =========================================================
+     JEU 3 — MONNAIE
+     ========================================================= */
+  const MONEY_CE1 = [2000, 1000, 500, 200, 100];
+  const MONEY_CE2 = [2000, 1000, 500, 200, 100, 50, 20, 10];
+  const SHOP = [['🍦','la glace'],['🧸','le nounours'],['⚽','le ballon'],['🍫','le chocolat'],['📕','le livre'],['🎲','le jeu de dés'],
+                ['🥐','le croissant'],['🧃','le jus de fruit'],['🍭','la sucette'],['🎒','le cartable'],['🚗','la petite voiture'],
+                ['🖍️','la boîte de crayons'],['🎨','la peinture'],['🧁','le gâteau'],['🪁','le cerf-volant'],['🎮','le jeu vidéo']];
+  const eur = c => c % 100 ? (c/100).toFixed(2).replace('.', ',') + ' €' : (c/100) + ' €';
+  function moneyHTML(v) {
+    if (v >= 500) return `<span class="note n${v}">${v/100} €</span>`;
+    if (v >= 100) return `<span class="coin c${v}"><b>${v/100} €</b></span>`;
+    return `<span class="coin c${v}"><b>${v} c</b></span>`;
+  }
+  function bestChange(t, set) { const out = []; for (const v of set) while (t >= v) { out.push(v); t -= v; } return out; }
+  const MON = { st:null };
+  GAMES.monnaie = {
+    title: 'Monnaie', emoji: '💶',
+    newQ(body, lv) {
+      const set = lv === 'CE1' ? MONEY_CE1 : MONEY_CE2;
+      const [em, name] = pickArr(SHOP);
+      let price, target, prompt, paid = 0;
+      const change = lv === 'CE2' && Math.random() < 0.5;
+      if (lv === 'CE1') {
+        price = rndi(1, 30) * 100; target = price;
+        prompt = `${cap(name)} coûte <b>${eur(price)}</b>.<br>Donne l'argent juste !`;
+      } else if (!change) {
+        price = rndi(10, 300) * 10; target = price;
+        prompt = `${cap(name)} coûte <b>${eur(price)}</b>.<br>Donne l'argent juste !`;
+      } else {
+        price = rndi(5, 190) * 10;
+        paid = [500, 1000, 2000].find(p => p > price);
+        target = paid - price;
+        prompt = `${cap(name)} coûte <b>${eur(price)}</b>.<br>Tu paies avec un billet de <b>${eur(paid)}</b>.<br>Le marchand te rend combien ? Donne la monnaie !`;
+      }
+      MON.st = { set, price, target, paid, change, given: [] };
+      body.innerHTML = `<div class="m-card">
+        <div class="mon-item">${em}<span class="mon-price">${eur(price)}</span></div>
+        <div class="m-prompt">${prompt}</div>
+        <div class="mon-tray" id="mon-tray"></div>
+        <div class="mon-wallet">${set.map(v => `<button class="mon-pick" onclick="monAdd(${v})" aria-label="${eur(v)}">${moneyHTML(v)}</button>`).join('')}</div>
+        <div class="w-actions">
+          <button class="m-btn" onclick="monClear()">↺ Effacer</button>
+          <button class="m-btn go" onclick="monCheck()">✓ Valider</button>
+        </div>
+      </div>`;
+      monRender();
+    },
+  };
+  function monRender() {
+    const g = MON.st.given;
+    document.getElementById('mon-tray').innerHTML = g.length
+      ? g.map((v, i) => `<button class="mon-given" onclick="monRemove(${i})" aria-label="Retirer">${moneyHTML(v)}</button>`).join('')
+      : '<span class="empty">👇 Touche les pièces et les billets pour les poser ici<br>(touche-les ici pour les enlever)</span>';
+  }
+  function monAdd(v)    { if (MINI.answered) return; MON.st.given.push(v); MON.st.given.sort((a, b) => b - a); if (S.sound) beep(700, 'triangle', 0.08, 0.15); monRender(); }
+  function monRemove(i){ if (MINI.answered) return; MON.st.given.splice(i, 1); sndClick(); monRender(); }
+  function monClear()   { if (MINI.answered) return; MON.st.given = []; sndClick(); monRender(); }
+  function monCheck() {
+    const st = MON.st; if (MINI.answered) return;
+    if (!st.given.length) { miniShake(document.getElementById('mon-tray')); return; }
+    const total = st.given.reduce((s, v) => s + v, 0);
+    const ok = total === st.target;
+    let html = `<div class="fb-exp-lbl">Tu as donné ${eur(total)}${ok ? '' : ' — il fallait ' + eur(st.target)}</div>`;
+    if (st.change) html += `<div class="fb-exp-lbl">${eur(st.paid)} − ${eur(st.price)} = ${eur(st.target)}</div>`;
+    html += `<div class="fb-exp-lbl">${ok ? 'Avec le moins de pièces possible :' : 'Par exemple :'}</div><div class="mon-fbrow">${bestChange(st.target, st.set).map(moneyHTML).join('')}</div>`;
+    const title = total < st.target ? `Il manque ${eur(st.target - total)} !` : `${eur(total - st.target)} de trop !`;
+    miniResult(ok, title, html);
+  }
+
+  /* =========================================================
+     JEU 4 — CONJUGAISON
+     ========================================================= */
+  const PRON = [['je',0],['tu',1],['il',2],['elle',2],['nous',3],['vous',4],['ils',5],['elles',5]];
+  const PERS_LBL = ['je','tu','il / elle','nous','vous','ils / elles'];
+  const ER_VERBS = ['chanter','danser','jouer','parler','regarder','aimer','marcher','sauter','dessiner','écouter','travailler','manger','nager','ranger','arriver','habiter','chercher','fermer'];
+  const IRR = {
+    'être':    { p:['suis','es','est','sommes','êtes','sont'],             i:'ét',     f:'ser' },
+    'avoir':   { p:['ai','as','a','avons','avez','ont'],                   i:'av',     f:'aur' },
+    'aller':   { p:['vais','vas','va','allons','allez','vont'],            i:'all',    f:'ir' },
+    'faire':   { p:['fais','fais','fait','faisons','faites','font'],       i:'fais',   f:'fer' },
+    'dire':    { p:['dis','dis','dit','disons','dites','disent'],          i:'dis',    f:'dir' },
+    'venir':   { p:['viens','viens','vient','venons','venez','viennent'],  i:'ven',    f:'viendr' },
+    'pouvoir': { p:['peux','peux','peut','pouvons','pouvez','peuvent'],    i:'pouv',   f:'pourr' },
+    'voir':    { p:['vois','vois','voit','voyons','voyez','voient'],       i:'voy',    f:'verr' },
+    'vouloir': { p:['veux','veux','veut','voulons','voulez','veulent'],    i:'voul',   f:'voudr' },
+    'prendre': { p:['prends','prends','prend','prenons','prenez','prennent'], i:'pren', f:'prendr' },
+    'finir':   { p:['finis','finis','finit','finissons','finissez','finissent'], i:'finiss', f:'finir' },
+  };
+  const END = { p:['e','es','e','ons','ez','ent'], i:['ais','ais','ait','ions','iez','aient'], f:['ai','as','a','ons','ez','ont'] };
+  const TENSES = {
+    p: { name:'présent',   cue:["Aujourd'hui", 'En ce moment', 'Maintenant'] },
+    f: { name:'futur',     cue:['Demain', 'Plus tard', 'La semaine prochaine'] },
+    i: { name:'imparfait', cue:['Autrefois', 'Avant', 'Il y a longtemps'] },
+  };
+  function conj(v, t) {
+    if (IRR[v]) { const d = IRR[v]; return t === 'p' ? d.p : END[t].map(e => d[t] + e); }
+    if (t === 'f') return END.f.map(e => v + e);
+    const st = v.slice(0, -2);
+    return END[t].map(e => st + (st.endsWith('g') && /^[ao]/.test(e) ? 'e' : '') + e);
+  }
+  const elide = (pr, form) => (pr === 'je' && /^[aeéèêiouhâîô]/.test(form)) ? "j'" : pr;
+  const withPron = (pr, form) => { const p = elide(pr, form); return p.endsWith("'") ? p + form : p + ' ' + form; };
+  const CJ = { st:null };
+  GAMES.conj = {
+    title: 'Conjugaison', emoji: '✍️',
+    newQ(body, lv) {
+      const verbs = lv === 'CE1' ? ER_VERBS.concat(['être','avoir','aller']) : ER_VERBS.concat(Object.keys(IRR));
+      const tenses = lv === 'CE1' ? ['p','p','f'] : ['p','f','i'];
+      const v = pickArr(verbs), t = pickArr(tenses), [pr, idx] = pickArr(PRON);
+      const forms = conj(v, t), correct = forms[idx];
+      const pool = forms.slice();
+      if (lv === 'CE2') ['p','f','i'].filter(x => x !== t).forEach(x => pool.push(conj(v, x)[idx]));
+      const distract = [];
+      for (const f of shuffle(pool)) { if (distract.length >= 3) break; if (f !== correct && !distract.includes(f)) distract.push(f); }
+      const opts = shuffle([correct, ...distract]);
+      const cue = pickArr(TENSES[t].cue);
+      CJ.st = { v, t, pr, idx, correct, opts, cue };
+      body.innerHTML = `<div class="m-card">
+        <div class="cj-tense">⏱️ ${TENSES[t].name}</div>
+        <div class="cj-sentence">${cue}, ${elide(pr, correct)} <span class="cj-blank">&nbsp;</span> <span class="cj-inf">(${v})</span></div>
+        <div class="m-hint">Choisis la bonne forme du verbe</div>
+        ${choicesHTML(opts, 'conjCheck')}
+      </div>`;
+    },
+  };
+  function conjCheck(i) {
+    const st = CJ.st; if (MINI.answered) return;
+    const ok = st.opts[i] === st.correct;
+    const forms = conj(st.v, st.t);
+    const rows = forms.map((f, k) => {
+      const lbl = k === 0 ? (elide('je', f) === "j'" ? "j'" : 'je') : PERS_LBL[k];
+      return `<tr class="${k === st.idx ? 'hl' : ''}"><td>${lbl}</td><td>${f}</td></tr>`;
+    }).join('');
+    const full = withPron(st.pr, st.correct);
+    miniResult(ok, `C'était « ${full} » !`,
+      `<div class="fb-exp-lbl">${st.cue}, ${full}.</div><div class="fb-exp-lbl">Le verbe ${st.v} au ${TENSES[st.t].name} :</div><table class="cj-table">${rows}</table>`);
+    say(`${st.cue}, ${full}`);
+  }
+
+  /* =========================================================
+     JEU 5 — NOMBRES (chiffres ⇄ lettres)
+     ========================================================= */
+  const NB = { st:null };
+  function nbDecomp(n) {
+    const parts = [], m = Math.floor(n/1000), c = Math.floor(n/100) % 10, d = Math.floor(n/10) % 10, u = n % 10;
+    if (m) parts.push(`${m} millier${m > 1 ? 's' : ''}`);
+    if (c) parts.push(`${c} centaine${c > 1 ? 's' : ''}`);
+    if (d) parts.push(`${d} dizaine${d > 1 ? 's' : ''}`);
+    if (u) parts.push(`${u} unité${u > 1 ? 's' : ''}`);
+    return parts.join(' + ');
+  }
+  const nbFmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  GAMES.nombres = {
+    title: 'Nombres', emoji: '🔢',
+    newQ(body, lv) {
+      const n = lv === 'CE1' ? rndi(0, 100) : (Math.random() < 0.5 ? rndi(100, 999) : rndi(1000, 9999));
+      const max = lv === 'CE1' ? 100 : 9999;
+      const w = frNum(n);
+      if (Math.random() < 0.5) {
+        NB.st = { n, mode:'digits' };
+        body.innerHTML = `<div class="m-card">
+          <div class="m-prompt">Écris ce nombre en chiffres :</div>
+          <div class="nb-words">${w}</div>
+          <button class="m-btn listen" onclick="say('${w}')">🔊 Écouter</button>
+          <div class="m-answer placeholder" id="nb-ans">?</div>
+        </div>`;
+        const ans = body.querySelector('#nb-ans');
+        body.querySelector('.m-card').appendChild(miniPad(ans, 4, v => nbResult(v === n)));
+      } else {
+        const traps = [];
+        if (/vingts$/.test(w)) traps.push(w.replace(/vingts$/, 'vingt'));
+        if (/cents$/.test(w)) traps.push(w.replace(/cents$/, 'cent'));
+        if (w.includes('quatre-vingt-')) traps.push(w.replace('quatre-vingt-', 'quatre-vingts-'));
+        if (w.includes('-cent-')) traps.push(w.replace('-cent-', '-cents-'));
+        if (w.includes('-et-')) traps.push(w.replace('-et-', '-'));
+        const nums = [n + 10, n - 10, n + 1, n - 1, n + 100, n - 100, parseInt(String(n).split('').reverse().join(''), 10)]
+          .filter(x => x >= 0 && x <= max && x !== n);
+        const opts = [w];
+        for (const x of shuffle(traps).slice(0, 1).concat(shuffle(nums).map(frNum))) {
+          if (opts.length >= 4) break;
+          if (!opts.includes(x)) opts.push(x);
+        }
+        NB.st = { n, mode:'words', opts: shuffle(opts) };
+        body.innerHTML = `<div class="m-card">
+          <div class="m-prompt">Comment s'écrit ce nombre en lettres ?</div>
+          <div class="nb-big">${nbFmt(n)}</div>
+          ${choicesHTML(NB.st.opts, 'nbPick', 'one words')}
+        </div>`;
+      }
+      if (S.sound && NB.st.mode === 'digits') setTimeout(() => say(w), 350);
+    },
+  };
+  function nbPick(i) { if (MINI.answered) return; nbResult(NB.st.opts[i] === frNum(NB.st.n)); }
+  function nbResult(ok) {
+    const n = NB.st.n, w = frNum(n);
+    miniResult(ok, `C'était ${nbFmt(n)} !`,
+      `<div class="nb-big">${nbFmt(n)}</div><div class="fb-exp-lbl">${w}</div>${n >= 10 ? `<div class="fb-exp-lbl">${nbDecomp(n)}</div>` : ''}`);
+    say(w);
+  }
 
   function spawnStars() {
     const slots  = [{x:'18%',y:'25%'},{x:'82%',y:'18%'},{x:'50%',y:'10%'},{x:'12%',y:'72%'},{x:'88%',y:'68%'},{x:'35%',y:'20%'},{x:'70%',y:'30%'}];
