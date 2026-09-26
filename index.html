@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#6C5CE7" />
   <title>🎓 Calculette Magique</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pirata+One&display=swap" rel="stylesheet" />
   <style>
     /* =============================================
        DESIGN TOKENS
@@ -941,6 +941,106 @@
       .fruit-item { font-size: 1.9rem; }
       .fruit-grid { max-width: 250px; gap: 5px; }
     }
+
+    /* =============================================
+       THEME PIRATE (CE1 uniquement)
+       ============================================= */
+    svg.ico { width:1em; height:1em; vertical-align:-0.12em; display:inline-block; }
+    .lc-crew { display:flex; gap:2px; align-items:flex-end; height:clamp(3.2rem,10vw,4.4rem); }
+    .lc-crew svg { height:100%; width:auto; }
+    .level-card.pirate-card { background:linear-gradient(160deg,#FFF6DC,#F0D79F); border:3px solid #8B5A2B; }
+    .level-card.pirate-card .lc-name { color:#7B3F12; font-family:'Pirata One', var(--font); font-weight:400; letter-spacing:1px; }
+    .level-card.pirate-card .lc-desc, .level-card.pirate-card .lc-ops { color:#6E4B2A; }
+
+    body.theme-pirate #game { background:linear-gradient(180deg,#F7E9C8 0%,#E9CF98 100%); }
+    body.theme-pirate .scorebar { background:#FFF8E7; border-bottom:3px solid #C99A45; }
+    body.theme-pirate .level-pill { background:#7B3F12; }
+    body.theme-pirate .level-pill::before { content:'🏴‍☠️ '; }
+    body.theme-pirate .exercise-card { background:#FFFBF0; border:3px solid #D9B77A; }
+    body.theme-pirate .num-label { color:#1F4E79; }
+    body.theme-pirate .op-sym, body.theme-pirate .op-label-hint { color:#C0392B; }
+    body.theme-pirate .answer-box { color:#1F4E79; border-color:#1F4E79; }
+    body.theme-pirate .answer-box.has-val { color:#C0392B; border-color:#C0392B; }
+    body.theme-pirate .answer-box.placeholder { color:#cdb98f; border-color:#dcc79a; }
+    body.theme-pirate .fruit-item.counted { background:rgba(212,160,23,0.25); outline-color:#B7950B; }
+    body.theme-pirate .fruit-count-badge { background:rgba(212,160,23,0.15); border-color:#B7950B; color:#7B3F12; }
+    body.theme-pirate .np-btn { background:#FFFDF6; box-shadow:0 4px 0 #d6c08e, 0 2px 10px rgba(0,0,0,0.08); }
+    body.theme-pirate .np-btn.del { background:#FBE3DC; }
+    body.theme-pirate .np-btn.ok { background:linear-gradient(135deg,#D4A017,#F4D03F); color:#5D3A1A; box-shadow:0 4px 0 #9A7D0A, 0 2px 16px rgba(212,160,23,0.35); }
+    body.theme-pirate .np-btn.ok:active { box-shadow:0 1px 0 #9A7D0A; }
+    body.theme-pirate .pbar-wrap { background:#E3CD9C; }
+    body.theme-pirate .pbar-fill { background:linear-gradient(90deg,#D4A017,#F4D03F); }
+    body.theme-pirate .score-item.pct .si-val { color:#7B3F12; }
+    body.theme-pirate .op-toggle.active { background:#7B3F12; border-color:#7B3F12; box-shadow:0 3px 12px rgba(123,63,18,0.35); }
+    body.theme-pirate #feedback.correct-bg { background:linear-gradient(145deg,#1B7FA8 0%,#145A86 50%,#0B3D5C 100%); }
+    body.theme-pirate #feedback.wrong-bg   { background:linear-gradient(145deg,#C0392B 0%,#922B21 55%,#641E16 100%); }
+    body.theme-pirate .fb-title { color:#F9D65C; font-family:'Pirata One', var(--font); font-weight:400; letter-spacing:1px; font-size:clamp(2.2rem,8vw,3.8rem); }
+    body.theme-pirate .correct-bg .fb-next { color:#145A86; }
+    body.theme-pirate .wrong-bg .fb-next { color:#922B21; }
+    .fb-crew { display:flex; align-items:flex-end; gap:6px; }
+    .fb-crew svg { height:clamp(5rem,17vw,8rem); width:auto; }
+    .fb-crew .fb-crew-em { font-size:clamp(2.2rem,7vw,3.5rem); align-self:center; }
+
+    /* =============================================
+       ÉCRAN CHOIX DES NOMBRES (CE1)
+       ============================================= */
+    #range {
+      background: linear-gradient(180deg,#0B3D5C 0%,#145A86 55%,#1B7FA8 100%);
+      gap: 18px; padding: 24px 16px; overflow-y: auto; justify-content: center;
+    }
+    .range-crew { display:flex; align-items:flex-end; gap:4px; height:clamp(4.5rem,15vw,7rem); animation: float 3s ease-in-out infinite; }
+    .range-crew svg { height:100%; width:auto; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.3)); }
+    .range-title {
+      font-family:'Pirata One', var(--font); font-weight:400; letter-spacing:1px;
+      font-size: clamp(1.8rem, 6.5vw, 3rem); color:#F9D65C; text-align:center; line-height:1.1;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.35);
+    }
+    .range-box {
+      background: linear-gradient(160deg,#FFF6DC,#F0D79F);
+      border: 3px solid #8B5A2B; border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 18px 20px; display:flex; flex-direction:column; align-items:center; gap:14px;
+      width:100%; max-width:520px;
+    }
+    .rg-row { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+    .rg-col { display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .rg-lbl { font-size:1rem; font-weight:900; color:#7B3F12; text-transform:uppercase; letter-spacing:0.6px; }
+    .rg-stepper { display:flex; align-items:center; gap:8px; }
+    .rg-btn {
+      width:56px; height:56px; border:none; border-radius:50%;
+      background:#7B3F12; color:#fff; font-family:var(--font); font-size:2rem; font-weight:900;
+      box-shadow:0 4px 0 #4a2508; cursor:pointer; touch-action:none;
+      display:flex; align-items:center; justify-content:center; line-height:1;
+    }
+    .rg-btn:active { transform: translateY(3px); box-shadow:0 1px 0 #4a2508; }
+    .rg-val {
+      min-width:92px; text-align:center; font-size:clamp(2.2rem,8vw,3rem); font-weight:900; color:#1F4E79;
+      background:#FFFDF6; border:3px solid #D9B77A; border-radius:var(--radius-sm); padding:2px 8px; line-height:1.2;
+    }
+    .rg-arrow { font-size:2rem; align-self:flex-end; padding-bottom:10px; }
+    .rg-presets { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+    .rg-chip {
+      border:2px solid #8B5A2B; background:#FFFDF6; color:#7B3F12; border-radius:100px;
+      padding:7px 14px; font-family:var(--font); font-weight:900; font-size:0.95rem; cursor:pointer;
+    }
+    .rg-chip.active { background:#D4A017; border-color:#9A7D0A; color:#3E2408; }
+    .rg-chip:active { transform: scale(0.94); }
+    .rg-hint { font-size:0.85rem; font-weight:700; color:#6E4B2A; text-align:center; }
+    .rg-go {
+      background:linear-gradient(135deg,#D4A017,#F4D03F); color:#3E2408; border:none; border-radius:100px;
+      padding:15px 40px; font-family:'Pirata One', var(--font); font-size:clamp(1.5rem,5vw,2rem); letter-spacing:1px;
+      box-shadow:0 5px 0 #9A7D0A, 0 8px 24px rgba(0,0,0,0.25); cursor:pointer;
+    }
+    .rg-go:active { transform: translateY(4px); box-shadow:0 1px 0 #9A7D0A; }
+    .rg-back { background:none; border:none; color:rgba(255,255,255,0.8); font-family:var(--font); font-weight:800; font-size:1rem; cursor:pointer; }
+    .settings-range-btn {
+      border:2px solid #8B5A2B; background:#FFF6DC; color:#7B3F12; border-radius:var(--radius-sm);
+      padding:9px 10px; font-family:var(--font); font-weight:900; font-size:0.9rem; cursor:pointer;
+    }
+    .fb-legend {
+      flex-basis:100%; text-align:center; font-size:0.8rem; font-weight:800; color:rgba(255,255,255,0.9);
+      margin-top:2px;
+    }
   </style>
 </head>
 <body>
@@ -966,13 +1066,51 @@
       <span class="lc-ops">+ et −</span>
       <span class="lc-desc">Avec des fruits !<br>Sans chiffres</span>
     </button>
-    <button class="level-card" id="btn-ce1" onclick="startLevel('CE1')" aria-label="Niveau CE1">
-      <span class="lc-emoji">🔢</span>
+    <button class="level-card pirate-card" id="btn-ce1" onclick="openRange('welcome')" aria-label="Niveau CE1">
+      <span class="lc-crew" id="lc-crew"></span>
       <span class="lc-name">CE1</span>
       <span class="lc-ops">+ − × ÷</span>
-      <span class="lc-desc">Chiffres et fruits<br>pour t'aider</span>
+      <span class="lc-desc">🏴‍☠️ Chiffres et trésors<br>de pirates !</span>
     </button>
   </div>
+</section>
+
+<!-- ===================================================
+     RANGE SCREEN (CE1) — choix des nombres
+     =================================================== -->
+<section id="range" class="screen hidden" aria-label="Choix des nombres">
+  <div class="range-crew" id="range-crew" aria-hidden="true"></div>
+  <h2 class="range-title">Choisis tes nombres,<br>moussaillon !</h2>
+  <div class="range-box">
+    <div class="rg-row">
+      <div class="rg-col">
+        <div class="rg-lbl">De</div>
+        <div class="rg-stepper">
+          <button class="rg-btn" data-t="lo" data-d="-1" aria-label="Moins">−</button>
+          <div class="rg-val" id="rg-lo">1</div>
+          <button class="rg-btn" data-t="lo" data-d="1" aria-label="Plus">+</button>
+        </div>
+      </div>
+      <div class="rg-col">
+        <div class="rg-lbl">à</div>
+        <div class="rg-stepper">
+          <button class="rg-btn" data-t="hi" data-d="-1" aria-label="Moins">−</button>
+          <div class="rg-val" id="rg-hi">200</div>
+          <button class="rg-btn" data-t="hi" data-d="1" aria-label="Plus">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="rg-presets" id="rg-presets">
+      <button class="rg-chip" onclick="setRange(1,10)">1 → 10</button>
+      <button class="rg-chip" onclick="setRange(1,20)">1 → 20</button>
+      <button class="rg-chip" onclick="setRange(1,50)">1 → 50</button>
+      <button class="rg-chip" onclick="setRange(1,100)">1 → 100</button>
+      <button class="rg-chip" onclick="setRange(1,200)">1 → 200</button>
+    </div>
+    <div class="rg-hint">👆 Reste appuyé sur − ou + pour aller plus vite</div>
+  </div>
+  <button class="rg-go" onclick="confirmRange()">🏴‍☠️ À l'abordage !</button>
+  <button class="rg-back" onclick="goHome()">← Retour</button>
 </section>
 
 <!-- ===================================================
@@ -1017,6 +1155,7 @@
           <button class="op-toggle active" id="tog-div"   onclick="toggleOp('÷')"  title="Division">÷<span class="op-tog-emoji">🍕</span></button>
         </div>
         <div class="settings-note" id="settings-note">Coche au moins une opération</div>
+        <button class="settings-range-btn" id="settings-range-btn" onclick="openRange('game')">🗺️ Nombres : 1 → 200</button>
       </div>
     </div>
   </div>
@@ -1115,6 +1254,36 @@
     '÷': { sym:'÷', emoji:'🍕', label:'On partage !' },
   };
 
+  /* ---- THEME PIRATE (CE1) ---- */
+  const ITEM_SVG = {
+    CANON: '<svg class="ico" viewBox="0 0 32 32" aria-label="canon"><g transform="rotate(-20 16 16)"><rect x="3" y="11" width="24" height="9" rx="4.5" fill="#4a4a4a"/><rect x="25" y="10" width="4" height="11" rx="1.5" fill="#222"/><circle cx="4" cy="15.5" r="3" fill="#222"/><rect x="11" y="11" width="2" height="9" fill="#D4A017"/></g><path d="M6 20h17l-2 6H8z" fill="#8B5A2B"/><circle cx="10" cy="26" r="4" fill="#6B3E1E" stroke="#2b1a0b" stroke-width="1.5"/><circle cx="21" cy="26" r="4" fill="#6B3E1E" stroke="#2b1a0b" stroke-width="1.5"/><circle cx="10" cy="26" r="1" fill="#2b1a0b"/><circle cx="21" cy="26" r="1" fill="#2b1a0b"/></svg>',
+    COFFRE: '<svg class="ico" viewBox="0 0 32 32" aria-label="coffre au trésor"><circle cx="10" cy="11" r="3" fill="#F1C40F" stroke="#9A7D0A"/><circle cx="16" cy="9" r="3" fill="#F4D03F" stroke="#9A7D0A"/><circle cx="22" cy="11" r="3" fill="#F1C40F" stroke="#9A7D0A"/><rect x="3" y="15" width="26" height="13" rx="2" fill="#8B5A2B" stroke="#4a2c10" stroke-width="1.5"/><path d="M3 16v-2h26v2z" fill="#A0522D" stroke="#4a2c10"/><rect x="8" y="14" width="3" height="14" fill="#D4AC0D"/><rect x="21" y="14" width="3" height="14" fill="#D4AC0D"/><rect x="14" y="16" width="4" height="5" rx="1" fill="#F1C40F" stroke="#7d6608" stroke-width=".8"/></svg>'
+  };
+  function itemHTML(it) { return ITEM_SVG[it] || it; }
+
+  const PIRATE_POOL = ['🪙','💰','💎','👑','⚔️','🗡️','🏴‍☠️','⛵','⚓','🧭','🗺️','🦜','🔑','CANON','COFFRE','CANON','COFFRE'];
+
+  const PIRATE_BRAVO = [
+    ['🏴‍☠️',"À l'abordage !"],['💰','Trésor trouvé !'],['🦜','Bravo moussaillon !'],['👑','Bravo capitaine !'],
+    ['💎','Mille sabords !'],['⚓','Super pirate !'],['🗺️','X marque le trésor !'],['🪙',"Pièces d'or gagnées !"],
+  ];
+
+  const PIRATE_OP_META = {
+    '+': { sym:'+', emoji:'💰', label:'On ajoute !' },
+    '-': { sym:'−', emoji:'💣', label:'On enlève !' },
+    '×': { sym:'×', emoji:'⚔️', label:'On multiplie !' },
+    '÷': { sym:'÷', emoji:'🏴‍☠️', label:'On partage !' },
+  };
+
+  const PIRATE_MAN = '<svg viewBox="0 0 120 160" aria-label="pirate"><defs><clipPath id="pm-body"><path d="M22 160v-28q0-26 38-26t38 26v28z"/></clipPath></defs><path d="M22 160v-28q0-26 38-26t38 26v28z" fill="#fff"/><g clip-path="url(#pm-body)" fill="#C0392B"><rect y="112" width="120" height="7"/><rect y="126" width="120" height="7"/><rect y="140" width="120" height="7"/><rect y="154" width="120" height="7"/></g><path d="M22 160v-28q0-20 22-24l6 52z" fill="#1F3A5F"/><path d="M98 160v-28q0-20-22-24l-6 52z" fill="#1F3A5F"/><rect x="52" y="90" width="16" height="16" fill="#E8B48A"/><circle cx="32" cy="72" r="6" fill="#E8B48A"/><circle cx="88" cy="72" r="6" fill="#E8B48A"/><circle cx="60" cy="70" r="28" fill="#F2C9A0"/><circle cx="89" cy="81" r="3.5" fill="none" stroke="#F1C40F" stroke-width="2"/><path d="M34 74q2 30 26 32q24-2 26-32q-6 12-26 12t-26-12z" fill="#6B3E1E"/><path d="M53 90q7 6 14 0" stroke="#7a2e1a" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M45 85q8-7 15-1q7-6 15 1q-8 3-15 0q-7 3-15 0z" fill="#4A2A12"/><ellipse cx="60" cy="76" rx="4" ry="3.5" fill="#E0A77F"/><circle cx="71" cy="67" r="3.5" fill="#2D3436"/><circle cx="72.2" cy="65.8" r="1.1" fill="#fff"/><path d="M65 60q6-4 12 0" stroke="#4A2A12" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M32 76L49 67L87 53" stroke="#111" stroke-width="2.5" fill="none"/><ellipse cx="49" cy="67" rx="7.5" ry="6.5" fill="#111"/><path d="M16 52q44-20 88 0q-6-13-14-15q-4-25-30-25t-30 25q-8 2-14 15z" fill="#1B1B1B"/><path d="M16 52q44-20 88 0" stroke="#F1C40F" stroke-width="3" fill="none"/><path d="M51 40L69 32M51 32L69 40" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="60" cy="28" r="6" fill="#fff"/><rect x="56.5" y="31" width="7" height="5" rx="1.5" fill="#fff"/><circle cx="57.8" cy="27.5" r="1.6" fill="#1B1B1B"/><circle cx="62.2" cy="27.5" r="1.6" fill="#1B1B1B"/></svg>';
+
+  const PIRATE_WOMAN = '<svg viewBox="0 0 120 160" aria-label="pirate"><path d="M28 72q-5 52 10 72h44q15-20 10-72q0-32-32-32t-32 32z" fill="#A0421B"/><path d="M24 160v-26q0-26 36-26t36 26v26z" fill="#FDFEFE"/><path d="M42 160l4-46q14 6 28 0l4 46z" fill="#1F3A5F"/><path d="M52 124h16M51 134h18M50 144h20" stroke="#F1C40F" stroke-width="2"/><rect x="24" y="148" width="72" height="7" fill="#C0392B"/><rect x="53" y="92" width="14" height="14" fill="#EBBF9A"/><circle cx="60" cy="72" r="26" fill="#F5D0B0"/><path d="M34 70q2-24 26-24t26 24q-10-12-26-10q-16-2-26 10z" fill="#B5501F"/><circle cx="50" cy="73" r="3.5" fill="#2D3436"/><circle cx="70" cy="73" r="3.5" fill="#2D3436"/><circle cx="51.2" cy="71.8" r="1.1" fill="#fff"/><circle cx="71.2" cy="71.8" r="1.1" fill="#fff"/><path d="M45 69l-3-3M75 69l3-3" stroke="#2D3436" stroke-width="1.8" stroke-linecap="round"/><circle cx="44" cy="82" r="4.5" fill="#F1948A" opacity=".55"/><circle cx="76" cy="82" r="4.5" fill="#F1948A" opacity=".55"/><path d="M58 78q2 3 4 0" stroke="#D68A6A" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M52 86q8 7 16 0" stroke="#A93226" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="35" cy="86" r="4" fill="none" stroke="#F1C40F" stroke-width="2"/><circle cx="85" cy="86" r="4" fill="none" stroke="#F1C40F" stroke-width="2"/><path d="M84 36q18-24 32-20q-14 6-28 24z" fill="#E74C3C"/><path d="M20 54q40-18 80 0q-6-12-13-14q-4-23-27-23t-27 23q-7 2-13 14z" fill="#5D3A1A"/><path d="M20 54q40-18 80 0" stroke="#F1C40F" stroke-width="3" fill="none"/><circle cx="60" cy="33" r="4" fill="#F1C40F"/></svg>';
+
+  const PIRATE_COLORS = ['#F1C40F','#F4D03F','#D4A017','#FFD700','#C0392B','#1F4E79','#8B5A2B','#FDFEFE'];
+
+  function isPirate() { return S.level === 'CE1'; }
+  function getOpMeta(op) { return (isPirate() ? PIRATE_OP_META : OP_META)[op] || OP_META['+']; }
+
   /* ================================================
      STATE
      ================================================ */
@@ -1131,7 +1300,13 @@
     clickCount: 0,        // fruit click counter
     lastIsRight: false,   // for replay
     ops: { '+':true, '-':true, '×':true, '÷':true }, // active operations
+    range: { lo: 1, hi: 200 }, // CE1 : intervalle des nombres
+    rangeFrom: 'welcome',
   };
+  try {
+    const saved = JSON.parse(localStorage.getItem('calc-ce1-range') || 'null');
+    if (saved && saved.lo >= 1 && saved.hi <= 999 && saved.lo < saved.hi) S.range = saved;
+  } catch(_) {}
 
   /* ================================================
      AUDIO (Web Audio API — no external files)
@@ -1165,7 +1340,7 @@
      EXERCISE GENERATION
      ================================================ */
   function rnd(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
-  function pick()        { return FRUITS_POOL[Math.floor(Math.random()*FRUITS_POOL.length)]; }
+  function pick()        { const P = isPirate() ? PIRATE_POOL : FRUITS_POOL; return P[Math.floor(Math.random()*P.length)]; }
   function pickDiff(exclude) {
     let f; do { f=pick(); } while(f===exclude);
     return f;
@@ -1197,20 +1372,34 @@
     const available = ['+','-','×','÷'].filter(o=>S.ops[o]);
     if(!available.length) available.push('+');
     const op = available[Math.floor(Math.random()*available.length)];
-    let a, b, result, fA, fB;
+    const lo = S.range.lo, hi = S.range.hi;
+    let a, b, result, fA = pick(), fB = fA;
+    const pickOne = arr => arr[Math.floor(Math.random()*arr.length)];
     switch(op) {
       case '+':
-        a=rnd(5,15); b=rnd(2,Math.min(10,20-a)); result=a+b;
-        fA=pick(); fB=pickDiff(fA); break;
+        if (hi >= 2*lo) { a = rnd(lo, hi-lo); b = rnd(lo, hi-a); }
+        else            { a = rnd(lo, hi);    b = rnd(lo, hi); }
+        result = a+b; fB = pickDiff(fA); break;
       case '-':
-        a=rnd(6,18); b=rnd(2,Math.min(a-1,8)); result=a-b;
-        fA=pick(); fB=fA; break;
-      case '×':
-        a=rnd(2,5); b=rnd(2,5); result=a*b;
-        fA=pick(); fB=fA; break;
-      case '÷':
-        result=rnd(2,5); b=rnd(2,5); a=result*b;
-        fA=pick(); fB=fA; break;
+        if (hi >= 2*lo) { a = rnd(2*lo, hi); b = rnd(lo, a-lo); }
+        else            { a = rnd(Math.max(lo,2), Math.max(hi,2)); b = rnd(1, a-1); }
+        result = a-b; break;
+      case '×': {
+        // résultat dans l'intervalle, tables de 2 à 10 en priorité
+        let pairs = [];
+        for (let x=2;x<=10;x++) for (let y=2;y<=10;y++) { const r=x*y; if (r>=lo && r<=hi) pairs.push([x,y]); }
+        if (!pairs.length) for (let x=2;x<=100;x++) for (let y=2;y<=10;y++) { const r=x*y; if (r>=lo && r<=hi) pairs.push([x,y]); }
+        if (!pairs.length) pairs.push([rnd(2,5), rnd(2,5)]);
+        [a,b] = pickOne(pairs); result = a*b; break;
+      }
+      case '÷': {
+        // nombre partagé dans l'intervalle, entre 2 à 10 pirates
+        let pairs = [];
+        for (let q=2;q<=10;q++) for (let d=2;d<=10;d++) { const n=q*d; if (n>=lo && n<=hi) pairs.push([q,d]); }
+        if (!pairs.length) for (let q=2;q<=100;q++) for (let d=2;d<=10;d++) { const n=q*d; if (n>=lo && n<=hi) pairs.push([q,d]); }
+        if (!pairs.length) pairs.push([rnd(2,5), rnd(2,5)]);
+        [result,b] = pickOne(pairs); a = result*b; break;
+      }
     }
     return { a, b, op, result, fA, fB };
   }
@@ -1267,7 +1456,7 @@
     for(let i=0;i<show;i++) {
       const delay = animated ? `animation-delay:${i*45}ms` : '';
       // [4] Each fruit is clickable — onclick calls onFruitClick(this)
-      h += `<span class="fruit-item" style="${delay}" onclick="onFruitClick(this)" title="Clique pour compter !">${emoji}</span>`;
+      h += `<span class="fruit-item" style="${delay}" onclick="onFruitClick(this)" title="Clique pour compter !">${itemHTML(emoji)}</span>`;
     }
     h += '</div>';
     return h;
@@ -1284,7 +1473,7 @@
 
     // [3] Operator meta
     const opKey  = ex.op === '−' ? '-' : ex.op;
-    const opMeta = OP_META[ex.op] || OP_META['+'];
+    const opMeta = getOpMeta(ex.op);
 
     S.clickCount = 0;
 
@@ -1323,7 +1512,7 @@
 
     // [4] Fruit click counter badge
     h += `<div class="fruit-count-badge hidden-badge" id="fruit-badge">
-      👆 Tu as compté : <span class="fcount-num" id="fcount-num">0</span> fruits
+      👆 Tu as compté : <span class="fcount-num" id="fcount-num">0</span> ${isPirate() ? 'objets' : 'fruits'}
       <button class="fcount-reset" onclick="resetClickCount()" title="Réinitialiser le comptage">✕</button>
     </div>`;
 
@@ -1356,7 +1545,7 @@
      ================================================ */
   function pad(d) {
     if (S.phase!=='game') return;
-    if (S.input.length>=2) return;
+    if (S.input.length >= (S.level==='CE1' ? 4 : 2)) return;
     sndClick();
     // If user types on numpad, reset fruit click selection
     if (S.clickCount > 0) {
@@ -1407,15 +1596,17 @@
     S.lastIsRight = isRight;
 
     if (isRight) {
-      const [em, msg] = BRAVO_MSGS[Math.floor(Math.random()*BRAVO_MSGS.length)];
-      fbIcon.textContent  = em;
+      const MSGS = isPirate() ? PIRATE_BRAVO : BRAVO_MSGS;
+      const [em, msg] = MSGS[Math.floor(Math.random()*MSGS.length)];
+      if (isPirate()) fbIcon.innerHTML = `<div class="fb-crew">${PIRATE_MAN}<span class="fb-crew-em">${em}</span>${PIRATE_WOMAN}</div>`;
+      else fbIcon.textContent = em;
       fbTitle.textContent = msg;
       sndCorrect();
       launchConfetti();
       spawnStars();
     } else {
-      fbIcon.textContent  = '🤔';
-      fbTitle.textContent = `C'était ${S.ex.result} !`;
+      fbIcon.textContent  = isPirate() ? '🦜' : '🤔';
+      fbTitle.textContent = isPirate() ? `Arrr ! C'était ${S.ex.result} !` : `C'était ${S.ex.result} !`;
       sndWrong();
       document.getElementById('ex-card').classList.add('do-shake');
     }
@@ -1438,7 +1629,7 @@
     for(let i=0;i<count;i++) {
       const sp = document.createElement('span');
       sp.className = 'fb-fruit';
-      sp.textContent = emoji;
+      sp.innerHTML = itemHTML(emoji);
       grid.appendChild(sp);
     }
     box.appendChild(grid);
@@ -1446,7 +1637,7 @@
     if (labelText) {
       const lbl = document.createElement('div');
       lbl.className = 'fb-group-label';
-      lbl.textContent = labelText;
+      lbl.innerHTML = labelText;
       box.appendChild(lbl);
     }
     return box;
@@ -1463,13 +1654,13 @@
     for(let i=0;i<countA;i++) {
       const sp = document.createElement('span');
       sp.className = 'fb-fruit';
-      sp.textContent = fA;
+      sp.innerHTML = itemHTML(fA);
       grid.appendChild(sp);
     }
     for(let i=0;i<countB;i++) {
       const sp = document.createElement('span');
       sp.className = 'fb-fruit';
-      sp.textContent = fB;
+      sp.innerHTML = itemHTML(fB);
       grid.appendChild(sp);
     }
     box.appendChild(grid);
@@ -1477,10 +1668,42 @@
     if (labelText) {
       const lbl = document.createElement('div');
       lbl.className = 'fb-group-label';
-      lbl.textContent = labelText;
+      lbl.innerHTML = labelText;
       box.appendChild(lbl);
     }
     return box;
+  }
+
+  // Helper: grand nombre en 👑 (100), coffres (10) et pièces (1)
+  function makeTensBox(n, labelText, delayMs) {
+    const box = document.createElement('div');
+    box.className = 'fb-group';
+    box.style.animationDelay = delayMs + 'ms';
+    const grid = document.createElement('div');
+    grid.className = 'fb-group-fruits';
+    const parts = [['👑', Math.floor(n/100)], ['COFFRE', Math.floor((n%100)/10)], ['🪙', n%10]];
+    parts.forEach(([it, k]) => {
+      for (let i=0;i<k;i++) {
+        const sp = document.createElement('span');
+        sp.className = 'fb-fruit';
+        sp.innerHTML = itemHTML(it);
+        grid.appendChild(sp);
+      }
+    });
+    box.appendChild(grid);
+    if (labelText) {
+      const lbl = document.createElement('div');
+      lbl.className = 'fb-group-label';
+      lbl.innerHTML = labelText;
+      box.appendChild(lbl);
+    }
+    return box;
+  }
+  function makeLegend(withCrown) {
+    const d = document.createElement('div');
+    d.className = 'fb-legend';
+    d.innerHTML = (withCrown ? '👑 = 100 · ' : '') + itemHTML('COFFRE') + ' = 10 · 🪙 = 1';
+    return d;
   }
 
   // Helper: operator separator label
@@ -1496,16 +1719,33 @@
     fruitsEl.innerHTML = '';
     fruitsEl.className = 'fb-fruits fb-groups'; // switch to grouped layout
 
-    if (ex.op === '+') {
+    const big = S.level==='CE1' && (
+      ((ex.op==='+' || ex.op==='-') && (ex.a > 10 || ex.b > 10)));
+
+    if (big) {
+      /* -------- GRANDS NOMBRES (+ / −) : 👑 coffres pièces -------- */
+      lblEl.innerHTML = ex.op==='+'
+        ? `${ex.a} + ${ex.b} = ${ex.result} pièces au total`
+        : `${ex.a} − ${ex.b} = ${ex.result} pièces qui restent`;
+      const sym = ex.op==='+' ? '+' : '−';
+      fruitsEl.appendChild(makeTensBox(ex.a, `${ex.a}`, 0));
+      fruitsEl.appendChild(makeOpLabel(sym));
+      fruitsEl.appendChild(makeTensBox(ex.b, `${ex.b}`, isRight ? 80 : 500));
+      fruitsEl.appendChild(makeOpLabel('='));
+      fruitsEl.appendChild(makeTensBox(ex.result, `= ${ex.result}`, isRight ? 160 : 900));
+      fruitsEl.appendChild(makeLegend(Math.max(ex.a, ex.b, ex.result) >= 100));
+
+    } else if (ex.op === '+') {
       /* -------- ADDITION --------
          Show: [GroupA] + [GroupB] = [GroupResult]
          Animate: GroupB and result appear with delay if wrong */
-      lblEl.textContent = `${ex.a} ${ex.fA} + ${ex.b} ${ex.fB} = ${ex.result} au total`;
+      const iA = itemHTML(ex.fA), iB = itemHTML(ex.fB);
+      lblEl.innerHTML = `${ex.a} ${iA} + ${ex.b} ${iB} = ${ex.result} au total`;
 
-      fruitsEl.appendChild(makeGroupBox(ex.fA, ex.a, `${ex.a} ${ex.fA}`, 0));
+      fruitsEl.appendChild(makeGroupBox(ex.fA, ex.a, `${ex.a} ${iA}`, 0));
       fruitsEl.appendChild(makeOpLabel('+'));
 
-      const grpB = makeGroupBox(ex.fB, ex.b, `${ex.b} ${ex.fB}`, isRight ? 80 : 500);
+      const grpB = makeGroupBox(ex.fB, ex.b, `${ex.b} ${iB}`, isRight ? 80 : 500);
       fruitsEl.appendChild(grpB);
       fruitsEl.appendChild(makeOpLabel('='));
 
@@ -1521,13 +1761,13 @@
     } else if (ex.op === '-') {
       /* -------- SUBTRACTION --------
          Show A fruits flat, then cross out last B with ❌ one by one */
-      lblEl.textContent = `${ex.a} ${ex.fA} − ${ex.b} enlevés = ${ex.result} qui restent`;
+      lblEl.innerHTML = `${ex.a} ${itemHTML(ex.fA)} − ${ex.b} enlevés = ${ex.result} qui restent`;
       fruitsEl.className = 'fb-fruits'; // flat layout for subtraction (clearer X removal)
 
       for(let i=0;i<Math.min(ex.a,10);i++) {
         const sp = document.createElement('span');
         sp.className = 'fb-fruit';
-        sp.textContent = ex.fA;
+        sp.innerHTML = itemHTML(ex.fA);
         fruitsEl.appendChild(sp);
       }
       const allActive = () => fruitsEl.querySelectorAll('.fb-fruit:not(.vanish)');
@@ -1545,26 +1785,37 @@
       /* -------- MULTIPLICATION --------
          Show a group boxes of b fruits each
          e.g. 4×5 → 4 boxes each with 5 🍎 */
-      lblEl.textContent = `${ex.a} fois ${ex.b} ${ex.fA} → ${ex.result} au total`;
+      let G = ex.a, per = ex.b;
+      if (G > 10 && per <= 10) { G = ex.b; per = ex.a; } // on montre le moins de groupes possible
+      lblEl.innerHTML = isPirate()
+        ? `${G} bateaux avec ${per} ${per > 10 ? 'pièces' : itemHTML(ex.fA)} → ${ex.result} au total`
+        : `${ex.a} fois ${ex.b} ${ex.fA} → ${ex.result} au total`;
 
-      for(let g=0;g<ex.a;g++) {
+      for(let g=0;g<G;g++) {
         const delayMs = (isRight ? 0 : 400) + g * 280;
-        fruitsEl.appendChild(makeGroupBox(ex.fA, ex.b, `× ${g+1}`, delayMs));
+        fruitsEl.appendChild(per > 10
+          ? makeTensBox(per, `⛵ ${g+1}`, delayMs)
+          : makeGroupBox(ex.fA, per, isPirate() ? `⛵ ${g+1}` : `× ${g+1}`, delayMs));
         if(S.sound) setTimeout(()=>beep(440+g*50,'sine',0.1,0.16), delayMs + 80);
       }
+      if (per > 10) fruitsEl.appendChild(makeLegend(per >= 100));
 
     } else { // ÷
       /* -------- DIVISION --------
          Show b group boxes of result fruits each
          e.g. 20÷5=4 → 5 boxes each with 4 🍍
          Label: "5 groupes de 4 = 20" */
-      lblEl.textContent = `${ex.a} ${ex.fA} partagés en ${ex.b} groupes → ${ex.result} dans chaque groupe`;
+      lblEl.innerHTML = isPirate()
+        ? `${ex.a} ${itemHTML(ex.fA)} partagés entre ${ex.b} pirates → ${ex.result} pour chacun`
+        : `${ex.a} ${ex.fA} partagés en ${ex.b} groupes → ${ex.result} dans chaque groupe`;
 
       for(let g=0;g<ex.b;g++) {
         const delayMs = (isRight ? 0 : 400) + g * 300;
-        fruitsEl.appendChild(makeGroupBox(ex.fA, ex.result, `Groupe ${g+1}`, delayMs));
+        const gl = isPirate() ? `${g%2 ? '👩' : '🧔'} Pirate ${g+1}` : `Groupe ${g+1}`;
+        fruitsEl.appendChild(ex.result > 10 ? makeTensBox(ex.result, gl, delayMs) : makeGroupBox(ex.fA, ex.result, gl, delayMs));
         if(S.sound) setTimeout(()=>beep(420+g*45,'sine',0.1,0.16), delayMs + 80);
       }
+      if (ex.result > 10) fruitsEl.appendChild(makeLegend(ex.result >= 100));
     }
   }
 
@@ -1588,6 +1839,11 @@
     S.phase = 'game';
 
     document.getElementById('level-pill').textContent = lvl;
+    document.body.classList.toggle('theme-pirate', lvl === 'CE1');
+    [['tog-plus','+'],['tog-minus','-'],['tog-mul','×'],['tog-div','÷']].forEach(([id,op])=>{
+      const em = document.querySelector('#'+id+' .op-tog-emoji');
+      if (em) em.textContent = getOpMeta(op).emoji;
+    });
     document.getElementById('welcome').classList.add('hidden');
     document.getElementById('game').classList.remove('hidden');
     document.getElementById('feedback').className = '';
@@ -1598,8 +1854,10 @@
 
   function goHome() {
     S.phase = 'welcome';
+    document.body.classList.remove('theme-pirate');
     document.getElementById('feedback').className = '';
     document.getElementById('game').classList.add('hidden');
+    document.getElementById('range').classList.add('hidden');
     document.getElementById('welcome').classList.remove('hidden');
     stopConfetti();
   }
@@ -1635,6 +1893,9 @@
     const isCE1 = S.level === 'CE1';
     document.getElementById('tog-mul').style.display = isCE1 ? '' : 'none';
     document.getElementById('tog-div').style.display = isCE1 ? '' : 'none';
+    const rb = document.getElementById('settings-range-btn');
+    rb.style.display = isCE1 ? '' : 'none';
+    rb.textContent = `🗺️ Nombres : ${S.range.lo} → ${S.range.hi}`;
     if (settingsOpen) sndClick();
   }
 
@@ -1761,7 +2022,7 @@
      KEYBOARD SUPPORT (desktop / external keyboard)
      ================================================ */
   document.addEventListener('keydown', e => {
-    if (S.phase==='welcome') return;
+    if (S.phase==='welcome' || S.phase==='range') return;
     if (S.phase==='feedback') { if(e.key==='Enter'||e.key===' ') nextEx(); return; }
     if (e.key>='0'&&e.key<='9') pad(e.key);
     else if (e.key==='Backspace') padDel();
@@ -1792,7 +2053,7 @@
         y: -10 - Math.random()*180,
         vx: (Math.random()-.5)*5,
         vy:  3 + Math.random()*5,
-        col: COLORS[Math.floor(Math.random()*COLORS.length)],
+        col: (isPirate() ? PIRATE_COLORS : COLORS)[Math.floor(Math.random()*(isPirate() ? PIRATE_COLORS : COLORS).length)],
         w:   5 + Math.random()*11,
         h:   5 + Math.random()*6,
         rot: Math.random()*Math.PI*2,
@@ -1829,9 +2090,82 @@
     else { c.clearRect(0,0,cnv.width,cnv.height); rafId=null; }
   }
 
+  document.getElementById('lc-crew').innerHTML = PIRATE_MAN + PIRATE_WOMAN;
+  document.getElementById('range-crew').innerHTML = PIRATE_MAN + PIRATE_WOMAN;
+
+  /* ================================================
+     CHOIX DES NOMBRES (CE1)
+     ================================================ */
+  const RANGE_MIN = 1, RANGE_MAX = 999;
+  let draftRange = { ...S.range };
+
+  function renderRange() {
+    document.getElementById('rg-lo').textContent = draftRange.lo;
+    document.getElementById('rg-hi').textContent = draftRange.hi;
+    document.querySelectorAll('#rg-presets .rg-chip').forEach(ch => {
+      const [l, h] = ch.textContent.split('→').map(t => parseInt(t, 10));
+      ch.classList.toggle('active', l === draftRange.lo && h === draftRange.hi);
+    });
+  }
+
+  function setRange(lo, hi) { draftRange = { lo, hi }; sndClick(); renderRange(); }
+
+  function stepRange(t, d) {
+    const r = draftRange;
+    if (t === 'lo') r.lo = Math.max(RANGE_MIN, Math.min(r.hi - 1, r.lo + d));
+    else            r.hi = Math.min(RANGE_MAX, Math.max(r.lo + 1, r.hi + d));
+    renderRange();
+  }
+
+  function openRange(from) {
+    S.rangeFrom = from;
+    draftRange = { ...S.range };
+    renderRange();
+    if (settingsOpen) toggleSettings();
+    document.getElementById('welcome').classList.add('hidden');
+    document.getElementById('game').classList.add('hidden');
+    document.getElementById('range').classList.remove('hidden');
+    S.phase = 'range';
+    sndClick();
+  }
+
+  function confirmRange() {
+    S.range = { ...draftRange };
+    try { localStorage.setItem('calc-ce1-range', JSON.stringify(S.range)); } catch(_) {}
+    document.getElementById('range').classList.add('hidden');
+    if (S.rangeFrom === 'game' && S.level === 'CE1') {
+      // on reprend la partie en gardant le score, avec une nouvelle question
+      document.getElementById('game').classList.remove('hidden');
+      S.phase = 'game'; S.input = ''; S.clickCount = 0;
+      S.ex = genEx(); renderEx();
+      sndClick();
+    } else {
+      startLevel('CE1');
+    }
+  }
+
+  // Boutons − / + : appui long = accélération
+  document.querySelectorAll('.rg-btn').forEach(btn => {
+    let timer = null, t0 = 0;
+    const t = btn.dataset.t, d = parseInt(btn.dataset.d, 10);
+    const stop = () => { clearTimeout(timer); timer = null; };
+    const loop = () => {
+      const held = performance.now() - t0;
+      stepRange(t, d * (held > 2500 ? 10 : held > 1200 ? 5 : 1));
+      timer = setTimeout(loop, held > 1200 ? 90 : 140);
+    };
+    btn.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      t0 = performance.now();
+      stepRange(t, d); sndClick();
+      timer = setTimeout(loop, 400);
+    });
+    ['pointerup','pointerleave','pointercancel'].forEach(ev => btn.addEventListener(ev, stop));
+  });
+
   function spawnStars() {
     const slots  = [{x:'18%',y:'25%'},{x:'82%',y:'18%'},{x:'50%',y:'10%'},{x:'12%',y:'72%'},{x:'88%',y:'68%'},{x:'35%',y:'20%'},{x:'70%',y:'30%'}];
-    const emojis = ['⭐','🌟','✨','💫','🎉','🎊','🏆'];
+    const emojis = isPirate() ? ['🪙','💰','💎','👑','🏴‍☠️','⭐','🪙'] : ['⭐','🌟','✨','💫','🎉','🎊','🏆'];
     slots.forEach((pos,i)=>{
       setTimeout(()=>{
         const el = document.createElement('div');
