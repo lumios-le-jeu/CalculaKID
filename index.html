@@ -1309,6 +1309,18 @@
     .tg-piece { stroke:rgba(0,0,0,.35); stroke-width:.05; stroke-linejoin:round; cursor:grab; }
     .tg-piece.sel { stroke:#fff; stroke-width:.12; filter:drop-shadow(0 .1px .25px rgba(0,0,0,.5)); }
     .tg-tools .m-btn { padding:10px 14px; }
+
+    /* Barre du haut : tout reste visible sur téléphone */
+    .scorebar { flex-wrap:wrap; row-gap:6px; }
+    @media (max-width:620px) {
+      #game .credit-mini, #game .score-sep, #game .score-item .si-lbl { display:none; }
+      #game .scorebar { padding:8px 10px; }
+      #game .score-left { gap:8px; }
+      #game .score-right { gap:5px; }
+      #game .icon-btn { width:38px; height:38px; font-size:1.05rem; }
+      #game .level-pill { font-size:.75rem; padding:5px 10px; }
+      #game .score-item .si-val { font-size:1.15rem; }
+    }
   </style>
 </head>
 <body>
@@ -1468,7 +1480,7 @@
       <button class="rg-chip" onclick="setRange(1,100)">1 → 100</button>
       <button class="rg-chip" onclick="setRange(1,200)">1 → 200</button>
     </div>
-    <div class="rg-hint">👆 Reste appuyé sur − ou + pour aller plus vite</div>
+    <div class="rg-hint">C'est l'intervalle du <b>1er nombre</b>. Le 2ᵉ nombre reste petit (moins de 20).<br>👆 Reste appuyé sur − ou + pour aller plus vite</div>
   </div>
   <button class="rg-go" onclick="confirmRange()">🏴‍☠️ À l'abordage !</button>
   <button class="rg-back" onclick="cancelRange()">← Retour</button>
@@ -1485,7 +1497,7 @@
       <button class="icon-btn" onclick="goHome()" aria-label="Accueil" title="Accueil">🏠</button>
       <span class="level-pill" id="level-pill">CP</span>
       <div class="score-sep"></div>
-      <span style="font-size:0.6rem;font-weight:800;color:var(--muted);letter-spacing:0.3px;white-space:nowrap">✏️ Etienne Leborgne</span>
+      <span class="credit-mini" style="font-size:0.6rem;font-weight:800;color:var(--muted);letter-spacing:0.3px;white-space:nowrap">✏️ Etienne Leborgne</span>
       <div class="score-sep"></div>
       <div class="score-item ok">
         <span class="si-lbl">✅ Bravo</span>
@@ -1506,7 +1518,6 @@
       <button class="icon-btn" id="range-btn" title="Choisir les nombres" onclick="openRange('game')" aria-label="Choisir les nombres">🗺️</button>
       <button class="icon-btn" id="sound-toggle" title="Activer/couper le son" onclick="toggleSound()" aria-label="Son">🔊</button>
       <button class="icon-btn" title="Réglages opérations" onclick="toggleSettings()" aria-label="Réglages" id="settings-btn">⚙️</button>
-      <button class="icon-btn" title="Recommencer" onclick="goHome()" aria-label="Recommencer">🔄</button>
       <button class="icon-btn lock-btn" id="lock-btn" title="Verrouiller" onclick="lockScreen()" aria-label="Verrouiller">🔒</button>
       <!-- Settings panel (anchored to score-right) -->
       <div id="settings-panel" role="menu" aria-label="Sélection des opérations">
@@ -1769,28 +1780,21 @@
     const lo = S.range.lo, hi = S.range.hi;
     let a, b, result, fA = pick(), fB = fA;
     const pickOne = arr => arr[Math.floor(Math.random()*arr.length)];
+    // L'intervalle choisi s'applique au 1er nombre ; le 2e reste petit (moins de 20)
     switch(op) {
       case '+':
-        if (hi >= 2*lo) { a = rnd(lo, hi-lo); b = rnd(lo, hi-a); }
-        else            { a = rnd(lo, hi);    b = rnd(lo, hi); }
+        a = rnd(lo, hi); b = rnd(1, Math.min(19, Math.max(hi, 2)));
         result = a+b; fB = pickDiff(fA); break;
       case '-':
-        if (hi >= 2*lo) { a = rnd(2*lo, hi); b = rnd(lo, a-lo); }
-        else            { a = rnd(Math.max(lo,2), Math.max(hi,2)); b = rnd(1, a-1); }
+        a = rnd(Math.max(lo, 2), Math.max(hi, 2)); b = rnd(1, Math.min(19, a-1));
         result = a-b; break;
-      case '×': {
-        // résultat dans l'intervalle, tables de 2 à 10 en priorité
-        let pairs = [];
-        for (let x=2;x<=10;x++) for (let y=2;y<=10;y++) { const r=x*y; if (r>=lo && r<=hi) pairs.push([x,y]); }
-        if (!pairs.length) for (let x=2;x<=100;x++) for (let y=2;y<=10;y++) { const r=x*y; if (r>=lo && r<=hi) pairs.push([x,y]); }
-        if (!pairs.length) pairs.push([rnd(2,5), rnd(2,5)]);
-        [a,b] = pickOne(pairs); result = a*b; break;
-      }
+      case '×':
+        a = rnd(Math.max(lo, 1), hi); b = rnd(2, 9);
+        result = a*b; break;
       case '÷': {
-        // nombre partagé dans l'intervalle, entre 2 à 10 pirates
+        // nombre à partager dans l'intervalle, entre 2 et 9 pirates, sans reste
         let pairs = [];
-        for (let q=2;q<=10;q++) for (let d=2;d<=10;d++) { const n=q*d; if (n>=lo && n<=hi) pairs.push([q,d]); }
-        if (!pairs.length) for (let q=2;q<=100;q++) for (let d=2;d<=10;d++) { const n=q*d; if (n>=lo && n<=hi) pairs.push([q,d]); }
+        for (let d=2; d<=9; d++) for (let q=1; q*d<=hi; q++) { if (q*d >= lo) pairs.push([q,d]); }
         if (!pairs.length) pairs.push([rnd(2,5), rnd(2,5)]);
         [result,b] = pickOne(pairs); a = result*b; break;
       }
