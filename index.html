@@ -1300,6 +1300,14 @@
     .at-row span { width:var(--ds,12px); height:var(--ds,12px); border-radius:50%; background:#6C5CE7; }
     .at-row:nth-child(even) span { background:#FD79A8; }
     .at-prog { color:var(--muted); }
+
+    /* Tangram */
+    #mini[data-game="tangram"] { background:linear-gradient(180deg,#FFF4E8,#FBDDBF); }
+    .tg-card { gap:8px; padding:12px 10px; }
+    .tg-svg { width:100%; max-width:520px; max-height:calc(100vh - 260px); touch-action:none; user-select:none; }
+    .tg-piece { stroke:rgba(0,0,0,.35); stroke-width:.05; stroke-linejoin:round; cursor:grab; }
+    .tg-piece.sel { stroke:#fff; stroke-width:.12; filter:drop-shadow(0 .1px .25px rgba(0,0,0,.5)); }
+    .tg-tools .m-btn { padding:10px 14px; }
   </style>
 </head>
 <body>
@@ -1362,6 +1370,11 @@
         <span class="lc-emoji">📏</span>
         <span class="lc-name">Mesures</span>
         <span class="lc-desc">Règle et<br>balance</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('tangram')" aria-label="Tangram">
+        <span class="lc-emoji">📐</span>
+        <span class="lc-name">Tangram</span>
+        <span class="lc-desc">Reproduis la forme<br>avec 7 pièces</span>
       </button>
       <button class="level-card game-card" onclick="openMini('symetrie')" aria-label="Symétrie">
         <span class="lc-emoji">🔷</span>
@@ -3968,6 +3981,161 @@
       `<div class="nb-big" style="color:#FFEAA7">${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}</div>
        <div class="fb-exp-lbl">${st.first} / 10 réussis du premier coup</div>
        <div class="fb-exp-lbl">💡 ${AT_TIPS[st.t]}</div>`, stars >= 2);
+  }
+
+  const TG_FIGS = [{"n":"Le carré","e":"🟪","p":[["LT",[[0,4],[0,0],[2,2]]],["LT",[[0,0],[4,0],[2,2]]],["ST",[[2,4],[0,4],[1,3]]],["PAR",[[4,0],[4,2],[3,3],[3,1]]],["ST",[[3,1],[3,3],[2,2]]],["MT",[[4,4],[2,4],[4,2]]],["SQ",[[2,2],[3,3],[2,4],[1,3]]]]},{"n":"Le grand triangle","e":"🔺","p":[["LT",[[0,0],[4,0],[2,2]]],["LT",[[4,0],[8,0],[6,2]]],["MT",[[4,2],[4,4],[2,2]]],["ST",[[4,4],[4,2],[5,3]]],["PAR",[[5,1],[3,1],[2,2],[4,2]]],["ST",[[5,1],[3,1],[4,0]]],["SQ",[[5,1],[6,2],[5,3],[4,2]]]]},{"n":"Le bateau","e":"⛵","p":[["LT",[[4,2],[0,2],[2,0]]],["MT",[[6,2],[6,0],[8,2]]],["ST",[[6,0],[6,2],[5,1]]],["PAR",[[2,2],[4,2],[5,3],[3,3]]],["ST",[[3,3],[5,3],[4,4]]],["LT",[[2,0],[6,0],[4,2]]],["SQ",[[5,1],[6,2],[5,3],[4,2]]]]},{"n":"Le diamant","e":"💎","p":[["MT",[[4,4],[2,4],[4,2]]],["ST",[[4,4],[4,2],[5,3]]],["PAR",[[2,0],[4,0],[5,1],[3,1]]],["ST",[[3,1],[5,1],[4,2]]],["SQ",[[5,1],[6,2],[5,3],[4,2]]],["LT",[[0,2],[4,2],[2,4]]],["LT",[[4,2],[0,2],[2,0]]]]},{"n":"Le rectangle","e":"▭","p":[["LT",[[0.0,0.0],[2.8284,0.0],[0.0,2.8284]]],["LT",[[2.8284,2.8284],[0.0,2.8284],[2.8284,0.0]]],["MT",[[5.6569,2.8284],[2.8284,2.8284],[4.2426,1.4142]]],["ST",[[2.8284,1.4142],[4.2426,1.4142],[2.8284,2.8284]]],["PAR",[[5.6569,2.8284],[5.6569,1.4142],[4.2426,0.0],[4.2426,1.4142]]],["ST",[[5.6569,0.0],[5.6569,1.4142],[4.2426,0.0]]],["SQ",[[2.8284,0.0],[4.2426,0.0],[4.2426,1.4142],[2.8284,1.4142]]]]},{"n":"La maison","e":"🏠","p":[["LT",[[1.4142,2.8284],[1.4142,5.6569],[-1.4142,2.8284]]],["LT",[[1.4142,2.8284],[4.2426,2.8284],[1.4142,5.6569]]],["MT",[[0.0,2.8284],[0.0,0.0],[1.4142,1.4142]]],["ST",[[1.4142,2.8284],[0.0,2.8284],[1.4142,1.4142]]],["PAR",[[0.0,0.0],[1.4142,0.0],[2.8284,1.4142],[1.4142,1.4142]]],["ST",[[2.8284,0.0],[2.8284,1.4142],[1.4142,0.0]]],["SQ",[[1.4142,1.4142],[2.8284,1.4142],[2.8284,2.8284],[1.4142,2.8284]]]]},{"n":"La fusée","e":"🚀","p":[["LT",[[1.4142,0.0],[1.4142,2.8284],[-1.4142,0.0]]],["LT",[[0.0,4.2426],[0.0,1.4142],[2.8284,4.2426]]],["MT",[[0.0,4.2426],[2.8284,4.2426],[1.4142,5.6569]]],["ST",[[2.8284,0.0],[4.2426,0.0],[2.8284,1.4142]]],["PAR",[[2.8284,4.2426],[2.8284,2.8284],[1.4142,1.4142],[1.4142,2.8284]]],["ST",[[2.8284,1.4142],[2.8284,2.8284],[1.4142,1.4142]]],["SQ",[[1.4142,0.0],[2.8284,0.0],[2.8284,1.4142],[1.4142,1.4142]]]]},{"n":"La lettre T","e":"🔤","p":[["ST",[[0.0,2.8284],[1.4142,2.8284],[0.0,4.2426]]],["SQ",[[4.2426,2.8284],[5.6569,2.8284],[5.6569,4.2426],[4.2426,4.2426]]],["LT",[[2.8284,4.2426],[0.0,4.2426],[2.8284,1.4142]]],["ST",[[2.8284,4.2426],[2.8284,2.8284],[4.2426,4.2426]]],["LT",[[1.4142,0.0],[4.2426,0.0],[1.4142,2.8284]]],["MT",[[4.2426,1.4142],[4.2426,4.2426],[2.8284,2.8284]]],["PAR",[[4.2426,0.0],[4.2426,1.4142],[2.8284,2.8284],[2.8284,1.4142]]]]},{"n":"La lettre L","e":"🔤","p":[["ST",[[5.6569,0.0],[5.6569,1.4142],[4.2426,0.0]]],["MT",[[5.6569,1.4142],[2.8284,1.4142],[4.2426,0.0]]],["LT",[[1.4142,0.0],[4.2426,0.0],[1.4142,2.8284]]],["LT",[[2.8284,4.2426],[0.0,4.2426],[2.8284,1.4142]]],["PAR",[[1.4142,1.4142],[1.4142,2.8284],[0.0,4.2426],[0.0,2.8284]]],["ST",[[0.0,1.4142],[1.4142,1.4142],[0.0,2.8284]]],["SQ",[[0.0,0.0],[1.4142,0.0],[1.4142,1.4142],[0.0,1.4142]]]]}];
+
+  /* =========================================================
+     JEU 16 — TANGRAM
+     ========================================================= */
+  const TG_BASE = {   // pièces du tangram (carré de côté 4)
+    LT: [[0,0],[4,0],[2,2]], MT: [[0,0],[2,0],[0,2]], ST: [[0,0],[2,0],[1,1]],
+    SQ: [[1,0],[2,1],[1,2],[0,1]], PAR: [[0,0],[2,0],[3,1],[1,1]],
+  };
+  const TG_PIECES = [
+    { id:'LT1', t:'LT', col:'#E74C3C', x:2.6,  y:11.6 }, { id:'LT2', t:'LT', col:'#3498DB', x:7.2,  y:11.6 },
+    { id:'MT',  t:'MT', col:'#F39C12', x:11.6, y:11.2 }, { id:'ST1', t:'ST', col:'#F1C40F', x:1.8,  y:15.2 },
+    { id:'ST2', t:'ST', col:'#1ABC9C', x:4.6,  y:15.2 }, { id:'SQ',  t:'SQ', col:'#2ECC71', x:7.6,  y:15.0 },
+    { id:'PAR', t:'PAR', col:'#9B59B6', x:11.4, y:15.4 },
+  ];
+  const TG_LOCAL = {};
+  for (const [t, pts] of Object.entries(TG_BASE)) {
+    const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+    TG_LOCAL[t] = pts.map(([x, y]) => [x - cx, -(y - cy)]);
+  }
+  const TG = { st:null, last:null };
+  const tgPts = arr => arr.map(p => p[0].toFixed(3) + ',' + p[1].toFixed(3)).join(' ');
+  function tgWorld(p) {
+    const a = p.rot * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
+    return TG_LOCAL[p.t].map(([lx, ly]) => { const x = p.flip ? -lx : lx; return [p.x + x * c - ly * s, p.y + x * s + ly * c]; });
+  }
+  function tgInPoly(x, y, poly) {
+    let c = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i], [xj, yj] = poly[j];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  }
+  GAMES.tangram = {
+    title: 'Tangram', emoji: '📐',
+    newQ(body, lv) {
+      let f; do { f = pickArr(TG_FIGS); } while (TG_FIGS.length > 1 && f.n === TG.last);
+      TG.last = f.n;
+      // figure : y inversé (SVG) puis centrée dans la zone du haut
+      let polys = f.p.map(([t, pts]) => pts.map(([x, y]) => [x, -y]));
+      const all = polys.flat();
+      const minX = Math.min(...all.map(p => p[0])), maxX = Math.max(...all.map(p => p[0]));
+      const minY = Math.min(...all.map(p => p[1])), maxY = Math.max(...all.map(p => p[1]));
+      const dx = 7 - (minX + maxX) / 2, dy = 4.6 - (minY + maxY) / 2;
+      polys = polys.map(poly => poly.map(([x, y]) => [x + dx, y + dy]));
+      const bbox = [minX + dx, minY + dy, maxX + dx, maxY + dy];
+      const pieces = TG_PIECES.map(p => ({ ...p, rot:0, flip:false }));
+      TG.st = { f, polys, bbox, pieces, sel:null, lines: lv === 'CE1', done:false, verts: polys.flat() };
+      body.innerHTML = `<div class="m-card tg-card">
+        <div class="m-prompt">Reproduis : <b>${f.n}</b> ${f.e}</div>
+        <svg class="tg-svg" id="tg-svg" viewBox="0 0 14 17.2">
+          <rect x="0.2" y="9.4" width="13.6" height="7.6" rx="0.5" fill="#F4F1FA"/>
+          <g id="tg-target"></g><g id="tg-pieces"></g>
+        </svg>
+        <div class="w-actions tg-tools">
+          <button class="m-btn" onclick="tgRotate()">⟳ Tourner</button>
+          <button class="m-btn" onclick="tgFlip()">↔ Retourner</button>
+          ${lv === 'CE2' ? '<button class="m-btn" id="tg-help" onclick="tgHelp()">💡 Aide</button>' : ''}
+          <button class="m-btn" onclick="tgReset()">↺</button>
+        </div>
+        <div class="m-hint">Fais glisser les pièces sur la forme. Touche une pièce pour la tourner.</div>
+      </div>`;
+      tgDrawTarget(); tgDrawPieces();
+    },
+  };
+  function tgDrawTarget() {
+    const st = TG.st;
+    document.getElementById('tg-target').innerHTML = st.polys.map(poly =>
+      `<polygon points="${tgPts(poly)}" fill="#4A4A68" stroke="${st.lines ? '#fff' : '#4A4A68'}" stroke-width="${st.lines ? 0.05 : 0.04}" stroke-linejoin="round"/>`).join('');
+  }
+  function tgDrawPieces() {
+    const st = TG.st, g = document.getElementById('tg-pieces');
+    g.innerHTML = '';
+    st.pieces.forEach((p, i) => {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      el.setAttribute('class', 'tg-piece' + (st.sel === i ? ' sel' : ''));
+      el.setAttribute('fill', p.col);
+      el.dataset.i = i;
+      el.setAttribute('points', tgPts(tgWorld(p)));
+      el.addEventListener('pointerdown', tgDown);
+      g.appendChild(el);
+    });
+    if (st.sel !== null) { const s = g.querySelector(`[data-i="${st.sel}"]`); if (s) g.appendChild(s); }
+  }
+  function tgSvgPt(e) {
+    const svg = document.getElementById('tg-svg'), pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const r = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return [r.x, r.y];
+  }
+  function tgDown(e) {
+    const st = TG.st; if (!st || st.done || MINI.answered) return;
+    e.preventDefault();
+    const i = +e.target.dataset.i, p = st.pieces[i], el = e.target;
+    st.sel = i;
+    el.parentNode.appendChild(el);
+    document.querySelectorAll('.tg-piece').forEach(x => x.classList.toggle('sel', +x.dataset.i === i));
+    const [sx, sy] = tgSvgPt(e), ox = p.x, oy = p.y, t0 = performance.now();
+    let moved = 0;
+    try { el.setPointerCapture(e.pointerId); } catch(_) {}
+    const move = ev => {
+      const [x, y] = tgSvgPt(ev);
+      moved = Math.max(moved, Math.hypot(x - sx, y - sy));
+      p.x = Math.min(13.8, Math.max(0.2, ox + x - sx)); p.y = Math.min(17, Math.max(0.2, oy + y - sy));
+      el.setAttribute('points', tgPts(tgWorld(p)));
+    };
+    const up = () => {
+      el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up);
+      if (moved < 0.2 && performance.now() - t0 < 500) { p.x = ox; p.y = oy; tgRotate(); return; }
+      tgSnap(p); tgDrawPieces(); tgCheck();
+    };
+    el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  }
+  function tgSnap(p) {
+    const st = TG.st; let best = 0.5, bx = 0, by = 0;
+    for (const [vx, vy] of tgWorld(p)) for (const [tx, ty] of st.verts) {
+      const d = Math.hypot(tx - vx, ty - vy);
+      if (d < best) { best = d; bx = tx - vx; by = ty - vy; }
+    }
+    if (best < 0.5) { p.x += bx; p.y += by; if (S.sound) beep(820, 'sine', 0.05, 0.12); }
+  }
+  function tgRotate() {
+    const st = TG.st; if (!st || st.sel === null || st.done) return;
+    const p = st.pieces[st.sel]; p.rot = (p.rot + 45) % 360;
+    sndClick(); tgSnap(p); tgDrawPieces(); tgCheck();
+  }
+  function tgFlip() {
+    const st = TG.st; if (!st || st.sel === null || st.done) return;
+    const p = st.pieces[st.sel]; p.flip = !p.flip;
+    sndClick(); tgSnap(p); tgDrawPieces(); tgCheck();
+  }
+  function tgHelp() { const st = TG.st; if (!st) return; st.lines = !st.lines; sndClick(); tgDrawTarget(); }
+  function tgReset() {
+    const st = TG.st; if (!st || st.done) return;
+    st.pieces = TG_PIECES.map(p => ({ ...p, rot:0, flip:false })); st.sel = null;
+    sndClick(); tgDrawPieces();
+  }
+  function tgCheck() {
+    const st = TG.st; if (!st || st.done) return;
+    const polys = st.pieces.map(tgWorld), [x0, y0, x1, y1] = st.bbox;
+    let tc = 0, miss = 0, extra = 0;
+    for (let x = x0 - 0.4137; x <= x1 + 0.4; x += 0.1) for (let y = y0 - 0.4071; y <= y1 + 0.4; y += 0.1) {
+      const inT = st.polys.some(poly => tgInPoly(x, y, poly)), inU = polys.some(poly => tgInPoly(x, y, poly));
+      if (inT) { tc++; if (!inU) miss++; } else if (inU) extra++;
+    }
+    if (miss < tc * 0.02 && extra < tc * 0.02) {
+      st.done = true;
+      const pad = 0.3, w = x1 - x0 + 2 * pad, h = y1 - y0 + 2 * pad;
+      const svg = `<svg viewBox="${x0 - pad} ${y0 - pad} ${w} ${h}" style="width:${Math.min(220, 40 * w)}px;height:auto">${st.pieces.map(p =>
+        `<polygon points="${tgPts(tgWorld(p))}" fill="${p.col}" stroke="#fff" stroke-width="0.05"/>`).join('')}</svg>`;
+      setTimeout(() => miniResult(true, '', `${svg}<div class="fb-exp-lbl">${st.f.e} ${st.f.n} réussi avec les 7 pièces !</div>`), 350);
+    }
   }
 
   function spawnStars() {
