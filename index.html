@@ -1070,7 +1070,7 @@
     .level-row.games .lc-name { font-size:clamp(1.05rem,3.4vw,1.45rem); white-space:nowrap; }
     .level-row.games .lc-name.long { font-size:clamp(0.95rem,2.9vw,1.15rem); }
     @media (max-width:560px) {
-      #mini .score-item .si-lbl, #mini .score-sep { display:none; }
+      #mini .score-item .si-lbl, #mini .score-sep, #mini .credit-mini { display:none; }
       #mini .mini-title { font-size:.75rem; padding:5px 10px; }
       #mini .scorebar { padding:8px 10px; }
       #mini .score-left { gap:8px; }
@@ -1574,6 +1574,8 @@
         <button data-lv="CE1" onclick="miniSetLevel('CE1')">CE1</button>
         <button data-lv="CE2" onclick="miniSetLevel('CE2')">CE2</button>
       </div>
+      <div class="score-sep"></div>
+      <span class="credit-mini" style="font-size:0.6rem;font-weight:800;color:var(--muted);letter-spacing:0.3px;white-space:nowrap">✏️ Etienne Leborgne</span>
       <div class="score-sep"></div>
       <div class="score-item ok"><span class="si-lbl">✅ Bravo</span><span class="si-val" id="m-ok">0</span></div>
       <div class="score-sep"></div>
