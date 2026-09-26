@@ -1321,6 +1321,11 @@
       #game .level-pill { font-size:.75rem; padding:5px 10px; }
       #game .score-item .si-val { font-size:1.15rem; }
     }
+
+    /* Mention auteur : uniquement sur ordinateur (cachée sur tout écran tactile ou étroit) */
+    @media (max-width:820px), (hover:none), (pointer:coarse) {
+      .credit-mini { display:none !important; }
+    }
   </style>
 </head>
 <body>
