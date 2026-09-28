@@ -1329,7 +1329,10 @@
 
     /* Explication pas à pas des grands nombres */
     .bx-wrap { flex-direction:column; align-items:center; gap:8px; }
-    .bx-step { min-height:2.6em; font-size:clamp(.9rem,2.8vw,1.05rem); font-weight:900; color:#fff; text-align:center; max-width:460px; }
+    .bx-step { display:flex; flex-direction:column; gap:5px; font-size:clamp(.9rem,2.8vw,1.05rem); font-weight:900; color:#fff; max-width:460px; width:100%; }
+    .bx-line { display:flex; align-items:flex-start; gap:8px; text-align:left; }
+    .bx-line.past { opacity:.6; font-weight:800; }
+    .bx-num { flex-shrink:0; width:1.5em; height:1.5em; border-radius:50%; background:#fff; color:#922B21; display:flex; align-items:center; justify-content:center; font-size:.8em; }
     .bx-step b { background:#FFEAA7; color:#2D3436; border-radius:5px; padding:0 4px; }
     .bx-pop { animation: fade-up .35s ease; }
     .bx-area { display:flex; flex-direction:column; align-items:center; gap:6px; background:rgba(255,255,255,.16); border:2px solid rgba(255,255,255,.4); border-radius:14px; padding:8px 12px; min-width:200px; }
@@ -2138,10 +2141,13 @@
   function clearExplTimers() { EXPL_TIMERS.forEach(clearTimeout); EXPL_TIMERS = []; }
   function bxDesc(n) {
     const h = Math.floor(n/100), t = Math.floor(n/10) % 10, u = n % 10, parts = [];
-    if (h) parts.push(`${h} couronne${h > 1 ? 's' : ''}`);
-    if (t) parts.push(`${t} coffre${t > 1 ? 's' : ''}`);
+    if (h) parts.push(`${h} couronne${h > 1 ? 's' : ''} de 100 pièces`);
+    if (t) parts.push(`${t} coffre${t > 1 ? 's' : ''} de 10 pièces`);
     if (u) parts.push(`${u} pièce${u > 1 ? 's' : ''}`);
-    return parts.length ? parts.join(', ').replace(/, ([^,]*)$/, ' et $1') : 'rien';
+    let txt = parts.length ? parts.join(', ').replace(/, ([^,]*)$/, ' et $1') : 'rien';
+    const sum = [h * 100, t * 10, u].filter(x => x);
+    if (sum.length > 1) txt += ` (${sum.join(' + ')})`;   // ex. 48 = 40 + 8
+    return txt;
   }
   function explainBig(fruitsEl, ex, isRight) {
     const ICON = { 100:'👑', 10:'COFFRE', 1:'🪙' };
@@ -2150,12 +2156,20 @@
       <div class="bx-row" data-v="100"></div><div class="bx-row" data-v="10"></div><div class="bx-row" data-v="1"></div></div>`;
     fruitsEl.appendChild(makeLegend(Math.max(ex.a, ex.b, ex.result) >= 100));
     const row = v => fruitsEl.querySelector(`.bx-row[data-v="${v}"]`);
-    const caption = html => { const c = fruitsEl.querySelector('#bx-step'); c.innerHTML = html; c.classList.remove('bx-pop'); void c.offsetWidth; c.classList.add('bx-pop'); };
+    let nStep = 0;
+    const caption = html => {   // les étapes s'empilent : l'enfant peut relire les précédentes
+      const c = fruitsEl.querySelector('#bx-step');
+      c.querySelectorAll('.bx-line').forEach(l => l.classList.add('past'));
+      const line = document.createElement('div');
+      line.className = 'bx-line bx-pop';
+      line.innerHTML = `<span class="bx-num">${++nStep}</span><span>${html}</span>`;
+      c.appendChild(line);
+    };
     const add = (v, n, cls='') => { for (let i = 0; i < n; i++) { const sp = document.createElement('span'); sp.className = 'fb-fruit bx-it appear ' + cls; sp.innerHTML = itemHTML(ICON[v]); row(v).appendChild(sp); } };
     const live = v => [...row(v).querySelectorAll('.bx-it:not(.vanish):not(.gone)')];
     const remove = (v, n, cls='vanish') => { const l = live(v); for (let i = 0; i < n && l.length; i++) { const el = l.pop(); el.classList.add(cls); if (cls === 'gone') setTimeout(() => el.remove(), 450); } };
     const ding = f => { if (S.sound) beep(f, 'sine', 0.1, 0.15); };
-    const D = isRight ? 1500 : 1900;
+    const D = 3500;   // temps de lecture de chaque étape
     let t = 0;
     const step = fn => { EXPL_TIMERS.push(setTimeout(fn, t)); t += D; };
     const dig = n => [Math.floor(n/100), Math.floor(n/10) % 10, n % 10];
