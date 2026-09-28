@@ -1326,6 +1326,20 @@
     @media (max-width:820px), (hover:none), (pointer:coarse) {
       .credit-mini { display:none !important; }
     }
+
+    /* Explication pas à pas des grands nombres */
+    .bx-wrap { flex-direction:column; align-items:center; gap:8px; }
+    .bx-step { min-height:2.6em; font-size:clamp(.9rem,2.8vw,1.05rem); font-weight:900; color:#fff; text-align:center; max-width:460px; }
+    .bx-step b { background:#FFEAA7; color:#2D3436; border-radius:5px; padding:0 4px; }
+    .bx-pop { animation: fade-up .35s ease; }
+    .bx-area { display:flex; flex-direction:column; align-items:center; gap:6px; background:rgba(255,255,255,.16); border:2px solid rgba(255,255,255,.4); border-radius:14px; padding:8px 12px; min-width:200px; }
+    .bx-row { display:flex; flex-wrap:wrap; justify-content:center; gap:3px; max-width:340px; }
+    .bx-row:empty { display:none; }
+    .bx-it.bx-new { background:rgba(255,234,167,.45); border-radius:6px; }
+    .bx-wrap .fb-legend { flex-basis:auto; }
+    .bx-it { font-size:clamp(1.35rem,4.2vw,1.8rem) !important; }
+    .bx-it.vanish { animation:none !important; opacity:.5; }
+    .bx-it.gone { animation: fruit-cross-out .4s ease forwards !important; }
   </style>
 </head>
 <body>
@@ -1531,7 +1545,7 @@
           <button class="op-toggle active" id="tog-plus"  onclick="toggleOp('+')"  title="Addition">+<span class="op-tog-emoji">🌱</span></button>
           <button class="op-toggle active" id="tog-minus" onclick="toggleOp('-')"  title="Soustraction">−<span class="op-tog-emoji">😋</span></button>
           <button class="op-toggle active" id="tog-mul"   onclick="toggleOp('×')"  title="Multiplication">×<span class="op-tog-emoji">✨</span></button>
-          <button class="op-toggle active" id="tog-div"   onclick="toggleOp('÷')"  title="Division">÷<span class="op-tog-emoji">🍕</span></button>
+          <button class="op-toggle" id="tog-div"   onclick="toggleOp('÷')"  title="Division">÷<span class="op-tog-emoji">🍕</span></button>
         </div>
         <div class="settings-note" id="settings-note">Coche au moins une opération</div>
       </div>
@@ -1711,7 +1725,7 @@
     qNum:       0,
     clickCount: 0,        // fruit click counter
     lastIsRight: false,   // for replay
-    ops: { '+':true, '-':true, '×':true, '÷':true }, // active operations
+    ops: { '+':true, '-':true, '×':true, '÷':false }, // active operations (division désactivée par défaut)
     range: { lo: 1, hi: 200 }, // CE1 : intervalle des nombres
     rangeFrom: 'welcome',
   };
@@ -2119,7 +2133,56 @@
     return sp;
   }
 
+  /* ---- Explication animée des grands nombres : 👑 = 100, coffre = 10, 🪙 = 1 ---- */
+  let EXPL_TIMERS = [];
+  function clearExplTimers() { EXPL_TIMERS.forEach(clearTimeout); EXPL_TIMERS = []; }
+  function bxDesc(n) {
+    const h = Math.floor(n/100), t = Math.floor(n/10) % 10, u = n % 10, parts = [];
+    if (h) parts.push(`${h} couronne${h > 1 ? 's' : ''}`);
+    if (t) parts.push(`${t} coffre${t > 1 ? 's' : ''}`);
+    if (u) parts.push(`${u} pièce${u > 1 ? 's' : ''}`);
+    return parts.length ? parts.join(', ').replace(/, ([^,]*)$/, ' et $1') : 'rien';
+  }
+  function explainBig(fruitsEl, ex, isRight) {
+    const ICON = { 100:'👑', 10:'COFFRE', 1:'🪙' };
+    fruitsEl.className = 'fb-fruits bx-wrap';
+    fruitsEl.innerHTML = `<div class="bx-step" id="bx-step"></div><div class="bx-area">
+      <div class="bx-row" data-v="100"></div><div class="bx-row" data-v="10"></div><div class="bx-row" data-v="1"></div></div>`;
+    fruitsEl.appendChild(makeLegend(Math.max(ex.a, ex.b, ex.result) >= 100));
+    const row = v => fruitsEl.querySelector(`.bx-row[data-v="${v}"]`);
+    const caption = html => { const c = fruitsEl.querySelector('#bx-step'); c.innerHTML = html; c.classList.remove('bx-pop'); void c.offsetWidth; c.classList.add('bx-pop'); };
+    const add = (v, n, cls='') => { for (let i = 0; i < n; i++) { const sp = document.createElement('span'); sp.className = 'fb-fruit bx-it appear ' + cls; sp.innerHTML = itemHTML(ICON[v]); row(v).appendChild(sp); } };
+    const live = v => [...row(v).querySelectorAll('.bx-it:not(.vanish):not(.gone)')];
+    const remove = (v, n, cls='vanish') => { const l = live(v); for (let i = 0; i < n && l.length; i++) { const el = l.pop(); el.classList.add(cls); if (cls === 'gone') setTimeout(() => el.remove(), 450); } };
+    const ding = f => { if (S.sound) beep(f, 'sine', 0.1, 0.15); };
+    const D = isRight ? 1500 : 1900;
+    let t = 0;
+    const step = fn => { EXPL_TIMERS.push(setTimeout(fn, t)); t += D; };
+    const dig = n => [Math.floor(n/100), Math.floor(n/10) % 10, n % 10];
+    let [h, te, u] = dig(ex.a);
+    const [bh, bt, bu] = dig(ex.b);
+
+    const [h0, t0, u0] = [h, te, u];
+    step(() => { add(100, h0); add(10, t0); add(1, u0); caption(`On a <b>${ex.a}</b> pièces d'or : ${bxDesc(ex.a)}`); ding(500); });
+
+    if (ex.op === '-') {
+      const openCrown = () => step(() => { caption(`Pas assez de coffres : on ouvre une couronne ! 👑 → 10 coffres`); remove(100, 1, 'gone'); setTimeout(() => add(10, 10, 'bx-new'), 420); ding(620); });
+      const openChest = () => step(() => { caption(`Pas assez de pièces pour en enlever ${bu} : on ouvre un coffre ! 🔓 → 10 pièces`); remove(10, 1, 'gone'); setTimeout(() => add(1, 10, 'bx-new'), 420); ding(620); });
+      if (u < bu) { if (te === 0) { openCrown(); h--; te += 10; } openChest(); te--; u += 10; }
+      if (te < bt) { openCrown(); h--; te += 10; }
+      step(() => { caption(`On enlève <b>${ex.b}</b> : ${bxDesc(ex.b)} ❌`); remove(100, bh); remove(10, bt); remove(1, bu); ding(300); });
+      step(() => { caption(`Il reste <b>${ex.result}</b> : ${bxDesc(ex.result)} ✅`); ding(780); });
+    } else {
+      step(() => { caption(`On ajoute <b>${ex.b}</b> : ${bxDesc(ex.b)} ➕`); add(100, bh, 'bx-new'); add(10, bt, 'bx-new'); add(1, bu, 'bx-new'); ding(620); });
+      let uu = u + bu, tt = te + bt;
+      if (uu >= 10) { step(() => { caption(`10 pièces = 1 coffre ! On échange 🔁`); remove(1, 10, 'gone'); setTimeout(() => add(10, 1, 'bx-new'), 420); ding(700); }); uu -= 10; tt += 1; }
+      if (tt >= 10) { step(() => { caption(`10 coffres = 1 couronne ! On échange 🔁`); remove(10, 10, 'gone'); setTimeout(() => add(100, 1, 'bx-new'), 420); ding(760); }); }
+      step(() => { caption(`Au total : <b>${ex.result}</b> = ${bxDesc(ex.result)} ✅`); ding(780); });
+    }
+  }
+
   function buildExplanation(lblEl, fruitsEl, isRight) {
+    clearExplTimers();
     const ex = S.ex;
     fruitsEl.innerHTML = '';
     fruitsEl.className = 'fb-fruits fb-groups'; // switch to grouped layout
@@ -2128,17 +2191,11 @@
       ((ex.op==='+' || ex.op==='-') && (ex.a > 10 || ex.b > 10)));
 
     if (big) {
-      /* -------- GRANDS NOMBRES (+ / −) : 👑 coffres pièces -------- */
+      /* -------- GRANDS NOMBRES (+ / −) : explication pas à pas -------- */
       lblEl.innerHTML = ex.op==='+'
         ? `${ex.a} + ${ex.b} = ${ex.result} pièces au total`
         : `${ex.a} − ${ex.b} = ${ex.result} pièces qui restent`;
-      const sym = ex.op==='+' ? '+' : '−';
-      fruitsEl.appendChild(makeTensBox(ex.a, `${ex.a}`, 0));
-      fruitsEl.appendChild(makeOpLabel(sym));
-      fruitsEl.appendChild(makeTensBox(ex.b, `${ex.b}`, isRight ? 80 : 500));
-      fruitsEl.appendChild(makeOpLabel('='));
-      fruitsEl.appendChild(makeTensBox(ex.result, `= ${ex.result}`, isRight ? 160 : 900));
-      fruitsEl.appendChild(makeLegend(Math.max(ex.a, ex.b, ex.result) >= 100));
+      explainBig(fruitsEl, ex, isRight);
 
     } else if (ex.op === '+') {
       /* -------- ADDITION --------
@@ -2176,7 +2233,7 @@
         fruitsEl.appendChild(sp);
       }
       const allActive = () => fruitsEl.querySelectorAll('.fb-fruit:not(.vanish)');
-      for(let i=0;i<Math.min(ex.b,8);i++) {
+      for(let i=0;i<ex.b;i++) {
         setTimeout(()=>{
           const items = allActive();
           if(items.length) {
@@ -2225,6 +2282,7 @@
   }
 
   function nextEx() {
+    clearExplTimers();
     S.phase = 'game';
     S.input = '';
     S.clickCount = 0;
@@ -2255,9 +2313,11 @@
     updateScore();
     renderEx();
     sndClick();
+    setRoute(lvl === 'CP' ? 'FruitsCalculette' : 'PiratesCalculette');
   }
 
   function goHome() {
+    setRoute('');
     S.phase = 'welcome';
     document.body.classList.remove('theme-pirate');
     document.getElementById('feedback').className = '';
@@ -2611,6 +2671,7 @@
 
   /* ---- Coquille commune ---- */
   function openMini(id) {
+    setRoute(ROUTE_OF[id]);
     MINI.id = id; MINI.ok = 0; MINI.nok = 0;
     const g = GAMES[id];
     S.phase = 'mini'; S.level = null;
@@ -2666,6 +2727,7 @@
     stopConfetti(); miniNew();
   }
   function miniHome() {
+    setRoute('');
     if (MINI.cleanup) { try { MINI.cleanup(); } catch(_) {} MINI.cleanup = null; }
     MINI.fbOpen = false;
     document.getElementById('mfb').className = '';
@@ -4168,6 +4230,60 @@
       }, i*80);
     });
   }
+
+  /* ================================================
+     LIENS PAR JEU (ex. …/CalculaKID/#PiratesCalculette ou …/CalculaKID/PiratesCalculette)
+     ================================================ */
+  const ROUTES = {
+    FruitsCalculette: () => startLevel('CP'),
+    PiratesCalculette: () => startLevel('CE1'),
+    CourseAuxTables: () => openMini('tables'),
+    MesTables: () => openMini('apprendre'),
+    Nombres: () => openMini('nombres'),
+    Monnaie: () => openMini('monnaie'),
+    Heure: () => openMini('heure'),
+    Mesures: () => openMini('mesures'),
+    Tangram: () => openMini('tangram'),
+    Symetrie: () => openMini('symetrie'),
+    Mots: () => openMini('mots'),
+    Syllabes: () => openMini('syllabes'),
+    Alphabet: () => openMini('alpha'),
+    Grammaire: () => openMini('nature'),
+    Accords: () => openMini('accords'),
+    Conjugaison: () => openMini('conj'),
+    Calendrier: () => openMini('calendrier'),
+    English: () => openMini('english')
+  };
+  const ROUTE_ALIASES = { fruits:'FruitsCalculette', pirates:'PiratesCalculette', piratescalulette:'PiratesCalculette', calculette:'PiratesCalculette', tables:'CourseAuxTables', course:'CourseAuxTables', symétrie:'Symetrie', lheure:'Heure', anglais:'English', verbes:'Conjugaison' };
+  const ROUTE_OF = { 'tables':'CourseAuxTables', 'apprendre':'MesTables', 'nombres':'Nombres', 'monnaie':'Monnaie', 'heure':'Heure', 'mesures':'Mesures', 'tangram':'Tangram', 'symetrie':'Symetrie', 'mots':'Mots', 'syllabes':'Syllabes', 'alpha':'Alphabet', 'nature':'Grammaire', 'accords':'Accords', 'conj':'Conjugaison', 'calendrier':'Calendrier', 'english':'English' };
+  let ROUTING = false;
+  const routeNorm = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  function setRoute(r) {
+    if (ROUTING) return;
+    try {
+      if (r) { if (location.hash !== '#' + r) history.pushState(null, '', '#' + r); }
+      else if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    } catch(_) {}
+  }
+  function routeFind(h) {
+    const n = routeNorm(h);
+    const k = Object.keys(ROUTES).find(x => routeNorm(x) === n);
+    if (k) return k;
+    const a = Object.keys(ROUTE_ALIASES).find(x => routeNorm(x) === n);
+    return a ? ROUTE_ALIASES[a] : null;
+  }
+  function routeApply() {
+    ROUTING = true;
+    try {
+      if (!document.getElementById('mini').classList.contains('hidden')) miniHome();
+      if (S.phase !== 'welcome' || !document.getElementById('game').classList.contains('hidden')) goHome();
+      const h = decodeURIComponent((location.hash || '').slice(1)) || new URLSearchParams(location.search).get('jeu') || '';
+      const k = h && routeFind(h);
+      if (k) { ROUTES[k](); if (location.hash !== '#' + k) history.replaceState(null, '', location.pathname + '#' + k); }
+    } finally { ROUTING = false; }
+  }
+  window.addEventListener('popstate', routeApply);
+  if (location.hash || location.search) routeApply();
 </script>
 </body>
 </html>

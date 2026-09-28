@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Le Cartable Magique</title>
+<script>
+  // /CalculaKID/QuelqueChose  ->  /CalculaKID/#QuelqueChose
+  var parts = location.pathname.split('/').filter(Boolean);
+  var base = '/', seg = parts[0] || '';
+  if (parts[0] && parts[0].toLowerCase() === 'calculakid') { base = '/' + parts[0] + '/'; seg = parts[1] || ''; }
+  location.replace(base + (seg ? '#' + seg : ''));
+</script>
+</head>
+<body></body>
+</html>
