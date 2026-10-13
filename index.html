@@ -1058,7 +1058,6 @@
     .fb-expbox { padding:10px 14px; gap:6px; }
     .fb-next { flex-shrink:0; }
     #range-btn { display:none; }
-    body.theme-pirate #range-btn { display:flex; }
 
     /* =============================================
        MINI-JEUX (Mots, Heure, Monnaie, Conjugaison, Nombres)
@@ -1343,6 +1342,51 @@
     .bx-it { font-size:clamp(1.35rem,4.2vw,1.8rem) !important; }
     .bx-it.vanish { animation:none !important; opacity:.5; }
     .bx-it.gone { animation: fruit-cross-out .4s ease forwards !important; }
+
+    /* Bouton lien + message « lien copié » */
+    #toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); z-index:1000; background:#2D3436; color:#fff;
+             border-radius:16px; padding:12px 16px; font-weight:800; font-size:.95rem; box-shadow:0 8px 30px rgba(0,0,0,.3); opacity:0; pointer-events:none;
+             transition:opacity .25s, transform .25s; max-width:calc(100vw - 32px); text-align:center; }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+    #toast .toast-url { display:block; margin-top:6px; font-size:.8rem; font-weight:700; color:#FDCB6E; word-break:break-all; user-select:all; -webkit-user-select:all; }
+
+    /* Sélecteur de niveau de la calculette */
+    .calc-lvl button { font-size:.78rem; white-space:nowrap; }
+    body.theme-pirate .calc-lvl button.active { background:#7B3F12; }
+    body.theme-space  .calc-lvl button.active { background:#5F27CD; }
+
+    /* =============================================
+       THÈME ESPACE (calculette CE2)
+       ============================================= */
+    body.theme-space #game { background:radial-gradient(circle at 20% 15%, #4B3B9A 0%, #241C5C 45%, #120E33 100%); }
+    body.theme-space #game::before { content:''; position:absolute; inset:0; pointer-events:none; opacity:.55;
+      background-image:radial-gradient(1.5px 1.5px at 10% 20%, #fff, transparent), radial-gradient(1px 1px at 30% 70%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 55% 35%, #fff, transparent), radial-gradient(1px 1px at 75% 80%, #fff, transparent),
+        radial-gradient(2px 2px at 88% 15%, #fff, transparent), radial-gradient(1px 1px at 45% 90%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 65% 60%, #fff, transparent), radial-gradient(1px 1px at 20% 50%, #fff, transparent); }
+    body.theme-space #game > * { position:relative; }
+    body.theme-space .scorebar { background:#F3F0FF; border-bottom:3px solid #A29BFE; }
+    body.theme-space .exercise-card { background:#FFFFFF; border:3px solid #A29BFE; }
+    body.theme-space .num-label, body.theme-space .answer-box { color:#3B2C7A; border-color:#3B2C7A; }
+    body.theme-space .op-sym, body.theme-space .op-label-hint { color:#5F27CD; }
+    body.theme-space .answer-box.has-val { color:#E84393; border-color:#E84393; }
+    body.theme-space .answer-box.placeholder { color:#C8C2EE; border-color:#DCD7F7; }
+    body.theme-space .np-btn { background:#FFFFFF; box-shadow:0 4px 0 #B8AEF0, 0 2px 10px rgba(0,0,0,.2); }
+    body.theme-space .np-btn.del { background:#FDE7F1; }
+    body.theme-space .np-btn.ok { background:linear-gradient(135deg,#5F27CD,#A29BFE); color:#fff; box-shadow:0 4px 0 #3B1D8F; }
+    body.theme-space .pbar-wrap { background:#2C2466; }
+    body.theme-space .pbar-fill { background:linear-gradient(90deg,#74B9FF,#A29BFE); }
+    body.theme-space .fruit-item.counted { background:rgba(162,155,254,.3); outline-color:#5F27CD; }
+    body.theme-space .fruit-count-badge { background:rgba(162,155,254,.15); border-color:#5F27CD; color:#3B2C7A; }
+    body.theme-space .op-toggle.active { background:#5F27CD; border-color:#5F27CD; }
+    body.theme-space #feedback.correct-bg { background:radial-gradient(circle at 30% 20%, #6C5CE7 0%, #3B2C7A 55%, #160F3D 100%); }
+    body.theme-space #feedback.wrong-bg { background:linear-gradient(145deg,#E84393 0%,#A33373 55%, #5B1A45 100%); }
+    body.theme-space .fb-title { color:#FFEAA7; }
+    body.theme-space .correct-bg .fb-next { color:#5F27CD; }
+    body.theme-space .wrong-bg .fb-next { color:#A33373; }
+    body.theme-space .bx-num { color:#3B2C7A; }
+    body.theme-space #range { background:radial-gradient(circle at 20% 15%, #4B3B9A 0%, #241C5C 45%, #120E33 100%); }
+    .space-crew { font-size:clamp(3rem,11vw,5rem); line-height:1; }
   </style>
 </head>
 <body>
@@ -1351,6 +1395,7 @@
      CONFETTI CANVAS
      =================================================== -->
 <canvas id="confetti"></canvas>
+<div id="toast" role="status" aria-live="polite"></div>
 
 
 <!-- ===================================================
@@ -1364,17 +1409,11 @@
   <div class="subject">
     <div class="subject-h">🔢 Maths</div>
     <div class="level-row games">
-      <button class="level-card" id="btn-cp" onclick="startLevel('CP')" aria-label="Calculette Fruits">
-        <span class="lc-emoji">🍎</span>
-        <span class="lc-tag">🧮 CALCULETTE</span>
-        <span class="lc-name">Fruits</span>
-        <span class="lc-desc">+ et − en comptant<br>des fruits</span>
-      </button>
-      <button class="level-card pirate-card" id="btn-ce1" onclick="startLevel('CE1')" aria-label="Calculette Pirates">
+      <button class="level-card pirate-card" id="btn-ce1" onclick="startLevel('CE1')" aria-label="Calculette">
         <span class="lc-crew" id="lc-crew"></span>
         <span class="lc-tag">🧮 CALCULETTE</span>
-        <span class="lc-name">Pirates</span>
-        <span class="lc-desc">+ − × ÷ avec<br>les trésors</span>
+        <span class="lc-name">Calculette</span>
+        <span class="lc-desc">🍎 CP · 🏴‍☠️ CE1 · 🚀 CE2</span>
       </button>
       <button class="level-card game-card" onclick="openMini('tables')" aria-label="Tables">
         <span class="lc-emoji">⚡</span>
@@ -1517,7 +1556,13 @@
   <div class="scorebar">
     <div class="score-left">
       <button class="icon-btn" onclick="goHome()" aria-label="Accueil" title="Accueil">🏠</button>
-      <span class="level-pill" id="level-pill">CP</span>
+      <button class="icon-btn link-btn" onclick="copyGameLink()" aria-label="Copier le lien du jeu" title="Copier le lien de ce jeu">🔗</button>
+      <span class="level-pill" id="level-pill" style="display:none">CP</span>
+      <div class="lvl-toggle calc-lvl" id="calc-lvl">
+        <button data-lv="CP" onclick="switchCalcLevel('CP')">🍎 CP</button>
+        <button data-lv="CE1" onclick="switchCalcLevel('CE1')">🏴‍☠️ CE1</button>
+        <button data-lv="CE2" onclick="switchCalcLevel('CE2')">🚀 CE2</button>
+      </div>
       <div class="score-sep"></div>
       <span class="credit-mini" style="font-size:0.6rem;font-weight:800;color:var(--muted);letter-spacing:0.3px;white-space:nowrap">✏️ Etienne Leborgne</span>
       <div class="score-sep"></div>
@@ -1591,6 +1636,7 @@
   <div class="scorebar">
     <div class="score-left">
       <button class="icon-btn" onclick="miniHome()" aria-label="Accueil" title="Accueil">🏠</button>
+      <button class="icon-btn link-btn" onclick="copyGameLink()" aria-label="Copier le lien du jeu" title="Copier le lien de ce jeu">🔗</button>
       <span class="level-pill mini-title" id="mini-title">🔤 Mots</span>
       <div class="lvl-toggle" id="lvl-toggle">
         <button data-lv="CE1" onclick="miniSetLevel('CE1')">CE1</button>
@@ -1711,7 +1757,27 @@
   const PIRATE_COLORS = ['#F1C40F','#F4D03F','#D4A017','#FFD700','#C0392B','#1F4E79','#8B5A2B','#FDFEFE'];
 
   function isPirate() { return S.level === 'CE1'; }
-  function getOpMeta(op) { return (isPirate() ? PIRATE_OP_META : OP_META)[op] || OP_META['+']; }
+  function isSpace()  { return S.level === 'CE2'; }
+  function isRangeLevel() { return S.level === 'CE1' || S.level === 'CE2'; }
+  function getOpMeta(op) { return (isSpace() ? SPACE_OP_META : isPirate() ? PIRATE_OP_META : OP_META)[op] || OP_META['+']; }
+
+  /* ---- THÈME ESPACE (CE2) ---- */
+  const SPACE_POOL  = ['🪐','🌙','☄️','👽','🛸','🌍','🛰️','🧑‍🚀','🔭','🌠','🌞','🌎'];
+  const SPACE_BRAVO = [['🚀','Décollage réussi !'],['🌟','Super astronaute !'],['🪐','Bravo !'],['👽','Les extraterrestres applaudissent !'],
+                       ['🌠','Génial !'],['🛸','Mission accomplie !'],['⭐','Excellent !'],['🌙','Magnifique !']];
+  const SPACE_OP_META = {
+    '+': { sym:'+', emoji:'🛸', label:'On ajoute !' },
+    '-': { sym:'−', emoji:'☄️', label:'On enlève !' },
+    '×': { sym:'×', emoji:'🚀', label:'On multiplie !' },
+    '÷': { sym:'÷', emoji:'👽', label:'On partage !' },
+  };
+  const SPACE_COLORS = ['#A29BFE','#74B9FF','#FDCB6E','#FFFFFF','#FD79A8','#55EFC4','#6C5CE7'];
+  /* Unités pour les grands nombres : 100 / 10 / 1 */
+  function UNITS() {
+    return isSpace()
+      ? { 100:'🪐', 10:'🚀', 1:'⭐', big:'planète', ten:'fusée', one:'étoile', bigArt:'une', tenArt:'une', what:'étoiles' }
+      : { 100:'👑', 10:'COFFRE', 1:'🪙', big:'couronne', ten:'coffre', one:'pièce', bigArt:'une', tenArt:'un', what:"pièces d'or" };
+  }
 
   /* ================================================
      STATE
@@ -1728,14 +1794,23 @@
     qNum:       0,
     clickCount: 0,        // fruit click counter
     lastIsRight: false,   // for replay
-    ops: { '+':true, '-':true, '×':true, '÷':false }, // active operations (division désactivée par défaut)
-    range: { lo: 1, hi: 200 }, // CE1 : intervalle des nombres
+    ops: null,      // opérations actives du niveau en cours
+    range: null,    // intervalle du 1er nombre du niveau en cours
     rangeFrom: 'welcome',
+    // Réglages par défaut de chaque niveau de la calculette
+    cfg: {
+      CP:  { ops: { '+':true, '-':true, '×':false, '÷':false } },
+      CE1: { ops: { '+':true, '-':true, '×':true,  '÷':false }, range: { lo:1, hi:100 } },   // thème pirate
+      CE2: { ops: { '+':true, '-':true, '×':true,  '÷':true  }, range: { lo:1, hi:20  } },   // thème espace
+    },
   };
-  try {
-    const saved = JSON.parse(localStorage.getItem('calc-ce1-range') || 'null');
-    if (saved && saved.lo >= 1 && saved.hi <= 999 && saved.lo < saved.hi) S.range = saved;
-  } catch(_) {}
+  S.ops = S.cfg.CE1.ops; S.range = S.cfg.CE1.range;
+  ['CE1','CE2'].forEach(lv => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('calc-range-' + lv) || 'null');
+      if (saved && saved.lo >= 1 && saved.hi <= 999 && saved.lo < saved.hi) S.cfg[lv].range = saved;
+    } catch(_) {}
+  });
 
   /* ================================================
      AUDIO (Web Audio API — no external files)
@@ -1769,7 +1844,7 @@
      EXERCISE GENERATION
      ================================================ */
   function rnd(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
-  function pick()        { const P = isPirate() ? PIRATE_POOL : FRUITS_POOL; return P[Math.floor(Math.random()*P.length)]; }
+  function pick()        { const P = isSpace() ? SPACE_POOL : isPirate() ? PIRATE_POOL : FRUITS_POOL; return P[Math.floor(Math.random()*P.length)]; }
   function pickDiff(exclude) {
     let f; do { f=pick(); } while(f===exclude);
     return f;
@@ -1934,7 +2009,7 @@
 
     // [4] Fruit click counter badge
     h += `<div class="fruit-count-badge hidden-badge" id="fruit-badge">
-      👆 Tu as compté : <span class="fcount-num" id="fcount-num">0</span> ${isPirate() ? 'objets' : 'fruits'}
+      👆 Tu as compté : <span class="fcount-num" id="fcount-num">0</span> ${isRangeLevel() ? 'objets' : 'fruits'}
       <button class="fcount-reset" onclick="resetClickCount()" title="Réinitialiser le comptage">✕</button>
     </div>`;
 
@@ -1967,7 +2042,7 @@
      ================================================ */
   function pad(d) {
     if (S.phase!=='game') return;
-    if (S.input.length >= (S.level==='CE1' ? 4 : 2)) return;
+    if (S.input.length >= (isRangeLevel() ? 4 : 2)) return;
     sndClick();
     // If user types on numpad, reset fruit click selection
     if (S.clickCount > 0) {
@@ -2018,7 +2093,7 @@
     S.lastIsRight = isRight;
 
     if (isRight) {
-      const MSGS = isPirate() ? PIRATE_BRAVO : BRAVO_MSGS;
+      const MSGS = isSpace() ? SPACE_BRAVO : isPirate() ? PIRATE_BRAVO : BRAVO_MSGS;
       const [em, msg] = MSGS[Math.floor(Math.random()*MSGS.length)];
       if (isPirate()) fbIcon.innerHTML = `<div class="fb-crew">${PIRATE_MAN}<span class="fb-crew-em">${em}</span>${PIRATE_WOMAN}</div>`;
       else fbIcon.textContent = em;
@@ -2027,8 +2102,8 @@
       launchConfetti();
       spawnStars();
     } else {
-      fbIcon.textContent  = isPirate() ? '🦜' : '🤔';
-      fbTitle.textContent = isPirate() ? `Arrr ! C'était ${S.ex.result} !` : `C'était ${S.ex.result} !`;
+      fbIcon.textContent  = isSpace() ? '👽' : isPirate() ? '🦜' : '🤔';
+      fbTitle.textContent = isSpace() ? `Oups ! C'était ${S.ex.result} !` : isPirate() ? `Arrr ! C'était ${S.ex.result} !` : `C'était ${S.ex.result} !`;
       sndWrong();
       document.getElementById('ex-card').classList.add('do-shake');
     }
@@ -2103,7 +2178,8 @@
     box.style.animationDelay = delayMs + 'ms';
     const grid = document.createElement('div');
     grid.className = 'fb-group-fruits';
-    const parts = [['👑', Math.floor(n/100)], ['COFFRE', Math.floor((n%100)/10)], ['🪙', n%10]];
+    const U = UNITS();
+    const parts = [[U[100], Math.floor(n/100)], [U[10], Math.floor((n%100)/10)], [U[1], n%10]];
     parts.forEach(([it, k]) => {
       for (let i=0;i<k;i++) {
         const sp = document.createElement('span');
@@ -2124,7 +2200,8 @@
   function makeLegend(withCrown) {
     const d = document.createElement('div');
     d.className = 'fb-legend';
-    d.innerHTML = (withCrown ? '👑 = 100 · ' : '') + itemHTML('COFFRE') + ' = 10 · 🪙 = 1';
+    const U = UNITS();
+    d.innerHTML = (withCrown ? itemHTML(U[100]) + ' = 100 · ' : '') + itemHTML(U[10]) + ' = 10 · ' + itemHTML(U[1]) + ' = 1';
     return d;
   }
 
@@ -2141,16 +2218,17 @@
   function clearExplTimers() { EXPL_TIMERS.forEach(clearTimeout); EXPL_TIMERS = []; }
   function bxDesc(n) {
     const h = Math.floor(n/100), t = Math.floor(n/10) % 10, u = n % 10, parts = [];
-    if (h) parts.push(`${h} couronne${h > 1 ? 's' : ''} de 100 pièces`);
-    if (t) parts.push(`${t} coffre${t > 1 ? 's' : ''} de 10 pièces`);
-    if (u) parts.push(`${u} pièce${u > 1 ? 's' : ''}`);
+    const U = UNITS();
+    if (h) parts.push(`${h} ${U.big}${h > 1 ? 's' : ''} de 100 ${U.one}s`);
+    if (t) parts.push(`${t} ${U.ten}${t > 1 ? 's' : ''} de 10 ${U.one}s`);
+    if (u) parts.push(`${u} ${U.one}${u > 1 ? 's' : ''}`);
     let txt = parts.length ? parts.join(', ').replace(/, ([^,]*)$/, ' et $1') : 'rien';
     const sum = [h * 100, t * 10, u].filter(x => x);
     if (sum.length > 1) txt += ` (${sum.join(' + ')})`;   // ex. 48 = 40 + 8
     return txt;
   }
   function explainBig(fruitsEl, ex, isRight) {
-    const ICON = { 100:'👑', 10:'COFFRE', 1:'🪙' };
+    const ICON = UNITS(), U = ICON;
     fruitsEl.className = 'fb-fruits bx-wrap';
     fruitsEl.innerHTML = `<div class="bx-step" id="bx-step"></div><div class="bx-area">
       <div class="bx-row" data-v="100"></div><div class="bx-row" data-v="10"></div><div class="bx-row" data-v="1"></div></div>`;
@@ -2177,11 +2255,11 @@
     const [bh, bt, bu] = dig(ex.b);
 
     const [h0, t0, u0] = [h, te, u];
-    step(() => { add(100, h0); add(10, t0); add(1, u0); caption(`On a <b>${ex.a}</b> pièces d'or : ${bxDesc(ex.a)}`); ding(500); });
+    step(() => { add(100, h0); add(10, t0); add(1, u0); caption(`On a <b>${ex.a}</b> ${U.what} : ${bxDesc(ex.a)}`); ding(500); });
 
     if (ex.op === '-') {
-      const openCrown = () => step(() => { caption(`Pas assez de coffres : on ouvre une couronne ! 👑 → 10 coffres`); remove(100, 1, 'gone'); setTimeout(() => add(10, 10, 'bx-new'), 420); ding(620); });
-      const openChest = () => step(() => { caption(`Pas assez de pièces pour en enlever ${bu} : on ouvre un coffre ! 🔓 → 10 pièces`); remove(10, 1, 'gone'); setTimeout(() => add(1, 10, 'bx-new'), 420); ding(620); });
+      const openCrown = () => step(() => { caption(`Pas assez de ${U.ten}s : on ouvre ${U.bigArt} ${U.big} ! ${itemHTML(U[100])} → 10 ${U.ten}s`); remove(100, 1, 'gone'); setTimeout(() => add(10, 10, 'bx-new'), 420); ding(620); });
+      const openChest = () => step(() => { caption(`Pas assez de ${U.one}s pour en enlever ${bu} : on ouvre ${U.tenArt} ${U.ten} ! 🔓 → 10 ${U.one}s`); remove(10, 1, 'gone'); setTimeout(() => add(1, 10, 'bx-new'), 420); ding(620); });
       if (u < bu) { if (te === 0) { openCrown(); h--; te += 10; } openChest(); te--; u += 10; }
       if (te < bt) { openCrown(); h--; te += 10; }
       step(() => { caption(`On enlève <b>${ex.b}</b> : ${bxDesc(ex.b)} ❌`); remove(100, bh); remove(10, bt); remove(1, bu); ding(300); });
@@ -2189,8 +2267,8 @@
     } else {
       step(() => { caption(`On ajoute <b>${ex.b}</b> : ${bxDesc(ex.b)} ➕`); add(100, bh, 'bx-new'); add(10, bt, 'bx-new'); add(1, bu, 'bx-new'); ding(620); });
       let uu = u + bu, tt = te + bt;
-      if (uu >= 10) { step(() => { caption(`10 pièces = 1 coffre ! On échange 🔁`); remove(1, 10, 'gone'); setTimeout(() => add(10, 1, 'bx-new'), 420); ding(700); }); uu -= 10; tt += 1; }
-      if (tt >= 10) { step(() => { caption(`10 coffres = 1 couronne ! On échange 🔁`); remove(10, 10, 'gone'); setTimeout(() => add(100, 1, 'bx-new'), 420); ding(760); }); }
+      if (uu >= 10) { step(() => { caption(`10 ${U.one}s = 1 ${U.ten} ! On échange 🔁`); remove(1, 10, 'gone'); setTimeout(() => add(10, 1, 'bx-new'), 420); ding(700); }); uu -= 10; tt += 1; }
+      if (tt >= 10) { step(() => { caption(`10 ${U.ten}s = 1 ${U.big} ! On échange 🔁`); remove(10, 10, 'gone'); setTimeout(() => add(100, 1, 'bx-new'), 420); ding(760); }); }
       step(() => { caption(`Au total : <b>${ex.result}</b> = ${bxDesc(ex.result)} ✅`); ding(780); });
     }
   }
@@ -2201,14 +2279,14 @@
     fruitsEl.innerHTML = '';
     fruitsEl.className = 'fb-fruits fb-groups'; // switch to grouped layout
 
-    const big = S.level==='CE1' && (
+    const big = isRangeLevel() && (
       ((ex.op==='+' || ex.op==='-') && (ex.a > 10 || ex.b > 10)));
 
     if (big) {
       /* -------- GRANDS NOMBRES (+ / −) : explication pas à pas -------- */
       lblEl.innerHTML = ex.op==='+'
-        ? `${ex.a} + ${ex.b} = ${ex.result} pièces au total`
-        : `${ex.a} − ${ex.b} = ${ex.result} pièces qui restent`;
+        ? `${ex.a} + ${ex.b} = ${ex.result} ${UNITS().one}s au total`
+        : `${ex.a} − ${ex.b} = ${ex.result} ${UNITS().one}s qui restent`;
       explainBig(fruitsEl, ex, isRight);
 
     } else if (ex.op === '+') {
@@ -2263,15 +2341,15 @@
          e.g. 4×5 → 4 boxes each with 5 🍎 */
       let G = ex.a, per = ex.b;
       if (G > 10 && per <= 10) { G = ex.b; per = ex.a; } // on montre le moins de groupes possible
-      lblEl.innerHTML = isPirate()
-        ? `${G} bateaux avec ${per} ${per > 10 ? 'pièces' : itemHTML(ex.fA)} → ${ex.result} au total`
+      lblEl.innerHTML = isRangeLevel()
+        ? `${G} ${isSpace() ? 'fusées' : 'bateaux'} avec ${per} ${per > 10 ? UNITS().one + 's' : itemHTML(ex.fA)} → ${ex.result} au total`
         : `${ex.a} fois ${ex.b} ${ex.fA} → ${ex.result} au total`;
 
       for(let g=0;g<G;g++) {
         const delayMs = (isRight ? 0 : 400) + g * 280;
         fruitsEl.appendChild(per > 10
-          ? makeTensBox(per, `⛵ ${g+1}`, delayMs)
-          : makeGroupBox(ex.fA, per, isPirate() ? `⛵ ${g+1}` : `× ${g+1}`, delayMs));
+          ? makeTensBox(per, `${isSpace() ? '🚀' : '⛵'} ${g+1}`, delayMs)
+          : makeGroupBox(ex.fA, per, isRangeLevel() ? `${isSpace() ? '🚀' : '⛵'} ${g+1}` : `× ${g+1}`, delayMs));
         if(S.sound) setTimeout(()=>beep(440+g*50,'sine',0.1,0.16), delayMs + 80);
       }
       if (per > 10) fruitsEl.appendChild(makeLegend(per >= 100));
@@ -2281,13 +2359,13 @@
          Show b group boxes of result fruits each
          e.g. 20÷5=4 → 5 boxes each with 4 🍍
          Label: "5 groupes de 4 = 20" */
-      lblEl.innerHTML = isPirate()
-        ? `${ex.a} ${itemHTML(ex.fA)} partagés entre ${ex.b} pirates → ${ex.result} pour chacun`
+      lblEl.innerHTML = isRangeLevel()
+        ? `${ex.a} ${itemHTML(ex.fA)} partagés entre ${ex.b} ${isSpace() ? 'astronautes' : 'pirates'} → ${ex.result} pour chacun`
         : `${ex.a} ${ex.fA} partagés en ${ex.b} groupes → ${ex.result} dans chaque groupe`;
 
       for(let g=0;g<ex.b;g++) {
         const delayMs = (isRight ? 0 : 400) + g * 300;
-        const gl = isPirate() ? `${g%2 ? '👩' : '🧔'} Pirate ${g+1}` : `Groupe ${g+1}`;
+        const gl = isSpace() ? `${g%2 ? '👩‍🚀' : '🧑‍🚀'} ${g+1}` : isPirate() ? `${g%2 ? '👩' : '🧔'} Pirate ${g+1}` : `Groupe ${g+1}`;
         fruitsEl.appendChild(ex.result > 10 ? makeTensBox(ex.result, gl, delayMs) : makeGroupBox(ex.fA, ex.result, gl, delayMs));
         if(S.sound) setTimeout(()=>beep(420+g*45,'sine',0.1,0.16), delayMs + 80);
       }
@@ -2312,11 +2390,14 @@
      ================================================ */
   function startLevel(lvl) {
     S.level = lvl; S.ok=0; S.nok=0; S.total=0; S.input=''; S.qNum=1; S.clickCount=0;
+    S.ops = S.cfg[lvl].ops; if (S.cfg[lvl].range) S.range = S.cfg[lvl].range;
+    syncCalcUI();
     S.ex = genEx();
     S.phase = 'game';
 
     document.getElementById('level-pill').textContent = lvl === 'CE1' ? 'Pirates' : '🍎 Fruits';
     document.body.classList.toggle('theme-pirate', lvl === 'CE1');
+    document.body.classList.toggle('theme-space', lvl === 'CE2');
     [['tog-plus','+'],['tog-minus','-'],['tog-mul','×'],['tog-div','÷']].forEach(([id,op])=>{
       const em = document.querySelector('#'+id+' .op-tog-emoji');
       if (em) em.textContent = getOpMeta(op).emoji;
@@ -2327,18 +2408,31 @@
     updateScore();
     renderEx();
     sndClick();
-    setRoute(lvl === 'CP' ? 'FruitsCalculette' : 'PiratesCalculette');
+    setRoute({ CP:'FruitsCalculette', CE1:'PiratesCalculette', CE2:'EspaceCalculette' }[lvl]);
   }
 
   function goHome() {
     setRoute('');
     S.phase = 'welcome';
-    document.body.classList.remove('theme-pirate');
+    document.body.classList.remove('theme-pirate', 'theme-space');
     document.getElementById('feedback').className = '';
     document.getElementById('game').classList.add('hidden');
     document.getElementById('range').classList.add('hidden');
     document.getElementById('welcome').classList.remove('hidden');
     stopConfetti();
+  }
+
+  /* Sélecteur CP / CE1 / CE2 de la calculette */
+  function switchCalcLevel(lv) { if (lv !== S.level) startLevel(lv); }
+  function syncCalcUI() {
+    document.querySelectorAll('#calc-lvl button').forEach(b => b.classList.toggle('active', b.dataset.lv === S.level));
+    [['tog-plus','+'],['tog-minus','-'],['tog-mul','×'],['tog-div','÷']].forEach(([id, op]) => {
+      const el = document.getElementById(id); if (el) el.classList.toggle('active', !!S.ops[op]);
+    });
+    const count = Object.values(S.ops).filter(Boolean).length;
+    const note = document.getElementById('settings-note');
+    if (note) note.textContent = count === 1 ? 'Une seule opération active' : `${count} opérations actives`;
+    const rb = document.getElementById('range-btn'); if (rb) rb.style.display = isRangeLevel() ? 'flex' : 'none';
   }
 
   function toggleSound() {
@@ -2369,7 +2463,7 @@
     panel.classList.toggle('open', settingsOpen);
     btn.style.background = settingsOpen ? '#e8e4ff' : '';
     // Show/hide × and ÷ depending on level
-    const isCE1 = S.level === 'CE1';
+    const isCE1 = isRangeLevel();
     document.getElementById('tog-mul').style.display = isCE1 ? '' : 'none';
     document.getElementById('tog-div').style.display = isCE1 ? '' : 'none';
     if (settingsOpen) sndClick();
@@ -2533,7 +2627,7 @@
         y: -10 - Math.random()*180,
         vx: (Math.random()-.5)*5,
         vy:  3 + Math.random()*5,
-        col: (isPirate() ? PIRATE_COLORS : COLORS)[Math.floor(Math.random()*(isPirate() ? PIRATE_COLORS : COLORS).length)],
+        col: ((P => P[Math.floor(Math.random()*P.length)])(isSpace() ? SPACE_COLORS : isPirate() ? PIRATE_COLORS : COLORS)),
         w:   5 + Math.random()*11,
         h:   5 + Math.random()*6,
         rot: Math.random()*Math.PI*2,
@@ -2598,6 +2692,9 @@
   }
 
   function openRange(from) {
+    const sp = S.level === 'CE2';
+    document.querySelector('#range .range-title').innerHTML = sp ? 'Choisis tes nombres,<br>astronaute !' : 'Choisis tes nombres,<br>moussaillon !';
+    document.getElementById('range-crew').innerHTML = sp ? '<span class="space-crew">🧑‍🚀🚀👩‍🚀</span>' : PIRATE_MAN + PIRATE_WOMAN;
     S.rangeFrom = from;
     draftRange = { ...S.range };
     renderRange();
@@ -2610,7 +2707,7 @@
   }
 
   function cancelRange() {
-    if (S.rangeFrom === 'game' && S.level === 'CE1') {
+    if (S.rangeFrom === 'game' && isRangeLevel()) {
       document.getElementById('range').classList.add('hidden');
       document.getElementById('game').classList.remove('hidden');
       S.phase = 'game'; sndClick();
@@ -2619,16 +2716,18 @@
 
   function confirmRange() {
     S.range = { ...draftRange };
-    try { localStorage.setItem('calc-ce1-range', JSON.stringify(S.range)); } catch(_) {}
+    const lvR = isRangeLevel() ? S.level : 'CE1';
+    S.cfg[lvR].range = S.range;
+    try { localStorage.setItem('calc-range-' + lvR, JSON.stringify(S.range)); } catch(_) {}
     document.getElementById('range').classList.add('hidden');
-    if (S.rangeFrom === 'game' && S.level === 'CE1') {
+    if (S.rangeFrom === 'game' && isRangeLevel()) {
       // on reprend la partie en gardant le score, avec une nouvelle question
       document.getElementById('game').classList.remove('hidden');
       S.phase = 'game'; S.input = ''; S.clickCount = 0;
       S.ex = genEx(); renderEx();
       sndClick();
     } else {
-      startLevel('CE1');
+      startLevel(lvR);
     }
   }
 
@@ -4232,7 +4331,7 @@
 
   function spawnStars() {
     const slots  = [{x:'18%',y:'25%'},{x:'82%',y:'18%'},{x:'50%',y:'10%'},{x:'12%',y:'72%'},{x:'88%',y:'68%'},{x:'35%',y:'20%'},{x:'70%',y:'30%'}];
-    const emojis = isPirate() ? ['🪙','💰','💎','👑','🏴‍☠️','⭐','🪙'] : ['⭐','🌟','✨','💫','🎉','🎊','🏆'];
+    const emojis = isSpace() ? ['⭐','🌟','🪐','🚀','✨','🌠','💫'] : isPirate() ? ['🪙','💰','💎','👑','🏴‍☠️','⭐','🪙'] : ['⭐','🌟','✨','💫','🎉','🎊','🏆'];
     slots.forEach((pos,i)=>{
       setTimeout(()=>{
         const el = document.createElement('div');
@@ -4250,7 +4349,9 @@
      ================================================ */
   const ROUTES = {
     FruitsCalculette: () => startLevel('CP'),
+    Calculette: () => startLevel('CE1'),
     PiratesCalculette: () => startLevel('CE1'),
+    EspaceCalculette: () => startLevel('CE2'),
     CourseAuxTables: () => openMini('tables'),
     MesTables: () => openMini('apprendre'),
     Nombres: () => openMini('nombres'),
@@ -4297,6 +4398,40 @@
     } finally { ROUTING = false; }
   }
   window.addEventListener('popstate', routeApply);
+
+  /* Bouton 🔗 : copie le lien direct du jeu en cours (ex. …/CalculaKID/PiratesCalculette/) */
+  function currentRoute() {
+    if (!document.getElementById('mini').classList.contains('hidden')) return ROUTE_OF[MINI.id];
+    if (S.level === 'CP') return 'FruitsCalculette';
+    if (S.level === 'CE1') return 'PiratesCalculette';
+    if (S.level === 'CE2') return 'EspaceCalculette';
+    return '';
+  }
+  function gameLink() {
+    const dir = location.pathname.replace(/[^/]*$/, '');   // retire « index.html » éventuel
+    const r = currentRoute();
+    return location.origin + dir + (r ? r + '/' : '');
+  }
+  let toastTimer = null;
+  function showToast(html) {
+    const t = document.getElementById('toast');
+    t.innerHTML = html; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 5000);
+  }
+  function copyGameLink() {
+    const url = gameLink();
+    const done = ok => { showToast(`${ok ? '🔗 Lien copié !' : '🔗 Lien du jeu :'}<span class="toast-url">${url}</span>`); if (ok && S.sound) beep(880, 'sine', 0.08, 0.15); };
+    const fallback = () => {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = url; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, url.length);
+        const ok = document.execCommand('copy'); ta.remove(); done(ok);
+      } catch(_) { done(false); }
+    };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(() => done(true), fallback);
+    else fallback();
+  }
   if (location.hash || location.search) routeApply();
 </script>
 </body>
