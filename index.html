@@ -1311,6 +1311,7 @@
 
     /* Barre du haut : tout reste visible sur téléphone */
     .scorebar { flex-wrap:wrap; row-gap:6px; }
+    .score-left { flex-wrap:wrap; row-gap:6px; min-width:0; }
     @media (max-width:620px) {
       #game .credit-mini, #game .score-sep, #game .score-item .si-lbl { display:none; }
       #game .scorebar { padding:8px 10px; }
@@ -1387,6 +1388,24 @@
     body.theme-space .bx-num { color:#3B2C7A; }
     body.theme-space #range { background:radial-gradient(circle at 20% 15%, #4B3B9A 0%, #241C5C 45%, #120E33 100%); }
     .space-crew { font-size:clamp(3rem,11vw,5rem); line-height:1; }
+
+    /* Compléments */
+    #mini[data-game="complement"] { background:linear-gradient(180deg,#E9FBF3,#C6F0DD); }
+    .cpl-eq { font-size:clamp(1.8rem,7vw,2.6rem); font-weight:900; color:var(--purple); }
+    .cpl-q { color:var(--orange); }
+    .cpl-frames { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+    .cpl-frame { display:grid; gap:4px; background:#2D3436; padding:4px; border-radius:8px; }
+    .cpl-cell { width:clamp(26px,8vw,40px); height:clamp(26px,8vw,40px); background:#fff; border-radius:50%; box-shadow:inset 0 0 0 2px #dfe6e9; }
+    .cpl-frames.big .cpl-frame { gap:2px; padding:3px; }
+    .cpl-frames.big .cpl-cell { width:clamp(14px,4.2vw,20px); height:clamp(14px,4.2vw,20px); }
+    .cpl-cell.on { background:#0984E3; box-shadow:none; }
+    .cpl-cell.rest { background:#FDCB6E; box-shadow:none; }
+    .cpl-bars { display:flex; gap:4px; flex-wrap:wrap; justify-content:center; }
+    .cpl-bar { width:clamp(26px,7vw,36px); height:90px; border-radius:6px; background:#fff; border:2px solid #dfe6e9; display:flex; align-items:flex-end; justify-content:center;
+               font-size:.6rem; font-weight:900; color:#b2bec3; padding-bottom:4px; writing-mode:vertical-rl; }
+    .cpl-bar.on { background:#0984E3; color:#fff; border-color:#0984E3; }
+    .cpl-bar.rest { background:#FDCB6E; color:#6E4B00; border-color:#FDCB6E; }
+    .cpl-hl { background:#FDCB6E; color:#2D3436; border-radius:6px; padding:0 6px; }
   </style>
 </head>
 <body>
@@ -1424,6 +1443,11 @@
         <span class="lc-emoji">✖️</span>
         <span class="lc-name long">Mes tables</span>
         <span class="lc-desc">Apprends table<br>par table</span>
+      </button>
+      <button class="level-card game-card" onclick="openMini('complement')" aria-label="Compléments">
+        <span class="lc-emoji">🔟</span>
+        <span class="lc-name long">Compléments</span>
+        <span class="lc-desc">6 + ? = 10</span>
       </button>
       <button class="level-card game-card" onclick="openMini('nombres')" aria-label="Nombres">
         <span class="lc-emoji">🔢</span>
@@ -4329,6 +4353,65 @@
     }
   }
 
+
+  /* =========================================================
+     JEU — COMPLÉMENTS (à 10, 20, 100, 1000)
+     ========================================================= */
+  const CPL = { st:null };
+  function cplVisual(n, target, showRest) {
+    if (target === 1000) {   // 10 barres de 100
+      let h = '<div class="cpl-bars">';
+      for (let i = 0; i < 10; i++) h += `<span class="cpl-bar ${i < n / 100 ? 'on' : showRest ? 'rest' : ''}">100</span>`;
+      return h + '</div>';
+    }
+    const cols = target === 100 ? 10 : 5;
+    let h = `<div class="cpl-frames${target === 100 ? ' big' : ''}">`;
+    for (let f = 0; f < target / (target === 100 ? 100 : 10); f++) {
+      h += `<div class="cpl-frame" style="grid-template-columns:repeat(${cols},1fr)">`;
+      const size = target === 100 ? 100 : 10;
+      for (let i = 0; i < size; i++) {
+        const k = f * size + i;
+        h += `<span class="cpl-cell ${k < n ? 'on' : showRest ? 'rest' : ''}"></span>`;
+      }
+      h += '</div>';
+    }
+    return h + '</div>';
+  }
+  GAMES.complement = {
+    title: 'Compléments', emoji: '🔟',
+    newQ(body, lv) {
+      let target, n;
+      const r = Math.random();
+      if (lv === 'CE1') {
+        if (r < 0.7) { target = 10; n = rndi(1, 9); } else { target = 20; n = rndi(1, 19); }
+      } else {
+        if (r < 0.2)      { target = 20;   n = rndi(1, 19); }
+        else if (r < 0.5) { target = 100;  n = rndi(1, 9) * 10; }
+        else if (r < 0.8) { target = 100;  n = rndi(1, 99); }
+        else              { target = 1000; n = rndi(1, 9) * 100; }
+      }
+      CPL.st = { target, n, ans: target - n };
+      body.innerHTML = `<div class="m-card">
+        <div class="m-prompt">Le complément à <b>${target}</b> de <b>${n}</b>, c'est… ?</div>
+        <div class="cpl-eq">${n} + <span class="cpl-q">?</span> = ${target}</div>
+        ${cplVisual(n, target, false)}
+        <div class="m-hint">${target <= 100 ? 'Compte les cases vides !' : 'Chaque barre vaut 100'}</div>
+        <div class="m-answer placeholder" id="cpl-ans">?</div>
+      </div>`;
+      const ans = body.querySelector('#cpl-ans');
+      body.querySelector('.m-card').appendChild(miniPad(ans, 4, v => cplCheck(v)));
+    },
+  };
+  function cplCheck(v) {
+    const st = CPL.st; if (MINI.answered) return;
+    const ok = v === st.ans;
+    miniResult(ok, `C'était ${st.ans} !`,
+      `${cplVisual(st.n, st.target, true)}
+       <div class="fb-exp-lbl" style="font-size:1.4rem">${st.n} + <b class="cpl-hl">${st.ans}</b> = ${st.target}</div>
+       <div class="fb-exp-lbl">Le complément à ${st.target} de ${st.n} est ${st.ans}.</div>`);
+    say(`${frNum(st.n)} plus ${frNum(st.ans)}, égale ${frNum(st.target)}`);
+  }
+
   function spawnStars() {
     const slots  = [{x:'18%',y:'25%'},{x:'82%',y:'18%'},{x:'50%',y:'10%'},{x:'12%',y:'72%'},{x:'88%',y:'68%'},{x:'35%',y:'20%'},{x:'70%',y:'30%'}];
     const emojis = isSpace() ? ['⭐','🌟','🪐','🚀','✨','🌠','💫'] : isPirate() ? ['🪙','💰','💎','👑','🏴‍☠️','⭐','🪙'] : ['⭐','🌟','✨','💫','🎉','🎊','🏆'];
@@ -4354,6 +4437,7 @@
     EspaceCalculette: () => startLevel('CE2'),
     CourseAuxTables: () => openMini('tables'),
     MesTables: () => openMini('apprendre'),
+    Complements: () => openMini('complement'),
     Nombres: () => openMini('nombres'),
     Monnaie: () => openMini('monnaie'),
     Heure: () => openMini('heure'),
@@ -4370,7 +4454,7 @@
     English: () => openMini('english')
   };
   const ROUTE_ALIASES = { fruits:'FruitsCalculette', pirates:'PiratesCalculette', piratescalulette:'PiratesCalculette', calculette:'PiratesCalculette', tables:'CourseAuxTables', course:'CourseAuxTables', symétrie:'Symetrie', lheure:'Heure', anglais:'English', verbes:'Conjugaison' };
-  const ROUTE_OF = { 'tables':'CourseAuxTables', 'apprendre':'MesTables', 'nombres':'Nombres', 'monnaie':'Monnaie', 'heure':'Heure', 'mesures':'Mesures', 'tangram':'Tangram', 'symetrie':'Symetrie', 'mots':'Mots', 'syllabes':'Syllabes', 'alpha':'Alphabet', 'nature':'Grammaire', 'accords':'Accords', 'conj':'Conjugaison', 'calendrier':'Calendrier', 'english':'English' };
+  const ROUTE_OF = { 'tables':'CourseAuxTables', 'apprendre':'MesTables', 'complement':'Complements', 'nombres':'Nombres', 'monnaie':'Monnaie', 'heure':'Heure', 'mesures':'Mesures', 'tangram':'Tangram', 'symetrie':'Symetrie', 'mots':'Mots', 'syllabes':'Syllabes', 'alpha':'Alphabet', 'nature':'Grammaire', 'accords':'Accords', 'conj':'Conjugaison', 'calendrier':'Calendrier', 'english':'English' };
   let ROUTING = false;
   const routeNorm = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
   function setRoute(r) {
